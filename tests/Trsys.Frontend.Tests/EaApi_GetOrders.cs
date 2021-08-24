@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Trsys.Frontend.Tests
 {
     [TestClass]
-    public class EaApi_PostToken
+    public class EaApi_GetOrders
     {
         private WebApplicationFactory<Startup> _factory;
 
@@ -25,13 +23,13 @@ namespace Trsys.Frontend.Tests
         }
 
         [TestMethod]
-        public async Task ValidSecretKey_ReturnValidToken()
+        public async Task ReturnSuccessAndCorrectContentType()
         {
             // Arrange
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync("/api/token", new StringContent("SECRETKEY", Encoding.UTF8, "text/plain"));
+            var response = await client.GetAsync("/api/orders");
 
             // Assert
             response.EnsureSuccessStatusCode();
