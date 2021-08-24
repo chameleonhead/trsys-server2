@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Trsys.Frontend.Web.Filters;
 using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Controllers
 {
+    [EaEndpoint]
+    [MinimumEaVersion("20210609")]
     [ApiController]
     public class EaApiController : ControllerBase
     {
