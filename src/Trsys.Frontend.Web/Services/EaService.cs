@@ -70,6 +70,13 @@ namespace Trsys.Frontend.Web.Services
             _byKeys.Add(session.Key, session);
             return Task.CompletedTask;
         }
+
+        public Task RemoveAsync(EaSession session)
+        {
+            _store.Remove(session.Token);
+            _byKeys.Remove(session.Key);
+            return Task.CompletedTask;
+        }
     }
 
     public class EaService
@@ -102,6 +109,17 @@ namespace Trsys.Frontend.Web.Services
             };
             await _sessionStore.AddAsync(session);
             return session;
+        }
+
+        public async Task<bool> InvalidateSessionAsync(string token)
+        {
+            var session = await _sessionStore.FindByTokenAsync(token);
+            if (session is null)
+            {
+                return false;
+            }
+            await _sessionStore.RemoveAsync(session);
+            return true;
         }
     }
 }
