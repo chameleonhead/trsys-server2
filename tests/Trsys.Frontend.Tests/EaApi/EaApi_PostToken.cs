@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Tests
+namespace Trsys.Frontend.Tests.EaApi
 {
     [TestClass]
     public class EaApi_PostToken
