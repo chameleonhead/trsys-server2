@@ -4,10 +4,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Tests.EaApi
+namespace Trsys.Frontend.Web.Tests.EaApi
 {
     [TestClass]
-    public class EaApi_PostOrders
+    public class EaApi_PostTokenRelease
     {
         private WebApplicationFactory<Startup> _factory;
 
@@ -25,13 +25,13 @@ namespace Trsys.Frontend.Tests.EaApi
         }
 
         [TestMethod]
-        public async Task ReturnSuccessAndCorrectContentType()
+        public async Task ValidToken_ReturnSuccess()
         {
             // Arrange
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync("/api/orders", new StringContent("", Encoding.UTF8, "text/plain"));
+            var response = await client.PostAsync("/api/token/TOKEN/release", new StringContent("", Encoding.UTF8, "text/plain"));
 
             // Assert
             response.EnsureSuccessStatusCode();

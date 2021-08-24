@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Trsys.Frontend.Formatters;
+using Trsys.Frontend.Web.Formatters;
 
-namespace Trsys.Frontend
+namespace Trsys.Frontend.Web
 {
     public class Startup
     {

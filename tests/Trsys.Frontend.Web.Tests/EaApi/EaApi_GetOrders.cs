@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Tests.EaApi
+namespace Trsys.Frontend.Web.Tests.EaApi
 {
     [TestClass]
-    public class EaApi_PostLogs
+    public class EaApi_GetOrders
     {
         private WebApplicationFactory<Startup> _factory;
 
@@ -25,16 +23,17 @@ namespace Trsys.Frontend.Tests.EaApi
         }
 
         [TestMethod]
-        public async Task ValidToken_ReturnSuccess()
+        public async Task ReturnSuccessAndCorrectContentType()
         {
             // Arrange
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync("/api/logs", new StringContent("", Encoding.UTF8, "text/plain"));
+            var response = await client.GetAsync("/api/orders");
 
             // Assert
             response.EnsureSuccessStatusCode();
+            Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
         }
     }
 }

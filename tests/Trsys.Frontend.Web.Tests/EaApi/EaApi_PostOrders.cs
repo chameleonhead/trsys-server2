@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Tests.EaApi
+namespace Trsys.Frontend.Web.Tests.EaApi
 {
     [TestClass]
-    public class EaApi_GetOrders
+    public class EaApi_PostOrders
     {
         private WebApplicationFactory<Startup> _factory;
 
@@ -29,11 +31,10 @@ namespace Trsys.Frontend.Tests.EaApi
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync("/api/orders");
+            var response = await client.PostAsync("/api/orders", new StringContent("", Encoding.UTF8, "text/plain"));
 
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
         }
     }
 }

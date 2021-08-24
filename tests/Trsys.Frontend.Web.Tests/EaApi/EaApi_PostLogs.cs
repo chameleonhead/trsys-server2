@@ -4,10 +4,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Tests.EaApi
+namespace Trsys.Frontend.Web.Tests.EaApi
 {
     [TestClass]
-    public class EaApi_PostTokenRelease
+    public class EaApi_PostLogs
     {
         private WebApplicationFactory<Startup> _factory;
 
@@ -31,7 +31,7 @@ namespace Trsys.Frontend.Tests.EaApi
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync("/api/token/TOKEN/release", new StringContent("", Encoding.UTF8, "text/plain"));
+            var response = await client.PostAsync("/api/logs", new StringContent("", Encoding.UTF8, "text/plain"));
 
             // Assert
             response.EnsureSuccessStatusCode();

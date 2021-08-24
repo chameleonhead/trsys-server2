@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Formatters
+namespace Trsys.Frontend.Web.Formatters
 {
     public class TextPlainInputFormatter : TextInputFormatter
     {

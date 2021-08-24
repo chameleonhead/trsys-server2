@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Trsys.Frontend.Controllers
+namespace Trsys.Frontend.Web.Controllers
 {
     [ApiController]
     public class EaApiController : ControllerBase

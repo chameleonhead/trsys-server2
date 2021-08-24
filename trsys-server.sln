@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C1A70540-C1D0-472B-BDAF-3EFF51FDF3FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Frontend", "src\Trsys.Frontend\Trsys.Frontend.csproj", "{42536116-C11E-434E-A9BE-BC67F6429B9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Frontend.Web", "src\Trsys.Frontend.Web\Trsys.Frontend.Web.csproj", "{42536116-C11E-434E-A9BE-BC67F6429B9F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4C68EF4-4DBB-4886-918C-9D6EE215B9EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Frontend.Tests", "tests\Trsys.Frontend.Tests\Trsys.Frontend.Tests.csproj", "{63BBF9A1-2A8D-4621-A361-83AD18E22EBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Frontend.Web.Tests", "tests\Trsys.Frontend.Web.Tests\Trsys.Frontend.Web.Tests.csproj", "{63BBF9A1-2A8D-4621-A361-83AD18E22EBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

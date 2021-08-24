@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend
+namespace Trsys.Frontend.Web
 {
     public class Program
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Services
+namespace Trsys.Frontend.Web.Services
 {
     public class EaSession
     {
