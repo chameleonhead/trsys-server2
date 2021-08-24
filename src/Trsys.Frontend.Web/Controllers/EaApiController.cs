@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Controllers
 {
@@ -9,9 +11,14 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/token")]
         [HttpPost]
         [Consumes("text/plain")]
-        public IActionResult PostToken([FromBody] string key)
+        public async Task<IActionResult> PostToken([FromBody] string key)
         {
-            return Ok("SECRETKEY");
+            var session = await EaService.Instance.GenerateTokenAsync(key);
+            if (session is null)
+            {
+                return BadRequest("InvalidToken");
+            }
+            return Ok(session.Token);
         }
 
         [Route("api/token/{token}/release")]

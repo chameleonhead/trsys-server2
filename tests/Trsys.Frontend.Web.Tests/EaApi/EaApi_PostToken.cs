@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Tests.EaApi
 {
@@ -15,7 +16,6 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         public void Setup()
         {
             _factory = new WebApplicationFactory<Startup>();
-            _factory.ClientOptions.AllowAutoRedirect = true;
         }
 
         [TestCleanup]
@@ -28,6 +28,7 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         public async Task ValidSecretKey_ReturnValidToken()
         {
             // Arrange
+            await EaService.Instance.AddValidSecretKyeAsync("SECRETKEY", "Publisher");
             var client = _factory.CreateClient();
 
             // Act

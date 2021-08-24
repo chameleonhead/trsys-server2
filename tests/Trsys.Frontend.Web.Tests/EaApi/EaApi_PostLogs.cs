@@ -15,7 +15,6 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         public void Setup()
         {
             _factory = new WebApplicationFactory<Startup>();
-            _factory.ClientOptions.AllowAutoRedirect = true;
         }
 
         [TestCleanup]
