@@ -14,9 +14,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/token")]
         [HttpPost]
         [Consumes("text/plain")]
-        public async Task<IActionResult> PostToken([FromBody] string key)
+        public async Task<IActionResult> PostToken([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
-            var session = await EaService.Instance.GenerateTokenAsync(key);
+            var session = await EaService.Instance.GenerateTokenAsync(key, keyType);
             if (session is null)
             {
                 return BadRequest("InvalidToken");

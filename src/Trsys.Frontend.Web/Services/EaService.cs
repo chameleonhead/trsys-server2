@@ -83,10 +83,14 @@ namespace Trsys.Frontend.Web.Services
             return _keyStore.AddAsync(key, keyType);
         }
 
-        public async Task<EaSession> GenerateTokenAsync(string key)
+        public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
         {
             var secretKey = await _keyStore.FindAsync(key);
             if (secretKey is null)
+            {
+                return null;
+            }
+            if (secretKey.KeyType != keyType)
             {
                 return null;
             }
