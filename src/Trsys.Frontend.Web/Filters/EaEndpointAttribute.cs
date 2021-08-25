@@ -13,17 +13,17 @@ namespace Trsys.Frontend.Web.Filters
             var version = (string)context.HttpContext.Request.Headers["X-Ea-Version"];
             if (string.IsNullOrEmpty(key))
             {
-                context.Result = new BadRequestObjectResult("X-Ea-Id is not set.");
+                context.Result = new BadRequestObjectResult("InvalidRequest");
                 return;
             }
             if (string.IsNullOrEmpty(type))
             {
-                context.Result = new BadRequestObjectResult("X-Ea-Type is not set.");
+                context.Result = new BadRequestObjectResult("InvalidRequest");
                 return;
             }
             if (string.IsNullOrEmpty(version))
             {
-                context.Result = new BadRequestObjectResult("X-Ea-Version is not set.");
+                context.Result = new BadRequestObjectResult("InvalidRequest");
                 return;
             }
             await base.OnActionExecutionAsync(context, next);

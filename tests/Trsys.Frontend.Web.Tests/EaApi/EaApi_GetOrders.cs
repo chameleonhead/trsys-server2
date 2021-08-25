@@ -26,15 +26,21 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         {
             // Arrange
             var client = _factory.CreateClient();
-            client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType1", "Publisher");
-            client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType2", "Subscriber");
+            // Publish empty text
+            await client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType1", "Publisher");
+            var publisherToken = await client.GenerateTokenAsync("ReturnSuccessAndCorrectContentType1", "Publisher");
+            await client.PublishOrderAsync("ReturnSuccessAndCorrectContentType1", publisherToken, "");
+            // Subscriber setup
+            await client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType2", "Subscriber");
+            var token = await client.GenerateTokenAsync("ReturnSuccessAndCorrectContentType2", "Subscriber");
 
             // Act
-            var response = await client.GetAsync("/api/orders", "SECRETKEY", "Subscriber");
+            var response = await client.GetAsync("/api/orders", "ReturnSuccessAndCorrectContentType2", "Subscriber", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
+            Assert.AreEqual("", await response.Content.ReadAsStringAsync());
         }
     }
 }

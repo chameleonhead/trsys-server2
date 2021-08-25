@@ -125,5 +125,23 @@ namespace Trsys.Frontend.Web.Services
             await _sessionStore.RemoveAsync(session);
             return true;
         }
+
+        public async Task<bool> ValidateSessionAsync(string token, string key, string keyType)
+        {
+            var session = await _sessionStore.FindByTokenAsync(token);
+            if (session is null)
+            {
+                return false;
+            }
+            if (session.Key != key)
+            {
+                return false;
+            }
+            if (session.KeyType != keyType)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Threading.Tasks;
 using Trsys.Frontend.Web.Filters;
 using Trsys.Frontend.Web.Services;
 
@@ -47,9 +47,15 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/orders")]
         [HttpGet]
         [Produces("text/plain")]
-        // [RequireToken("Subscriber")]
-        public IActionResult GetOrders()
+        [RequireToken]
+        [RequireKeyType("Subscriber")]
+        public async Task<IActionResult> GetOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token)
         {
+            var result = await EaService.Instance.ValidateSessionAsync(token, key, "Subscriber");
+            if (!result)
+            {
+                return BadRequest("InvalidToken");
+            }
             HttpContext.Response.Headers["ETag"] = $"\"ETAG\"";
             return Ok("");
         }
@@ -57,8 +63,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/orders")]
         [HttpPost]
         [Consumes("text/plain")]
-        // [RequireToken("Publisher")]
-        public IActionResult PostOrder([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
+        [RequireToken]
+        [RequireKeyType("Publisher")]
+        public IActionResult PostOrder([FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
             return Ok();
         }
