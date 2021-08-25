@@ -1,0 +1,11 @@
+version: "3.5"
+services:
+  app:
+    image: mcr.microsoft.com/dotnet/sdk:5.0
+    command: dotnet run --launch-profile Docker --project src/Trsys.Frontend.Web/Trsys.Frontend.Web.csproj
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - 5001:5001
+      - 5000:5000
