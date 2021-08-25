@@ -96,7 +96,7 @@ namespace Trsys.Frontend.Web.Services
         private readonly ValidSeacretKeyStore _keyStore = new();
         private readonly EaSessionStore _sessionStore = new();
 
-        public Task AddValidSecretKyeAsync(string key, string keyType)
+        public Task AddValidSecretKeyAsync(string key, string keyType)
         {
             return _keyStore.AddAsync(key, keyType);
         }

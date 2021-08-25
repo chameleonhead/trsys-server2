@@ -35,7 +35,7 @@ namespace Trsys.Frontend.Web.Tests
 
         public static async Task RegisterSecretKeyAsync(this HttpClient _, string key, string keyType)
         {
-            await EaService.Instance.AddValidSecretKyeAsync(key, keyType);
+            await EaService.Instance.AddValidSecretKeyAsync(key, keyType);
         }
 
         public static async Task<string> GenerateTokenAsync(this HttpClient client, string key, string keyType)
