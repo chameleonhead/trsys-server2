@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Trsys.Frontend.Web.Tests.EaApi
@@ -28,9 +26,11 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         {
             // Arrange
             var client = _factory.CreateClient();
+            await client.RegisterSecretKeyAsync("ValidToken_ReturnSuccess", "Publisher");
+            var token = await client.GenerateTokenAsync("ValidToken_ReturnSuccess", "Publisher");
 
             // Act
-            var response = await client.PostAsync("/api/token/TOKEN/release", "SECRETKEY", "Publisher");
+            var response = await client.PostAsync($"/api/token/{token}/release", "ValidToken_ReturnSuccess", "Publisher");
 
             // Assert
             response.EnsureSuccessStatusCode();

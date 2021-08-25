@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Tests.EaApi
 {
@@ -28,11 +25,11 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         public async Task ValidSecretKey_ReturnValidToken()
         {
             // Arrange
-            await EaService.Instance.AddValidSecretKyeAsync("SECRETKEY", "Publisher");
             var client = _factory.CreateClient();
+            await client.RegisterSecretKeyAsync("ValidSecretKey_ReturnValidToken", "Publisher");
 
             // Act
-            var response = await client.PostAsync("/api/token", "SECRETKEY", "Publisher", content: "SECRETKEY");
+            var response = await client.PostAsync("/api/token", "ValidSecretKey_ReturnValidToken", "Publisher", content: "ValidSecretKey_ReturnValidToken");
 
             // Assert
             response.EnsureSuccessStatusCode();

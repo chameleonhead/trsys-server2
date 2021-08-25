@@ -26,6 +26,8 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         {
             // Arrange
             var client = _factory.CreateClient();
+            client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType1", "Publisher");
+            client.RegisterSecretKeyAsync("ReturnSuccessAndCorrectContentType2", "Subscriber");
 
             // Act
             var response = await client.GetAsync("/api/orders", "SECRETKEY", "Subscriber");

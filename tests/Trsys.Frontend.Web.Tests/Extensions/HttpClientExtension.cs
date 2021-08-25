@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Tests
 {
@@ -22,6 +23,18 @@ namespace Trsys.Frontend.Web.Tests
             message.Headers.Add("X-Ea-Version", version);
             message.Content = new StringContent(content, Encoding.UTF8, "text/plain");
             return client.SendAsync(message);
+        }
+
+        public static async Task RegisterSecretKeyAsync(this HttpClient _, string key, string keyType)
+        {
+            await EaService.Instance.AddValidSecretKyeAsync(key, keyType);
+        }
+
+        public static async Task<string> GenerateTokenAsync(this HttpClient client, string key, string keyType)
+        {
+            var response = await client.PostAsync("/api/token", key, keyType, content: key);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

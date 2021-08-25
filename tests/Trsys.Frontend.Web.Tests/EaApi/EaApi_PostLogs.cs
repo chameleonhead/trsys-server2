@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Trsys.Frontend.Web.Tests.EaApi

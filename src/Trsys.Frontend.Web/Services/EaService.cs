@@ -81,9 +81,10 @@ namespace Trsys.Frontend.Web.Services
 
     public class EaService
     {
-        public static EaService Instance = new EaService();
-        private ValidSeacretKeyStore _keyStore = new();
-        private EaSessionStore _sessionStore = new();
+        public static EaService Instance { get; } = new();
+
+        private readonly ValidSeacretKeyStore _keyStore = new();
+        private readonly EaSessionStore _sessionStore = new();
 
         public Task AddValidSecretKyeAsync(string key, string keyType)
         {
