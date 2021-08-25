@@ -22,13 +22,15 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         }
 
         [TestMethod]
-        public async Task ReturnSuccessAndCorrectContentType()
+        public async Task EmptyOrders_ReturnSuccess()
         {
             // Arrange
             var client = _factory.CreateClient();
+            await client.RegisterSecretKeyAsync("EmptyOrders_ReturnSuccess", "Publisher");
+            var token = await client.GenerateTokenAsync("EmptyOrders_ReturnSuccess", "Publisher");
 
             // Act
-            var response = await client.PostAsync("/api/logs", "SECRETKEY", "Publisher");
+            var response = await client.PostAsync("/api/logs", "EmptyOrders_ReturnSuccess", "Publisher", content: "", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();

@@ -65,8 +65,13 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         [RequireToken]
         [RequireKeyType("Publisher")]
-        public IActionResult PostOrder([FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
+        public async Task<IActionResult> PostOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
+            var result = await EaService.Instance.ValidateSessionAsync(token, key, "Publisher");
+            if (!result)
+            {
+                return BadRequest("InvalidToken");
+            }
             return Ok();
         }
 
