@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Trsys.Frontend.Web.Tests.EaApi
@@ -34,6 +35,19 @@ namespace Trsys.Frontend.Web.Tests.EaApi
 
             // Assert
             response.EnsureSuccessStatusCode();
+        }
+
+        [TestMethod]
+        public async Task InvalidToken_ReturnBadRequest()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync($"/api/token/INVALID_TOKEN/release", "ValidToken_ReturnSuccess", "Publisher");
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }

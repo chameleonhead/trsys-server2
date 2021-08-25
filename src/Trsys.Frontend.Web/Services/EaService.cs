@@ -64,11 +64,21 @@ namespace Trsys.Frontend.Web.Services
             return Task.FromResult(default(EaSession));
         }
 
-        public Task AddAsync(EaSession session)
+        public Task<EaSession> CreateSessionAsync(SecretKey secretKey)
         {
+            if (_byKeys.TryGetValue(secretKey.Key, out var _))
+            {
+                throw new EaSessionAlreadyExistsException();
+            }
+            var session = new EaSession()
+            {
+                Key = secretKey.Key,
+                KeyType = secretKey.KeyType,
+                Token = Guid.NewGuid().ToString(),
+            };
             _store.Add(session.Token, session);
             _byKeys.Add(session.Key, session);
-            return Task.CompletedTask;
+            return Task.FromResult(session);
         }
 
         public Task RemoveAsync(EaSession session)
@@ -102,14 +112,7 @@ namespace Trsys.Frontend.Web.Services
             {
                 return null;
             }
-            var session = new EaSession()
-            {
-                Key = secretKey.Key,
-                KeyType = secretKey.KeyType,
-                Token = Guid.NewGuid().ToString(),
-            };
-            await _sessionStore.AddAsync(session);
-            return session;
+            return await _sessionStore.CreateSessionAsync(secretKey);
         }
 
         public async Task<bool> InvalidateSessionAsync(string token)

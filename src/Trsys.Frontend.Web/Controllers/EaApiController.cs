@@ -16,12 +16,19 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostToken([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
-            var session = await EaService.Instance.GenerateTokenAsync(key, keyType);
-            if (session is null)
+            try
             {
-                return BadRequest("InvalidToken");
+                var session = await EaService.Instance.GenerateTokenAsync(key, keyType);
+                if (session is null)
+                {
+                    return BadRequest("InvalidSecretKey");
+                }
+                return Ok(session.Token);
             }
-            return Ok(session.Token);
+            catch (EaSessionAlreadyExistsException)
+            {
+                return BadRequest("SecretKeyInUse");
+            }
         }
 
         [Route("api/token/{token}/release")]
