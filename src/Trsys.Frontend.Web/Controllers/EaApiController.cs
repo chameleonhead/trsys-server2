@@ -34,9 +34,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/token/{token}/release")]
         [HttpPost]
         [Consumes("text/plain")]
-        public async Task<IActionResult> PostTokenRelease(string token)
+        public async Task<IActionResult> PostTokenRelease([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, string token)
         {
-            var result = await EaService.Instance.InvalidateSessionAsync(token);
+            var result = await EaService.Instance.InvalidateSessionAsync(token, key, keyType);
             if (!result)
             {
                 return BadRequest("InvalidToken");

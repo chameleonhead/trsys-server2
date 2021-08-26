@@ -115,10 +115,18 @@ namespace Trsys.Frontend.Web.Services
             return await _sessionStore.CreateSessionAsync(secretKey);
         }
 
-        public async Task<bool> InvalidateSessionAsync(string token)
+        public async Task<bool> InvalidateSessionAsync(string token, string key, string keyType)
         {
             var session = await _sessionStore.FindByTokenAsync(token);
             if (session is null)
+            {
+                return false;
+            }
+            if (session.Key != key)
+            {
+                return false;
+            }
+            if (session.KeyType != keyType)
             {
                 return false;
             }
