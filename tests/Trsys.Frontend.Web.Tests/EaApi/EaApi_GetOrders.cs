@@ -26,7 +26,7 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         {
             // Arrange
             var client = _factory.CreateClient();
-            // Publish empty text
+            // Publisher setup and set empty text
             await client.RegisterSecretKeyAsync("EmptyOrders_ReturnSuccessAndCorrectContent1", "Publisher");
             var publisherToken = await client.GenerateTokenAsync("EmptyOrders_ReturnSuccessAndCorrectContent1", "Publisher");
             await client.PublishOrderAsync("EmptyOrders_ReturnSuccessAndCorrectContent1", publisherToken, "");
