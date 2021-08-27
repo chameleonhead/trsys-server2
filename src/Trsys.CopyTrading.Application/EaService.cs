@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
 namespace Trsys.CopyTrading.Application
@@ -72,9 +73,26 @@ namespace Trsys.CopyTrading.Application
             return true;
         }
 
-        public async Task PublishOrderAsync(string key, string text)
+        public async Task PublishOrderTextAsync(string key, string text)
         {
-            await orderStore.SetTextAsync(key, text);
+            var secretKey = await keyStore.FindAsync(key);
+            if (secretKey is null)
+            {
+                return;
+            }
+            if (!secretKey.Followers.Any())
+            {
+                return;
+            }
+            foreach (var follower in secretKey.Followers)
+            {
+                await orderStore.SetTextAsync(follower, text);
+            }
+        }
+
+        public async Task<PublishedOrders> GetOrderTextAsync(string key)
+        {
+            return await orderStore.GetTextAsync(key);
         }
     }
 }

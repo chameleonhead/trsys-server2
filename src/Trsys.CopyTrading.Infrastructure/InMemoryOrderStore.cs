@@ -14,5 +14,13 @@ namespace Trsys.CopyTrading.Infrastructure
             _store[key] = PublishedOrders.Parse(text);
             return Task.CompletedTask;
         }
+        public Task<PublishedOrders> GetTextAsync(string key)
+        {
+            if (_store.TryGetValue(key, out var text))
+            {
+                return Task.FromResult(text);
+            }
+            return Task.FromResult(PublishedOrders.Empty);
+        }
     }
 }

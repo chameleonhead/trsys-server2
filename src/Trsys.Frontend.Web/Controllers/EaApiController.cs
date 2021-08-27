@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
@@ -74,8 +76,22 @@ namespace Trsys.Frontend.Web.Controllers
             {
                 return BadRequest("InvalidToken");
             }
-            HttpContext.Response.Headers["ETag"] = $"\"ETAG\"";
-            return Ok("");
+
+            var orderText = await service.GetOrderTextAsync(key);
+            var etags = HttpContext.Request.Headers["If-None-Match"];
+            if (etags.Any())
+            {
+                foreach (var etag in etags)
+                {
+                    if (etag == $"\"{orderText.Hash}\"")
+                    {
+                        return StatusCode(304);
+                    }
+                }
+            }
+
+            HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
+            return Ok(orderText.Text);
         }
 
         [Route("api/orders")]
@@ -93,7 +109,7 @@ namespace Trsys.Frontend.Web.Controllers
 
             try
             {
-                await service.PublishOrderAsync(key, text);
+                await service.PublishOrderTextAsync(key, text);
                 return Ok();
             }
             catch (PublishOrderFormatException)

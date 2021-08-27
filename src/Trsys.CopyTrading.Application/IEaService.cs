@@ -10,6 +10,7 @@ namespace Trsys.CopyTrading.Application
         Task<EaSession> GenerateTokenAsync(string key, string keyType);
         Task<bool> InvalidateSessionAsync(string token, string key, string keyType);
         Task<bool> ValidateSessionAsync(string token, string key, string keyType);
-        Task PublishOrderAsync(string key, string orders);
+        Task PublishOrderTextAsync(string key, string text);
+        Task<PublishedOrders> GetOrderTextAsync(string key);
     }
 }
