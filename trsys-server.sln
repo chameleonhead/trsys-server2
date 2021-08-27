@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.CopyTrading.Abstracti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.CopyTrading.Application", "src\Trsys.CopyTrading.Application\Trsys.CopyTrading.Application.csproj", "{BF71D0EA-1C93-4F0D-9D87-B7BB4C65C9D0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.CopyTrading.Infrastructure", "src\Trsys.CopyTrading.Infrastructure\Trsys.CopyTrading.Infrastructure.csproj", "{63C28BD6-4906-4CD3-BA45-15597F56BC66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{BF71D0EA-1C93-4F0D-9D87-B7BB4C65C9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF71D0EA-1C93-4F0D-9D87-B7BB4C65C9D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF71D0EA-1C93-4F0D-9D87-B7BB4C65C9D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C28BD6-4906-4CD3-BA45-15597F56BC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C28BD6-4906-4CD3-BA45-15597F56BC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C28BD6-4906-4CD3-BA45-15597F56BC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C28BD6-4906-4CD3-BA45-15597F56BC66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{63BBF9A1-2A8D-4621-A361-83AD18E22EBA} = {C1A70540-C1D0-472B-BDAF-3EFF51FDF3FF}
 		{34F20085-9AEB-4606-8769-BB30BD2C41E0} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
 		{BF71D0EA-1C93-4F0D-9D87-B7BB4C65C9D0} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
+		{63C28BD6-4906-4CD3-BA45-15597F56BC66} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C04D48EA-152D-4D14-B109-AB8298E46165}

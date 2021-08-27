@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
+using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
 using Trsys.Frontend.Web.Filters;
 

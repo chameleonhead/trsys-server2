@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
-namespace Trsys.CopyTrading.Application
+namespace Trsys.CopyTrading.Infrastructure
 {
-    public class EaSessionStore : IEaSessionStore
+    public class InMemoryEaSessionStore : IEaSessionStore
     {
         private Dictionary<string, EaSession> _store = new();
         private Dictionary<string, EaSession> _byKeys = new();

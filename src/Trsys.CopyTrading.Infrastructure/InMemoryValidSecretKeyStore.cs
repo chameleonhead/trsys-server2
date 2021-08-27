@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
-namespace Trsys.CopyTrading.Application
+namespace Trsys.CopyTrading.Infrastructure
 {
-    public class ValidSeacretKeyStore : IValidSecretKeyStore
+    public class InMemoryValidSecretKeyStore : IValidSecretKeyStore
     {
         private Dictionary<string, SecretKey> _store = new();
 

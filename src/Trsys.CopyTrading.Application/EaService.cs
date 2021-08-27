@@ -5,17 +5,23 @@ namespace Trsys.CopyTrading.Application
 {
     public class EaService : IEaService
     {
-        private readonly ValidSeacretKeyStore _keyStore = new();
-        private readonly EaSessionStore _sessionStore = new();
+        private readonly IValidSecretKeyStore keyStore;
+        private readonly IEaSessionStore sessionStore;
+
+        public EaService(IValidSecretKeyStore keyStore, IEaSessionStore sessionStore)
+        {
+            this.keyStore = keyStore;
+            this.sessionStore = sessionStore;
+        }
 
         public Task AddValidSecretKeyAsync(string key, string keyType)
         {
-            return _keyStore.AddAsync(key, keyType);
+            return keyStore.AddAsync(key, keyType);
         }
 
         public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
         {
-            var secretKey = await _keyStore.FindAsync(key);
+            var secretKey = await keyStore.FindAsync(key);
             if (secretKey is null)
             {
                 return null;
@@ -24,12 +30,12 @@ namespace Trsys.CopyTrading.Application
             {
                 return null;
             }
-            return await _sessionStore.CreateSessionAsync(secretKey);
+            return await sessionStore.CreateSessionAsync(secretKey);
         }
 
         public async Task<bool> InvalidateSessionAsync(string token, string key, string keyType)
         {
-            var session = await _sessionStore.FindByTokenAsync(token);
+            var session = await sessionStore.FindByTokenAsync(token);
             if (session is null)
             {
                 return false;
@@ -42,13 +48,13 @@ namespace Trsys.CopyTrading.Application
             {
                 return false;
             }
-            await _sessionStore.RemoveAsync(session);
+            await sessionStore.RemoveAsync(session);
             return true;
         }
 
         public async Task<bool> ValidateSessionAsync(string token, string key, string keyType)
         {
-            var session = await _sessionStore.FindByTokenAsync(token);
+            var session = await sessionStore.FindByTokenAsync(token);
             if (session is null)
             {
                 return false;

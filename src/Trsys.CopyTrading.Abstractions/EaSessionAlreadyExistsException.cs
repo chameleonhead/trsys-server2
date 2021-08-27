@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Trsys.CopyTrading.Application
+namespace Trsys.CopyTrading.Abstractions
 {
     [Serializable]
     public class EaSessionAlreadyExistsException : Exception
