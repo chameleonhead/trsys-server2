@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.CopyTrading.Application;
-using Trsys.CopyTrading.Infrastructure;
 using Trsys.Frontend.Web.Formatters;
 
 namespace Trsys.Frontend.Web
@@ -26,7 +25,6 @@ namespace Trsys.Frontend.Web
                 options.InputFormatters.Add(new TextPlainInputFormatter());
             });
             services.AddEaServiceInfrastructure();
-            services.AddSingleton<IEaService, EaService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
