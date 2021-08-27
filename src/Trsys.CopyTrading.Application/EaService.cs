@@ -7,11 +7,13 @@ namespace Trsys.CopyTrading.Application
     {
         private readonly IValidSecretKeyStore keyStore;
         private readonly IEaSessionStore sessionStore;
+        private readonly IOrderStore orderStore;
 
-        public EaService(IValidSecretKeyStore keyStore, IEaSessionStore sessionStore)
+        public EaService(IValidSecretKeyStore keyStore, IEaSessionStore sessionStore, IOrderStore orderStore)
         {
             this.keyStore = keyStore;
             this.sessionStore = sessionStore;
+            this.orderStore = orderStore;
         }
 
         public Task AddValidSecretKeyAsync(string key, string keyType)
@@ -68,6 +70,11 @@ namespace Trsys.CopyTrading.Application
                 return false;
             }
             return true;
+        }
+
+        public async Task PublishOrderAsync(string key, string text)
+        {
+            await orderStore.SetTextAsync(key, text);
         }
     }
 }

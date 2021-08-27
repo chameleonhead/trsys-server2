@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
@@ -89,7 +90,16 @@ namespace Trsys.Frontend.Web.Controllers
             {
                 return BadRequest("InvalidToken");
             }
-            return Ok();
+
+            try
+            {
+                await service.PublishOrderAsync(key, text);
+                return Ok();
+            }
+            catch (PublishOrderFormatException)
+            {
+                return BadRequest("InvalidOrderText");
+            }
         }
 
         [Route("api/logs")]
