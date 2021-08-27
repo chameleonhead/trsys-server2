@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Trsys.Frontend.Web.Tests.Api
 {
     [TestClass]
-    public class EaAdmin_PostToken
+    public class Session_PostToken
     {
         private WebApplicationFactory<Startup> _factory;
 

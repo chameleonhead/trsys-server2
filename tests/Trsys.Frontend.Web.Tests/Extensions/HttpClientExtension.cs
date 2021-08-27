@@ -1,7 +1,6 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Tests
 {
@@ -33,9 +32,10 @@ namespace Trsys.Frontend.Web.Tests
             return client.SendAsync(message);
         }
 
-        public static async Task RegisterSecretKeyAsync(this HttpClient _, string key, string keyType)
+        public static async Task RegisterSecretKeyAsync(this HttpClient client, string key, string keyType)
         {
-            await EaService.Instance.AddValidSecretKeyAsync(key, keyType);
+            var response = await client.PostAsync("/api/keys", key, keyType);
+            response.EnsureSuccessStatusCode();
         }
 
         public static async Task<string> GenerateTokenAsync(this HttpClient client, string key, string keyType)

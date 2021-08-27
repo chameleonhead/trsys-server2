@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Trsys.Frontend.Web.Services
+namespace Trsys.CopyTrading.Application
 {
     [Serializable]
     public class EaSessionAlreadyExistsException : Exception

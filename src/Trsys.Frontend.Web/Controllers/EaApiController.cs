@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
+using Trsys.CopyTrading.Application;
 using Trsys.Frontend.Web.Filters;
-using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web.Controllers
 {
@@ -11,6 +11,22 @@ namespace Trsys.Frontend.Web.Controllers
     [ApiController]
     public class EaApiController : ControllerBase
     {
+        private readonly IEaService service;
+
+        public EaApiController(IEaService service)
+        {
+            this.service = service;
+        }
+
+        [Route("api/keys")]
+        [HttpPost]
+        [Consumes("text/plain")]
+        public async Task<IActionResult> PostKey([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
+        {
+            await service.AddValidSecretKeyAsync(key, keyType);
+            return Ok();
+        }
+
         [Route("api/token")]
         [HttpPost]
         [Consumes("text/plain")]
@@ -18,7 +34,7 @@ namespace Trsys.Frontend.Web.Controllers
         {
             try
             {
-                var session = await EaService.Instance.GenerateTokenAsync(key, keyType);
+                var session = await service.GenerateTokenAsync(key, keyType);
                 if (session is null)
                 {
                     return BadRequest("InvalidSecretKey");
@@ -36,7 +52,7 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostTokenRelease([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, string token)
         {
-            var result = await EaService.Instance.InvalidateSessionAsync(token, key, keyType);
+            var result = await service.InvalidateSessionAsync(token, key, keyType);
             if (!result)
             {
                 return BadRequest("InvalidToken");
@@ -51,7 +67,7 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Subscriber")]
         public async Task<IActionResult> GetOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token)
         {
-            var result = await EaService.Instance.ValidateSessionAsync(token, key, "Subscriber");
+            var result = await service.ValidateSessionAsync(token, key, "Subscriber");
             if (!result)
             {
                 return BadRequest("InvalidToken");
@@ -67,7 +83,7 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Publisher")]
         public async Task<IActionResult> PostOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
-            var result = await EaService.Instance.ValidateSessionAsync(token, key, "Publisher");
+            var result = await service.ValidateSessionAsync(token, key, "Publisher");
             if (!result)
             {
                 return BadRequest("InvalidToken");
