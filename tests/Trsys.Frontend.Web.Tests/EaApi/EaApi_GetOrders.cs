@@ -22,29 +22,6 @@ namespace Trsys.Frontend.Web.Tests.EaApi
         }
 
         [TestMethod]
-        public async Task SingleOrder_ReturnSuccessAndCorrectContent()
-        {
-            // Arrange
-            var client = _factory.CreateClient();
-            // Publisher setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
-            var publisherToken = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
-            // Subscriber setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
-            var token = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
-            // Set order text
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
-
-            // Act
-            var response = await client.GetAsync("/api/orders", "SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
-            Assert.AreEqual("1:USDJPY:0:1:2:1617271883", await response.Content.ReadAsStringAsync());
-        }
-
-        [TestMethod]
         public async Task EmptyOrders_ReturnSuccessAndCorrectContent()
         {
             // Arrange
@@ -65,6 +42,29 @@ namespace Trsys.Frontend.Web.Tests.EaApi
             response.EnsureSuccessStatusCode();
             Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
             Assert.AreEqual("", await response.Content.ReadAsStringAsync());
+        }
+
+        [TestMethod]
+        public async Task SingleOrder_ReturnSuccessAndCorrectContent()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            // Publisher setup
+            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            var publisherToken = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            // Subscriber setup
+            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            var token = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            // Set order text
+            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
+
+            // Act
+            var response = await client.GetAsync("/api/orders", "SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual("text/plain; charset=utf-8", response.Content.Headers.ContentType.ToString());
+            Assert.AreEqual("1:USDJPY:0:1:2:1617271883", await response.Content.ReadAsStringAsync());
         }
     }
 }

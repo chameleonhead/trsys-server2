@@ -30,7 +30,7 @@ namespace Trsys.Frontend.Web.Tests.EaApi
             var token = await client.GenerateTokenAsync("EmptyOrders_ReturnSuccess", "Publisher");
 
             // Act
-            var response = await client.PostAsync("/api/logs", "EmptyOrders_ReturnSuccess", "Publisher", content: "", token: token);
+            var response = await client.PostAsync("/api/orders", "EmptyOrders_ReturnSuccess", "Publisher", content: "", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();
