@@ -19,7 +19,14 @@ namespace Trsys.CopyTrading.Application
 
         public Task AddValidSecretKeyAsync(string key, string keyType)
         {
-            return keyStore.AddAsync(key, keyType);
+            if (keyType == "Publisher")
+            {
+                return keyStore.AddPublisherAsync(key);
+            }
+            else
+            {
+                return keyStore.AddSubscriberAsync(key);
+            }
         }
 
         public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
@@ -75,18 +82,14 @@ namespace Trsys.CopyTrading.Application
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            var secretKey = await keyStore.FindAsync(key);
-            if (secretKey is null)
+            var followers = await keyStore.SearchFollowersAsync(key);
+            if (!followers.Any())
             {
                 return;
             }
-            if (!secretKey.Followers.Any())
+            foreach (var follower in followers)
             {
-                return;
-            }
-            foreach (var follower in secretKey.Followers)
-            {
-                await orderStore.SetTextAsync(follower, text);
+                await orderStore.SetTextAsync(follower.Key, text);
             }
         }
 
