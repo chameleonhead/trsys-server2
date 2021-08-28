@@ -45,6 +45,11 @@ namespace Trsys.CopyTrading.Abstractions
                 Time = long.Parse(time),
             };
         }
+
+        public override string ToString()
+        {
+            return $"{TicketNo}:{Symbol}:{(int)OrderType}:{Price}:{Lots}:{Time}";
+        }
     }
 
     static class DecimalExtension

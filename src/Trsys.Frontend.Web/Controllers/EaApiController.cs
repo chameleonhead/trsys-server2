@@ -27,7 +27,7 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostKey([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
-            await service.AddValidSecretKeyAsync(key, keyType);
+            await service.AddSecretKeyAsync(key, keyType);
             return Ok();
         }
 

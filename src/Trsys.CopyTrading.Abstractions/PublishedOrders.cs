@@ -8,14 +8,16 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public class PublishedOrders
     {
-        public static readonly PublishedOrders Empty = new PublishedOrders("");
+        public static readonly PublishedOrders Empty = new PublishedOrders(null, "");
 
-        private PublishedOrders(string text)
+        private PublishedOrders(string publisher, string text)
         {
+            Publisher = publisher;
             Text = text;
             Hash = CalculateHash(text);
         }
 
+        public string Publisher { get; }
         public string Text { get; }
         public string Hash { get; }
 
@@ -39,7 +41,12 @@ namespace Trsys.CopyTrading.Abstractions
             }
         }
 
-        public static PublishedOrders Parse(string text)
+        public static PublishedOrders FromOrder(string key, PublishedOrder order)
+        {
+            return new PublishedOrders(key, order.ToString());
+        }
+
+        public static PublishedOrders Parse(string publisher, string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -52,7 +59,7 @@ namespace Trsys.CopyTrading.Abstractions
                     throw new PublishOrderFormatException();
                 }
             }
-            return new PublishedOrders(text);
+            return new PublishedOrders(publisher, text);
         }
 
         private string CalculateHash(string text)

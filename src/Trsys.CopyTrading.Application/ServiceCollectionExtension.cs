@@ -10,7 +10,7 @@ namespace Trsys.CopyTrading.Application
         {
             services.AddSingleton<IEaService, EaService>();
             services.AddSingleton<IEaSessionStore, InMemoryEaSessionStore>();
-            services.AddSingleton<IValidSecretKeyStore, InMemoryValidSecretKeyStore>();
+            services.AddSingleton<ISecretKeyStore, InMemorySecretKeyStore>();
             services.AddSingleton<IOrderStore, InMemoryOrderStore>();
             return services;
         }

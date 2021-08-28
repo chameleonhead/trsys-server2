@@ -6,27 +6,20 @@ namespace Trsys.CopyTrading.Application
 {
     public class EaService : IEaService
     {
-        private readonly IValidSecretKeyStore keyStore;
+        private readonly ISecretKeyStore keyStore;
         private readonly IEaSessionStore sessionStore;
         private readonly IOrderStore orderStore;
 
-        public EaService(IValidSecretKeyStore keyStore, IEaSessionStore sessionStore, IOrderStore orderStore)
+        public EaService(ISecretKeyStore keyStore, IEaSessionStore sessionStore, IOrderStore orderStore)
         {
             this.keyStore = keyStore;
             this.sessionStore = sessionStore;
             this.orderStore = orderStore;
         }
 
-        public Task AddValidSecretKeyAsync(string key, string keyType)
+        public async Task AddSecretKeyAsync(string key, string keyType)
         {
-            if (keyType == "Publisher")
-            {
-                return keyStore.AddPublisherAsync(key);
-            }
-            else
-            {
-                return keyStore.AddSubscriberAsync(key);
-            }
+            await keyStore.AddAsync(key, keyType);
         }
 
         public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
@@ -82,15 +75,7 @@ namespace Trsys.CopyTrading.Application
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            var followers = await keyStore.SearchFollowersAsync(key);
-            if (!followers.Any())
-            {
-                return;
-            }
-            foreach (var follower in followers)
-            {
-                await orderStore.SetTextAsync(follower.Key, text);
-            }
+            await orderStore.SetTextAsync(key, text);
         }
 
         public async Task<PublishedOrders> GetOrderTextAsync(string key)
