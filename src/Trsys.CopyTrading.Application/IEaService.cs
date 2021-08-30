@@ -11,6 +11,6 @@ namespace Trsys.CopyTrading.Application
         Task<bool> InvalidateSessionAsync(string token, string key, string keyType);
         Task<bool> ValidateSessionAsync(string token, string key, string keyType);
         Task PublishOrderTextAsync(string key, string text);
-        Task<PublishedOrders> GetOrderTextAsync(string key);
+        Task<OrderText> GetOrderTextAsync(string key);
     }
 }

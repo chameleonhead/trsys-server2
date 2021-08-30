@@ -112,7 +112,7 @@ namespace Trsys.Frontend.Web.Controllers
                 await service.PublishOrderTextAsync(key, text);
                 return Ok();
             }
-            catch (PublishOrderFormatException)
+            catch (OrderTextFormatException)
             {
                 return BadRequest("InvalidOrderText");
             }

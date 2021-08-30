@@ -1,14 +1,10 @@
-﻿using System;
-
-namespace Trsys.CopyTrading.Abstractions
+﻿namespace Trsys.CopyTrading.Abstractions
 {
-    public class OrderOpenedEvent
+    public class PublisherOrder
     {
         public string Id { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public string PublishedOrderId { get; set; }
-        public int MagicNumber { get; set; }
         public string PublisherKey { get; set; }
+        public string Text { get; set; }
         public int TicketNo { get; set; }
         public string Symbol { get; set; }
         public OrderType OrderType { get; set; }

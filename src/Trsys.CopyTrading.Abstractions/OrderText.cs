@@ -6,34 +6,33 @@ using System.Text.RegularExpressions;
 
 namespace Trsys.CopyTrading.Abstractions
 {
-    public class PublishedOrders
+    public class OrderText
     {
-        public static readonly PublishedOrders Empty = new PublishedOrders(null, "");
+        public static readonly OrderText Empty = new OrderText("");
 
-        private PublishedOrders(string publisher, string text)
+        private OrderText(string text)
         {
-            Publisher = publisher;
             Text = text;
             Hash = CalculateHash(text);
         }
 
-        public string Publisher { get; }
         public string Text { get; }
         public string Hash { get; }
 
-        private List<PublishedOrder> _orders;
-        public List<PublishedOrder> Orders
+        private List<OrderTextItem> _orders;
+
+        public List<OrderTextItem> Orders
         {
             get
             {
                 if (_orders == null)
                 {
-                    _orders = new List<PublishedOrder>();
+                    _orders = new List<OrderTextItem>();
                     if (!string.IsNullOrEmpty(Text))
                     {
                         foreach (var item in Text.Split("@"))
                         {
-                            _orders.Add(PublishedOrder.Parse(item));
+                            _orders.Add(OrderTextItem.Parse(item));
                         }
                     }
                 }
@@ -41,25 +40,20 @@ namespace Trsys.CopyTrading.Abstractions
             }
         }
 
-        public static PublishedOrders FromOrder(string key, PublishedOrder order)
-        {
-            return new PublishedOrders(key, order.ToString());
-        }
-
-        public static PublishedOrders Parse(string publisher, string text)
+        public static OrderText Parse(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
-                return PublishedOrders.Empty;
+                return Empty;
             }
             foreach (var order in text.Split("@"))
             {
                 if (!Regex.IsMatch(order, @"^\d+:[A-Z]+:[01]:\d+(\.\d+)?:\d+(\.\d+)?:\d+"))
                 {
-                    throw new PublishOrderFormatException();
+                    throw new OrderTextFormatException();
                 }
             }
-            return new PublishedOrders(publisher, text);
+            return new OrderText(text);
         }
 
         private string CalculateHash(string text)

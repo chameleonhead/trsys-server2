@@ -2,30 +2,32 @@
 
 namespace Trsys.CopyTrading.Abstractions
 {
-    public class PublishedOrder
+    public class OrderTextItem
     {
-        public int TicketNo { get; set; }
-        public string Symbol { get; set; }
-        public OrderType OrderType { get; set; }
-        private decimal _Price;
-        public decimal Price
+        private OrderTextItem(string text, int ticketNo, string symbol, OrderType orderType, decimal price, decimal lots, long time)
         {
-            get { return _Price; }
-            set { _Price = value.Normalize(); }
+            Text = text;
+            TicketNo = ticketNo;
+            Symbol = symbol;
+            OrderType = orderType;
+            Price = price.Normalize();
+            Lots = lots.Normalize();
+            Time = time;
         }
-        private decimal _Lots;
-        public decimal Lots
-        {
-            get { return _Lots; }
-            set { _Lots = value.Normalize(); }
-        }
+
+        public string Text { get; }
+        public int TicketNo { get; }
+        public string Symbol { get; }
+        public OrderType OrderType { get; }
+        public decimal Price { get; }
+        public decimal Lots { get; }
         public long Time { get; set; }
 
-        public static PublishedOrder Parse(string text)
+        public static OrderTextItem Parse(string text)
         {
             if (!Regex.IsMatch(text, @"^\d+:[A-Z]+:[01]:\d+(\.\d+)?:\d+(\.\d+)?:\d+"))
             {
-                throw new PublishOrderFormatException();
+                throw new OrderTextFormatException();
             }
             var splitted = text.Split(":");
             var ticketNo = splitted[0];
@@ -35,15 +37,7 @@ namespace Trsys.CopyTrading.Abstractions
             var lots = splitted[4];
             var time = splitted[5];
 
-            return new PublishedOrder()
-            {
-                TicketNo = int.Parse(ticketNo),
-                Symbol = symbol,
-                OrderType = orderType,
-                Price = decimal.Parse(price),
-                Lots = decimal.Parse(lots),
-                Time = long.Parse(time),
-            };
+            return new OrderTextItem(text, int.Parse(ticketNo), symbol, orderType, decimal.Parse(price), decimal.Parse(lots), long.Parse(time));
         }
 
         public override string ToString()

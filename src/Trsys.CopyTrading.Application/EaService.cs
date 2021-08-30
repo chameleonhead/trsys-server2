@@ -7,18 +7,23 @@ namespace Trsys.CopyTrading.Application
     {
         private readonly ISecretKeyStore keyStore;
         private readonly IEaSessionStore sessionStore;
-        private readonly IOrderStore orderStore;
+        private readonly IPublisherOrderStore orderStore;
+        private readonly IActiveOrderStore activeOrderStore;
+        private readonly IEventPublisher publisher;
 
-        public EaService(ISecretKeyStore keyStore, IEaSessionStore sessionStore, IOrderStore orderStore)
+        public EaService(ISecretKeyStore keyStore, IEaSessionStore sessionStore, IPublisherOrderStore orderStore, IActiveOrderStore activeOrderStore, IEventPublisher publisher)
         {
             this.keyStore = keyStore;
             this.sessionStore = sessionStore;
             this.orderStore = orderStore;
+            this.activeOrderStore = activeOrderStore;
+            this.publisher = publisher;
         }
 
         public async Task AddSecretKeyAsync(string key, string keyType)
         {
-            await keyStore.AddAsync(key, keyType);
+            var secretKey = await keyStore.AddAsync(key, keyType);
+            publisher.Publish(new SecretKeyRegisteredEvent(secretKey));
         }
 
         public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
@@ -32,7 +37,9 @@ namespace Trsys.CopyTrading.Application
             {
                 return null;
             }
-            return await sessionStore.CreateSessionAsync(secretKey);
+            var session = await sessionStore.CreateSessionAsync(secretKey);
+            publisher.Publish(new EaSessionGeneratedEvent(session));
+            return session;
         }
 
         public async Task<bool> InvalidateSessionAsync(string token, string key, string keyType)
@@ -51,6 +58,7 @@ namespace Trsys.CopyTrading.Application
                 return false;
             }
             await sessionStore.RemoveAsync(session);
+            publisher.Publish(new EaSessionDestroyedEvent(session));
             return true;
         }
 
@@ -69,17 +77,37 @@ namespace Trsys.CopyTrading.Application
             {
                 return false;
             }
+            publisher.Publish(new EaSessionValidatedEvent(session));
             return true;
         }
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            await orderStore.SetTextAsync(key, text);
+            var diff = await orderStore.SetPublishedOrderTextAsync(key, text);
+            if (diff.HasDifference)
+            {
+                var result = await activeOrderStore.ApplyChangesAsync(diff);
+                publisher.Publish(new OrderTextPublishedEvent(key, text));
+                foreach (var item in result.Opened)
+                {
+                    publisher.Publish(new PublisherOrderOpenedEvent(item));
+                }
+                foreach (var item in result.Closed)
+                {
+                    publisher.Publish(new PublisherOrderClosedEvent(item));
+                }
+                foreach (var item in result.Ignored)
+                {
+                    publisher.Publish(new PublisherOrderIgnoredEvent(item));
+                }
+            }
         }
 
-        public async Task<PublishedOrders> GetOrderTextAsync(string key)
+        public async Task<OrderText> GetOrderTextAsync(string key)
         {
-            return await orderStore.GetTextAsync(key);
+            var orderText = await activeOrderStore.GetActiveOrderAsync();
+            publisher.Publish(new ActiveOrderPublishedEvent(key, orderText));
+            return orderText.OrderText;
         }
     }
 }
