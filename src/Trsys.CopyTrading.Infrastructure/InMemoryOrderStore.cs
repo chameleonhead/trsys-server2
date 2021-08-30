@@ -8,23 +8,23 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryOrderStore : IOrderStore
     {
-        private Dictionary<string, PublishedOrders> _store = new();
+        private readonly Dictionary<string, PublishedOrders> _store = new();
         private PublishedOrders currentOrderText = PublishedOrders.Empty;
 
-        public Task SetTextAsync(string publisher, string text)
+        public Task SetTextAsync(string publisherKey, string text)
         {
-            var orders = PublishedOrders.Parse(publisher, text);
-            _store[publisher] = orders;
+            var orders = PublishedOrders.Parse(publisherKey, text);
+            _store[publisherKey] = orders;
             if (currentOrderText == PublishedOrders.Empty)
             {
                 if (orders == PublishedOrders.Empty)
                 {
                     return Task.CompletedTask;
                 }
-                currentOrderText = PublishedOrders.FromOrder(publisher, orders.Orders.First());
+                currentOrderText = PublishedOrders.FromOrder(publisherKey, orders.Orders.First());
                 return Task.CompletedTask;
             }
-            else if (currentOrderText.Publisher == publisher)
+            else if (currentOrderText.Publisher == publisherKey)
             {
                 var targetOrder = currentOrderText.Orders.Single();
                 if (orders.Orders.Any(o => o.TicketNo == targetOrder.TicketNo))
@@ -37,7 +37,7 @@ namespace Trsys.CopyTrading.Infrastructure
             return Task.CompletedTask;
         }
 
-        public Task<PublishedOrders> GetTextAsync(string subscriber)
+        public Task<PublishedOrders> GetTextAsync(string subscriberKey)
         {
             return Task.FromResult(currentOrderText);
         }

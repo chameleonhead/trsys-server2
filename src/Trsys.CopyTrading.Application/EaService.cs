@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
 namespace Trsys.CopyTrading.Application
@@ -24,7 +23,7 @@ namespace Trsys.CopyTrading.Application
 
         public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
         {
-            var secretKey = await keyStore.FindAsync(key);
+            var secretKey = await keyStore.FindAsync(key, keyType);
             if (secretKey is null)
             {
                 return null;

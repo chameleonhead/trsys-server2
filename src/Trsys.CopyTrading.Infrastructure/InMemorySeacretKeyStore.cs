@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
@@ -7,11 +6,13 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemorySecretKeyStore : ISecretKeyStore
     {
-        private Dictionary<string, SecretKey> _store = new();
+        record DictionaryKey (string Key, string KeyType);
 
-        public Task<SecretKey> FindAsync(string key)
+        private Dictionary<DictionaryKey, SecretKey> _store = new();
+
+        public Task<SecretKey> FindAsync(string key, string keyType)
         {
-            if (_store.TryGetValue(key, out var secretKey))
+            if (_store.TryGetValue(new DictionaryKey(key, keyType), out var secretKey))
             {
                 return Task.FromResult(secretKey);
             }
@@ -20,7 +21,7 @@ namespace Trsys.CopyTrading.Infrastructure
 
         public Task AddAsync(string key, string keyType)
         {
-            _store.Add(key, new SecretKey()
+            _store.Add(new DictionaryKey(key, keyType), new SecretKey()
             {
                 Key = key,
                 KeyType = keyType,
@@ -28,9 +29,9 @@ namespace Trsys.CopyTrading.Infrastructure
             return Task.CompletedTask;
         }
 
-        public Task RemoveAsync(string key)
+        public Task RemoveAsync(string key, string keyType)
         {
-            _store.Remove(key);
+            _store.Remove(new DictionaryKey(key, keyType));
             return Task.CompletedTask;
         }
     }
