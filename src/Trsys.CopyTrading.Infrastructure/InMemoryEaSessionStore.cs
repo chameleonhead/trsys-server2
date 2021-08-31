@@ -7,8 +7,8 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryEaSessionStore : IEaSessionStore
     {
-        private Dictionary<string, EaSession> _store = new();
-        private Dictionary<string, EaSession> _byKeys = new();
+        private readonly Dictionary<string, EaSession> _store = new();
+        private readonly Dictionary<string, EaSession> _byKeys = new();
 
         public Task<EaSession> FindByTokenAsync(string token)
         {
@@ -37,6 +37,7 @@ namespace Trsys.CopyTrading.Infrastructure
             var session = new EaSession()
             {
                 Id = Guid.NewGuid().ToString(),
+                SecretKeyId = secretKey.Id,
                 Key = secretKey.Key,
                 KeyType = secretKey.KeyType,
                 Token = Guid.NewGuid().ToString(),
