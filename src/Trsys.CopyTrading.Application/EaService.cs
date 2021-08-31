@@ -109,5 +109,11 @@ namespace Trsys.CopyTrading.Application
             publisher.Publish(new ActiveOrderPublishedEvent(key, orderText));
             return orderText.OrderText;
         }
+
+        public Task ReceiveLogAsync(string key, string keyType, string token, string text)
+        {
+            publisher.Publish(new EaLogReceivedEvent(key, keyType, text));
+            return Task.CompletedTask;
+        }
     }
 }

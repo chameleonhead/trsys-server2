@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
 namespace Trsys.CopyTrading.Application
@@ -12,5 +11,6 @@ namespace Trsys.CopyTrading.Application
         Task<bool> ValidateSessionAsync(string token, string key, string keyType);
         Task PublishOrderTextAsync(string key, string text);
         Task<OrderText> GetOrderTextAsync(string key);
+        Task ReceiveLogAsync(string key, string keyType, string token, string text);
     }
 }

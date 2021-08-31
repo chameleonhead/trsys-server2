@@ -25,7 +25,7 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "PublisherOrderClosed";
+        public string Type => "PublisherOrderIgnored";
         public string PublisherOrderId { get; set; }
         public string PublisherKey { get; set; }
         public string Text { get; set; }

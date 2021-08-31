@@ -121,8 +121,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/logs")]
         [HttpPost]
         [Consumes("text/plain")]
-        public IActionResult PostLogs([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
+        public async Task<IActionResult> PostLogs([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
+            await service.ReceiveLogAsync(key, keyType, token, text);
             return Ok();
         }
     }
