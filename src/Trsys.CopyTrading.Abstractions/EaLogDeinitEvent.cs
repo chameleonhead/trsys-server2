@@ -8,7 +8,7 @@ namespace Trsys.CopyTrading.Abstractions
         {
         }
 
-        public EaLogDeinitEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token)
+        public EaLogDeinitEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token, int reason)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = timestamp;
@@ -16,6 +16,7 @@ namespace Trsys.CopyTrading.Abstractions
             KeyType = keyType;
             Version = version;
             Token = token;
+            Reason = reason;
         }
 
         public string Id { get; set; }
@@ -25,5 +26,6 @@ namespace Trsys.CopyTrading.Abstractions
         public string KeyType { get; set; }
         public string Version { get; set; }
         public string Token { get; set; }
+        public int Reason { get; set; }
     }
 }

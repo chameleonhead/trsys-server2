@@ -6,7 +6,7 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public class ActiveOrder
     {
-        public static readonly ActiveOrder Empty = new ActiveOrder(OrderText.Empty, Array.Empty<PublisherOrder>());
+        public static readonly ActiveOrder Empty = new(OrderText.Empty, Array.Empty<PublisherOrder>());
 
         public ActiveOrder(OrderText orderText, IEnumerable<PublisherOrder> publisherOrders)
         {
@@ -15,6 +15,6 @@ namespace Trsys.CopyTrading.Abstractions
         }
 
         public OrderText OrderText { get; set; }
-        public List<PublisherOrder> Orders {get;set;}
+        public List<PublisherOrder> Orders { get; set; }
     }
 }
