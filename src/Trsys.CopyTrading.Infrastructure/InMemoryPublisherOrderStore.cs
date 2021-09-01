@@ -6,11 +6,11 @@ using Trsys.CopyTrading.Abstractions;
 
 namespace Trsys.CopyTrading.Infrastructure
 {
-    public class InMemoryPublishedOrderStore : IPublisherOrderStore
+    public class InMemoryPublisherOrderStore : IPublisherOrderStore
     {
         private readonly Dictionary<string, Dictionary<int, PublisherOrder>> _store = new();
 
-        public Task<PublisherOrderDifference> SetPublishedOrderTextAsync(string publisherKey, string text)
+        public Task<OrderDifference<PublisherOrder>> SetOrderTextAsync(string publisherKey, string text)
         {
             var orders = OrderText.Parse(text).Orders;
             if (_store.TryGetValue(publisherKey, out var publishedOrdersDictionary) && publishedOrdersDictionary.Any())
@@ -47,17 +47,17 @@ namespace Trsys.CopyTrading.Infrastructure
                             newPublishedOrdersDictionary.Add(order.TicketNo, order);
                         }
                         _store[publisherKey] = newPublishedOrdersDictionary;
-                        return Task.FromResult(new PublisherOrderDifference(openedOrders, closed.Select(o => publishedOrdersDictionary[o])));
+                        return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders, closed.Select(o => publishedOrdersDictionary[o])));
                     }
                     else
                     {
-                        return Task.FromResult(PublisherOrderDifference.NoDifference);
+                        return Task.FromResult(OrderDifference<PublisherOrder>.NoDifference);
                     }
                 }
                 else
                 {
                     _store.Remove(publisherKey);
-                    return Task.FromResult(new PublisherOrderDifference(Array.Empty<PublisherOrder>(), publishedOrdersDictionary.Values.ToArray()));
+                    return Task.FromResult(new OrderDifference<PublisherOrder>(Array.Empty<PublisherOrder>(), publishedOrdersDictionary.Values.ToArray()));
                 }
             }
             else
@@ -82,11 +82,11 @@ namespace Trsys.CopyTrading.Infrastructure
                         newPublishedOrdersDictionary.Add(order.TicketNo, order);
                     }
                     _store[publisherKey] = newPublishedOrdersDictionary;
-                    return Task.FromResult(new PublisherOrderDifference(openedOrders.ToArray(), Array.Empty<PublisherOrder>()));
+                    return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders.ToArray(), Array.Empty<PublisherOrder>()));
                 }
                 else
                 {
-                    return Task.FromResult(PublisherOrderDifference.NoDifference);
+                    return Task.FromResult(OrderDifference<PublisherOrder>.NoDifference);
                 }
             }
         }

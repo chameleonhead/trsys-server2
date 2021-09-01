@@ -4,6 +4,6 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public interface IPublisherOrderStore
     {
-        Task<PublisherOrderDifference> SetPublishedOrderTextAsync(string publisherKey, string text);
+        Task<OrderDifference<PublisherOrder>> SetOrderTextAsync(string publisherKey, string text);
     }
 }

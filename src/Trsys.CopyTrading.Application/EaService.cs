@@ -7,16 +7,24 @@ namespace Trsys.CopyTrading.Application
     {
         private readonly ISecretKeyStore keyStore;
         private readonly IEaSessionStore sessionStore;
-        private readonly IPublisherOrderStore orderStore;
+        private readonly IPublisherOrderStore publisherOrderStore;
         private readonly IActiveOrderStore activeOrderStore;
+        private readonly ISubscriberOrderStore subscriberOrderStore;
         private readonly IEventPublisher publisher;
 
-        public EaService(ISecretKeyStore keyStore, IEaSessionStore sessionStore, IPublisherOrderStore orderStore, IActiveOrderStore activeOrderStore, IEventPublisher publisher)
+        public EaService(
+            ISecretKeyStore keyStore,
+            IEaSessionStore sessionStore,
+            IPublisherOrderStore publisherOrderStore,
+            IActiveOrderStore activeOrderStore,
+            ISubscriberOrderStore subscriberOrderStore,
+            IEventPublisher publisher)
         {
             this.keyStore = keyStore;
             this.sessionStore = sessionStore;
-            this.orderStore = orderStore;
+            this.publisherOrderStore = publisherOrderStore;
             this.activeOrderStore = activeOrderStore;
+            this.subscriberOrderStore = subscriberOrderStore;
             this.publisher = publisher;
         }
 
@@ -83,11 +91,15 @@ namespace Trsys.CopyTrading.Application
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            var diff = await orderStore.SetPublishedOrderTextAsync(key, text);
+            var diff = await publisherOrderStore.SetOrderTextAsync(key, text);
             if (diff.HasDifference)
             {
                 var result = await activeOrderStore.ApplyChangesAsync(diff);
                 publisher.Publish(new OrderTextPublishedEvent(key, text));
+                if (result.Changed)
+                {
+                    publisher.Publish(new ActiveOrderPublishedEvent(key, result.ActiveOrder));
+                }
                 foreach (var item in result.Opened)
                 {
                     publisher.Publish(new PublisherOrderOpenedEvent(item));
@@ -106,7 +118,18 @@ namespace Trsys.CopyTrading.Application
         public async Task<OrderText> GetOrderTextAsync(string key)
         {
             var orderText = await activeOrderStore.GetActiveOrderAsync();
-            publisher.Publish(new ActiveOrderPublishedEvent(key, orderText));
+            var diff = await subscriberOrderStore.SetOrderTextAsync(key, orderText);
+            if (diff.HasDifference)
+            {
+                foreach (var item in diff.Opened)
+                {
+                    publisher.Publish(new SubscriberOrderOpenedEvent(item));
+                }
+                foreach (var item in diff.Closed)
+                {
+                    publisher.Publish(new SubscriberOrderClosedEvent(item));
+                }
+            }
             return orderText.OrderText;
         }
 

@@ -9,7 +9,7 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         private ActiveOrder activeOrder = ActiveOrder.Empty;
 
-        public Task<ActiveOrderSetResult> ApplyChangesAsync(PublisherOrderDifference diff)
+        public Task<ActiveOrderSetResult> ApplyChangesAsync(OrderDifference<PublisherOrder> diff)
         {
             var opened = new List<PublisherOrder>();
             var ignored = new List<PublisherOrder>();
