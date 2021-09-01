@@ -13,16 +13,16 @@ namespace Trsys.CopyTrading.Infrastructure
         public Task<OrderDifference<PublisherOrder>> SetOrderTextAsync(string publisherKey, string text)
         {
             var orders = OrderText.Parse(text).Orders;
-            if (_store.TryGetValue(publisherKey, out var publishedOrdersDictionary) && publishedOrdersDictionary.Any())
+            if (_store.TryGetValue(publisherKey, out var publisherOrdersDictionary) && publisherOrdersDictionary.Any())
             {
                 if (orders.Any())
                 {
-                    var prevTicketNos = publishedOrdersDictionary.Values.Select(o => o.TicketNo);
+                    var prevTicketNos = publisherOrdersDictionary.Values.Select(o => o.TicketNo);
                     var nextTicketNos = orders.Select(o => o.TicketNo);
                     var closed = prevTicketNos.Except(nextTicketNos);
                     var notChanged = prevTicketNos.Intersect(nextTicketNos);
                     var opened = nextTicketNos.Except(prevTicketNos);
-                    var notChangedOrders = publishedOrdersDictionary.Values.Where(kv => notChanged.Contains(kv.TicketNo));
+                    var notChangedOrders = publisherOrdersDictionary.Values.Where(kv => notChanged.Contains(kv.TicketNo));
                     var openedOrders = orders.Where(o => opened.Contains(o.TicketNo)).Select(lu => new PublisherOrder()
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -34,7 +34,7 @@ namespace Trsys.CopyTrading.Infrastructure
                         Price = lu.Price,
                         Lots = lu.Lots,
                         Time = lu.Time,
-                    });
+                    }).ToList();
                     if (opened.Any() || closed.Any())
                     {
                         var newPublishedOrdersDictionary = new Dictionary<int, PublisherOrder>();
@@ -47,7 +47,7 @@ namespace Trsys.CopyTrading.Infrastructure
                             newPublishedOrdersDictionary.Add(order.TicketNo, order);
                         }
                         _store[publisherKey] = newPublishedOrdersDictionary;
-                        return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders, closed.Select(o => publishedOrdersDictionary[o])));
+                        return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders, closed.Select(o => publisherOrdersDictionary[o])));
                     }
                     else
                     {
@@ -57,7 +57,7 @@ namespace Trsys.CopyTrading.Infrastructure
                 else
                 {
                     _store.Remove(publisherKey);
-                    return Task.FromResult(new OrderDifference<PublisherOrder>(Array.Empty<PublisherOrder>(), publishedOrdersDictionary.Values.ToArray()));
+                    return Task.FromResult(new OrderDifference<PublisherOrder>(Array.Empty<PublisherOrder>(), publisherOrdersDictionary.Values.ToArray()));
                 }
             }
             else
@@ -75,7 +75,7 @@ namespace Trsys.CopyTrading.Infrastructure
                         Price = lu.Price,
                         Lots = lu.Lots,
                         Time = lu.Time,
-                    });
+                    }).ToList();
                     var newPublishedOrdersDictionary = new Dictionary<int, PublisherOrder>();
                     foreach (var order in openedOrders)
                     {

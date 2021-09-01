@@ -8,10 +8,10 @@ namespace Trsys.CopyTrading.Abstractions
     {
         public static readonly ActiveOrder Empty = new ActiveOrder(OrderText.Empty, Array.Empty<PublisherOrder>());
 
-        public ActiveOrder(OrderText orderText, IEnumerable<PublisherOrder> publishedOrders)
+        public ActiveOrder(OrderText orderText, IEnumerable<PublisherOrder> publisherOrders)
         {
             OrderText = orderText;
-            Orders = publishedOrders.ToList();
+            Orders = publisherOrders.ToList();
         }
 
         public OrderText OrderText { get; set; }

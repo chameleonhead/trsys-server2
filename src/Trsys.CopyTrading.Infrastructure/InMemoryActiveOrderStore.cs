@@ -34,6 +34,7 @@ namespace Trsys.CopyTrading.Infrastructure
                 {
                     current.AddRange(currentOrders);
                 }
+                ignored.AddRange(diff.Opened);
             }
             else
             {
@@ -43,7 +44,6 @@ namespace Trsys.CopyTrading.Infrastructure
                     ignored.AddRange(diff.Opened.Skip(1));
                     current.AddRange(opened);
                 }
-                ignored.AddRange(diff.Closed);
             }
             activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current); 
             return Task.FromResult(new ActiveOrderSetResult(ignored, opened, closed, activeOrder));

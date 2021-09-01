@@ -73,16 +73,16 @@ namespace Trsys.Frontend.Web.Tests.EaApi
             // Arrange
             var client = _factory.CreateClient();
             // Publisher setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
-            var publisherToken = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            await client.RegisterSecretKeyAsync("MultipleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            var publisherToken = await client.GenerateTokenAsync("MultipleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
             // Subscriber setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
-            var token = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            await client.RegisterSecretKeyAsync("MultipleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            var token = await client.GenerateTokenAsync("MultipleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
             // Set order text
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883@2:EURUSD:1:2:3:1617271884");
+            await client.PublishOrderAsync("MultipleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883@2:EURUSD:1:2:3:1617271884");
 
             // Act
-            var response = await client.GetAsync("/api/orders", "SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
+            var response = await client.GetAsync("/api/orders", "MultipleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -96,17 +96,17 @@ namespace Trsys.Frontend.Web.Tests.EaApi
             // Arrange
             var client = _factory.CreateClient();
             // Publisher setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
-            var publisherToken = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            await client.RegisterSecretKeyAsync("MultipleOrder2_ReturnSuccessAndCorrectContent1", "Publisher");
+            var publisherToken = await client.GenerateTokenAsync("MultipleOrder2_ReturnSuccessAndCorrectContent1", "Publisher");
             // Subscriber setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
-            var token = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            await client.RegisterSecretKeyAsync("MultipleOrder2_ReturnSuccessAndCorrectContent2", "Subscriber");
+            var token = await client.GenerateTokenAsync("MultipleOrder2_ReturnSuccessAndCorrectContent2", "Subscriber");
             // Set order text
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883@2:EURUSD:1:2:3:1617271884");
+            await client.PublishOrderAsync("MultipleOrder2_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
+            await client.PublishOrderAsync("MultipleOrder2_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883@2:EURUSD:1:2:3:1617271884");
 
             // Act
-            var response = await client.GetAsync("/api/orders", "SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
+            var response = await client.GetAsync("/api/orders", "MultipleOrder2_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -120,17 +120,17 @@ namespace Trsys.Frontend.Web.Tests.EaApi
             // Arrange
             var client = _factory.CreateClient();
             // Publisher setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
-            var publisherToken = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            await client.RegisterSecretKeyAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent1", "Publisher");
+            var publisherToken = await client.GenerateTokenAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent1", "Publisher");
             // Subscriber setup
-            await client.RegisterSecretKeyAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
-            var token = await client.GenerateTokenAsync("SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            await client.RegisterSecretKeyAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
+            var token = await client.GenerateTokenAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent2", "Subscriber");
             // Set order text
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
-            await client.PublishOrderAsync("SingleOrder_ReturnSuccessAndCorrectContent1", publisherToken, "");
+            await client.PublishOrderAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent1", publisherToken, "1:USDJPY:0:1:2:1617271883");
+            await client.PublishOrderAsync("SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent1", publisherToken, "");
 
             // Act
-            var response = await client.GetAsync("/api/orders", "SingleOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
+            var response = await client.GetAsync("/api/orders", "SingleOrderThenEmptyOrder_ReturnSuccessAndCorrectContent2", "Subscriber", token: token);
 
             // Assert
             response.EnsureSuccessStatusCode();
