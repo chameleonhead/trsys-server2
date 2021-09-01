@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trsys.Backoffice.Infrastructure\Trsys.Backoffice.Infrastructure.csproj" />
-    <ProjectReference Include="..\Trsys.CopyTrading.Application\Trsys.CopyTrading.Application.csproj" />
+    <ProjectReference Include="..\Trsys.Backoffice\Trsys.Backoffice.csproj" />
+    <ProjectReference Include="..\Trsys.CopyTrading\Trsys.CopyTrading.csproj" />
   </ItemGroup>
 
 </Project>

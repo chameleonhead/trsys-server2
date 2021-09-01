@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trsys.Backoffice.Infrastructure\Trsys.Backoffice.Infrastructure.csproj" />
+    <ProjectReference Include="..\Trsys.Backoffice.ReadModels\Trsys.Backoffice.ReadModels.csproj" />
+  </ItemGroup>
+
+</Project>

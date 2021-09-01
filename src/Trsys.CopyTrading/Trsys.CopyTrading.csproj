@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trsys.CopyTrading.Application\Trsys.CopyTrading.Application.csproj" />
+    <ProjectReference Include="..\Trsys.CopyTrading.Infrastructure\Trsys.CopyTrading.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

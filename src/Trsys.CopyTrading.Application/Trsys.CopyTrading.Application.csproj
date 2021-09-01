@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Trsys.CopyTrading.Abstractions\Trsys.CopyTrading.Abstractions.csproj" />
-    <ProjectReference Include="..\Trsys.CopyTrading.Infrastructure\Trsys.CopyTrading.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,11 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.CopyTrading.Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backoffice", "Backoffice", "{43F259A4-7ACB-4833-9CCC-EF827610B218}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Backoffice.Abstractions", "src\Trsys.Backoffice.Abstractions\Trsys.Backoffice.Abstractions.csproj", "{80558D10-06A3-4FE6-AA7E-E2BDBAB58C73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Backoffice.Abstractions", "src\Trsys.Backoffice.Abstractions\Trsys.Backoffice.Abstractions.csproj", "{80558D10-06A3-4FE6-AA7E-E2BDBAB58C73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Backoffice.ReadModels", "src\Trsys.Backoffice.ReadModels\Trsys.Backoffice.ReadModels.csproj", "{77AB10F1-0616-489F-8859-217535985548}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Backoffice.ReadModels", "src\Trsys.Backoffice.ReadModels\Trsys.Backoffice.ReadModels.csproj", "{77AB10F1-0616-489F-8859-217535985548}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Backoffice.Infrastructure", "src\Trsys.Backoffice.Infrastructure\Trsys.Backoffice.Infrastructure.csproj", "{D9E9E457-41FA-4087-A561-CBD7B5CC65C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.CopyTrading", "src\Trsys.CopyTrading\Trsys.CopyTrading.csproj", "{A2E52A39-7892-460A-83C4-30E022728B6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Backoffice", "src\Trsys.Backoffice\Trsys.Backoffice.csproj", "{037A31B5-0761-47C3-BB49-C26DDC440143}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.CopyTrading.Tests", "tests\Trsys.CopyTrading.Tests\Trsys.CopyTrading.Tests.csproj", "{65326ECB-F14F-476C-B2CE-306229178BC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +69,18 @@ Global
 		{D9E9E457-41FA-4087-A561-CBD7B5CC65C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9E9E457-41FA-4087-A561-CBD7B5CC65C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9E9E457-41FA-4087-A561-CBD7B5CC65C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E52A39-7892-460A-83C4-30E022728B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E52A39-7892-460A-83C4-30E022728B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E52A39-7892-460A-83C4-30E022728B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E52A39-7892-460A-83C4-30E022728B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{037A31B5-0761-47C3-BB49-C26DDC440143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{037A31B5-0761-47C3-BB49-C26DDC440143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{037A31B5-0761-47C3-BB49-C26DDC440143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{037A31B5-0761-47C3-BB49-C26DDC440143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65326ECB-F14F-476C-B2CE-306229178BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65326ECB-F14F-476C-B2CE-306229178BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65326ECB-F14F-476C-B2CE-306229178BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65326ECB-F14F-476C-B2CE-306229178BC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +94,9 @@ Global
 		{80558D10-06A3-4FE6-AA7E-E2BDBAB58C73} = {43F259A4-7ACB-4833-9CCC-EF827610B218}
 		{77AB10F1-0616-489F-8859-217535985548} = {43F259A4-7ACB-4833-9CCC-EF827610B218}
 		{D9E9E457-41FA-4087-A561-CBD7B5CC65C2} = {43F259A4-7ACB-4833-9CCC-EF827610B218}
+		{A2E52A39-7892-460A-83C4-30E022728B6A} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
+		{037A31B5-0761-47C3-BB49-C26DDC440143} = {43F259A4-7ACB-4833-9CCC-EF827610B218}
+		{65326ECB-F14F-476C-B2CE-306229178BC5} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C04D48EA-152D-4D14-B109-AB8298E46165}

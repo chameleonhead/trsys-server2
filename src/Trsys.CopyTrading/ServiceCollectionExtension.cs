@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.Infrastructure;
 
-namespace Trsys.CopyTrading.Application
+namespace Trsys.CopyTrading
 {
     public static class ServiceCollectionExtension
     {

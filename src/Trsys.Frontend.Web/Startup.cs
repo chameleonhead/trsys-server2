@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Trsys.Backoffice.Infrastructure;
-using Trsys.CopyTrading.Application;
+using Trsys.Backoffice;
+using Trsys.CopyTrading;
 using Trsys.Frontend.Web.Formatters;
 
 namespace Trsys.Frontend.Web
