@@ -4,8 +4,8 @@ namespace Trsys.Backoffice.Abstractions
 {
     public interface IEvent
     {
-        public string Id { get; }
-        public DateTimeOffset Timestamp { get; }
-        public string Type { get; }
+        string Id { get; }
+        DateTimeOffset Timestamp { get; }
+        string Type { get; }
     }
 }

@@ -1,28 +1,20 @@
-﻿using System;
+﻿using EventFlow.Aggregates;
 
 namespace Trsys.Backoffice.Abstractions
 {
-    public class UserCreatedEvent
+    public class UserCreatedEvent : AggregateEvent<UserAggregate, UserId>
     {
-        public UserCreatedEvent()
+        public UserCreatedEvent(string username, string passwordHash, string name, string role)
         {
-        }
-        public UserCreatedEvent(string userId, string username, string passwordHash)
-        {
-            Id = Guid.NewGuid().ToString();
-            Timestamp = DateTimeOffset.UtcNow;
-            UserId = userId;
             Username = username;
             PasswordHash = passwordHash;
+            Name = name;
+            Role = role;
         }
 
-        public string Id { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public string Type => "UserCreated";
-
-        public string UserId { get; set; }
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
-
+        public string Username { get; }
+        public string PasswordHash { get; }
+        public string Name { get; }
+        public string Role { get; }
     }
 }

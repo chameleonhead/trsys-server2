@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using EventFlow.Aggregates.ExecutionResults;
+using EventFlow.Commands;
+using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,19 +8,16 @@ using Trsys.Backoffice.Abstractions;
 
 namespace Trsys.Backoffice.WriteModels.Users
 {
-    public class UserCommandHandler : IRequestHandler<UserCreateCommand, string>
+    public class UserCommandHandler : CommandHandler<UserAggregate, UserId, IExecutionResult, UserCreateCommand>
     {
-        private readonly IMediator mediator;
+        public override Task<IExecutionResult> ExecuteCommandAsync(
+                UserAggregate aggregate,
+                UserCreateCommand command,
+                CancellationToken cancellationToken)
+        {
+            var executionResult = aggregate.Create(command.Username, command.PasswordHash, command.Name, command.Role);
 
-        public UserCommandHandler(IMediator mediator)
-        {
-            this.mediator = mediator;
-        }
-        public Task<string> Handle(UserCreateCommand request, CancellationToken cancellationToken)
-        {
-            var id = Guid.NewGuid().ToString();
-            mediator.Publish(new UserCreatedEvent(id, request.Username, request.PasswordHash));
-            return Task.FromResult(id);
+            return Task.FromResult(executionResult);
         }
     }
 }
