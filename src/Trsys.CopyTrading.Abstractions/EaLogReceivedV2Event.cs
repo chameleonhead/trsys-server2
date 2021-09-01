@@ -2,25 +2,29 @@
 
 namespace Trsys.CopyTrading.Abstractions
 {
-    public class EaLogReceivedEvent : IEvent
+    public class EaLogReceivedV2Event : IEvent
     {
-        public EaLogReceivedEvent()
+        public EaLogReceivedV2Event()
         {
         }
-        public EaLogReceivedEvent(string key, string keyType, string version, string text)
+        public EaLogReceivedV2Event(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string text)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
+            ServerTimestamp = serverTimestamp;
+            EaTimestamp = eaTimestamp;
             Key = key;
             KeyType = keyType;
             Version = version;
             Text = text;
         }
 
-        public EaLogReceivedEvent(SecretKey secretKey, string version, string text)
+        public EaLogReceivedV2Event(DateTimeOffset serverTimestamp, long eaTimestamp, SecretKey secretKey, string version, string text)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
+            ServerTimestamp = serverTimestamp;
+            EaTimestamp = eaTimestamp;
             SecretKeyId = secretKey.Id;
             Key = secretKey.Key;
             KeyType = secretKey.KeyType;
@@ -28,10 +32,12 @@ namespace Trsys.CopyTrading.Abstractions
             Text = text;
         }
 
-        public EaLogReceivedEvent(EaSession session, string version, string text)
+        public EaLogReceivedV2Event(DateTimeOffset serverTimestamp, long eaTimestamp, EaSession session, string version, string text)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
+            ServerTimestamp = serverTimestamp;
+            EaTimestamp = eaTimestamp;
             SecretKeyId = session.SecretKeyId;
             EaSessionId = session.Id;
             Key = session.Key;
@@ -43,7 +49,11 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaLogReceived";
+        public string Type => "EaLogReceivedV2";
+
+        public DateTimeOffset ServerTimestamp { get; set; }
+        public long EaTimestamp { get; set; }
+
         public string SecretKeyId { get; set; }
         public string Key { get; set; }
         public string KeyType { get; set; }

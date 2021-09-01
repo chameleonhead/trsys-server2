@@ -121,9 +121,17 @@ namespace Trsys.Frontend.Web.Controllers
         [Route("api/logs")]
         [HttpPost]
         [Consumes("text/plain")]
-        public async Task<IActionResult> PostLogs([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
+        public async Task<IActionResult> PostLogs([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, [FromHeader(Name = "X-Ea-Version")] string version, [FromHeader(Name = "X-Secret-Token")] string token, [FromHeader(Name = "X-Ea-Timestamp")] string timestamp, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
-            await service.ReceiveLogAsync(key, keyType, token, text);
+            var now = DateTimeOffset.Now;
+            if (string.IsNullOrEmpty(timestamp) || !long.TryParse(timestamp, out var eaTimestamp))
+            {
+                await service.ReceiveLogAsync(key, keyType, version, token, text);
+            }
+            else
+            {
+                await service.ReceiveLogAsync(now, eaTimestamp, key, keyType, version, token, text);
+            }
             return Ok();
         }
     }
