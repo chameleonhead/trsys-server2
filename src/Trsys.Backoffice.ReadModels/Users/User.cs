@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Trsys.Backoffice.ReadModels.Users
+﻿namespace Trsys.Backoffice.ReadModels.Users
 {
     public class User
     {

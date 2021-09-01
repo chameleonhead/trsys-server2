@@ -2,7 +2,7 @@
 
 namespace Trsys.Backoffice.ReadModels.Users
 {
-    public class FindUserByIdRequest : IRequest<User>
+    public class FindUserByIdQuery : IRequest<User>
     {
         public string UserId { get; set; }
     }

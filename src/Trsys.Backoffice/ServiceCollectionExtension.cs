@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Trsys.Backoffice.Infrastructure;
 using Trsys.Backoffice.Infrastructure.ReadModels;
 using Trsys.Backoffice.ReadModels.Users;
+using Trsys.Backoffice.WriteModels.Users;
 
 namespace Trsys.Backoffice
 {
@@ -10,6 +12,7 @@ namespace Trsys.Backoffice
     {
         public static IServiceCollection AddBackofficeInfrastructure(this IServiceCollection services)
         {
+            services.AddMediatR(typeof(UserQueryHandler).Assembly, typeof(UserCommandHandler).Assembly);
             services.AddDbContext<TrsysBackofficeContext>(options => options.UseSqlite("Data Source=backoffice.db"));
             services.AddTransient<IUserStore, UserStore>();
             return services;

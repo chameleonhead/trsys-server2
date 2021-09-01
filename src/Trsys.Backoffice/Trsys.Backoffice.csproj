@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Trsys.Backoffice.Infrastructure\Trsys.Backoffice.Infrastructure.csproj" />
     <ProjectReference Include="..\Trsys.Backoffice.ReadModels\Trsys.Backoffice.ReadModels.csproj" />
+    <ProjectReference Include="..\Trsys.Backoffice.WriteModels\Trsys.Backoffice.WriteModels.csproj" />
   </ItemGroup>
 
 </Project>
