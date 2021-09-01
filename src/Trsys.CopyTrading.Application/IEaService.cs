@@ -12,7 +12,7 @@ namespace Trsys.CopyTrading.Application
         Task<bool> ValidateSessionAsync(string token, string key, string keyType);
         Task PublishOrderTextAsync(string key, string text);
         Task<OrderText> GetOrderTextAsync(string key);
-        Task ReceiveLogAsync(string key, string keyType, string version, string token, string text);
+        Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text);
         Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text);
     }
 }

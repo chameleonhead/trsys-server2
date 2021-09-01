@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
@@ -126,7 +125,7 @@ namespace Trsys.Frontend.Web.Controllers
             var now = DateTimeOffset.Now;
             if (string.IsNullOrEmpty(timestamp) || !long.TryParse(timestamp, out var eaTimestamp))
             {
-                await service.ReceiveLogAsync(key, keyType, version, token, text);
+                await service.ReceiveLogAsync(now, key, keyType, version, token, text);
             }
             else
             {

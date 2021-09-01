@@ -7,36 +7,14 @@ namespace Trsys.CopyTrading.Abstractions
         public EaLogReceivedEvent()
         {
         }
-        public EaLogReceivedEvent(string key, string keyType, string version, string text)
+
+        public EaLogReceivedEvent(DateTimeOffset serverTimestamp, string key, string keyType, string version, string text)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
+            ServerTimestamp = serverTimestamp;
             Key = key;
             KeyType = keyType;
-            Version = version;
-            Text = text;
-        }
-
-        public EaLogReceivedEvent(SecretKey secretKey, string version, string text)
-        {
-            Id = Guid.NewGuid().ToString();
-            Timestamp = DateTimeOffset.UtcNow;
-            SecretKeyId = secretKey.Id;
-            Key = secretKey.Key;
-            KeyType = secretKey.KeyType;
-            Version = version;
-            Text = text;
-        }
-
-        public EaLogReceivedEvent(EaSession session, string version, string text)
-        {
-            Id = Guid.NewGuid().ToString();
-            Timestamp = DateTimeOffset.UtcNow;
-            SecretKeyId = session.SecretKeyId;
-            EaSessionId = session.Id;
-            Key = session.Key;
-            KeyType = session.KeyType;
-            Token = session.Token;
             Version = version;
             Text = text;
         }
@@ -44,6 +22,7 @@ namespace Trsys.CopyTrading.Abstractions
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public string Type => "EaLogReceived";
+        public DateTimeOffset ServerTimestamp { get; set; }
         public string SecretKeyId { get; set; }
         public string Key { get; set; }
         public string KeyType { get; set; }

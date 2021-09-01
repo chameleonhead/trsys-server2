@@ -134,64 +134,16 @@ namespace Trsys.CopyTrading.Application
             return orderText.OrderText;
         }
 
-        public async Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)
+        public Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)
         {
-            if (!string.IsNullOrEmpty(token))
-            {
-                var session = await sessionStore.FindByTokenAsync(token);
-                if (session != null)
-                {
-                    publisher.Publish(new EaLogReceivedEvent(session, version, text));
-                    return;
-                }
-            }
-            var secretKey = await keyStore.FindAsync(key, keyType);
-            if (secretKey != null)
-            {
-                publisher.Publish(new EaLogReceivedEvent(secretKey, version, text));
-                return;
-            }
-            publisher.Publish(new EaLogReceivedEvent(key, keyType, version, text));
+            publisher.Publish(new EaLogReceivedEvent(timestamp, key, keyType, version, text));
+            return Task.CompletedTask;
         }
 
-        public async Task ReceiveLogAsync(string key, string keyType, string version, string token, string text)
+        public Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            if (!string.IsNullOrEmpty(token))
-            {
-                var session = await sessionStore.FindByTokenAsync(token);
-                if (session != null)
-                {
-                    publisher.Publish(new EaLogReceivedEvent(session, version, text));
-                    return;
-                }
-            }
-            var secretKey = await keyStore.FindAsync(key, keyType);
-            if (secretKey != null)
-            {
-                publisher.Publish(new EaLogReceivedEvent(secretKey, version, text));
-                return;
-            }
-            publisher.Publish(new EaLogReceivedEvent(key, keyType, version, text));
-        }
-
-        public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
-        {
-            if (!string.IsNullOrEmpty(token))
-            {
-                var session = await sessionStore.FindByTokenAsync(token);
-                if (session != null)
-                {
-                    publisher.Publish(new EaLogReceivedV2Event(serverTimestamp, eaTimestamp, session, version, text));
-                    return;
-                }
-            }
-            var secretKey = await keyStore.FindAsync(key, keyType);
-            if (secretKey != null)
-            {
-                publisher.Publish(new EaLogReceivedV2Event(serverTimestamp, eaTimestamp, secretKey, version, text));
-                return;
-            }
             publisher.Publish(new EaLogReceivedV2Event(serverTimestamp, eaTimestamp, key, keyType, version, text));
+            return Task.CompletedTask;
         }
     }
 }

@@ -14,8 +14,6 @@ namespace Trsys.CopyTrading.Tests
             var events = EaLogParser
                 .Parse(
                     DateTimeOffset.Parse("2021-08-20T16:55:54.950"),
-                    "SKID",
-                    "EAID",
                     "KEY",
                     "Publisher",
                     "TOKEN",

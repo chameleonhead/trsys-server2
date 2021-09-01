@@ -7,8 +7,6 @@ namespace Trsys.CopyTrading.Abstractions
     {
         public EaLogContext(
             DateTimeOffset serverTimestamp,
-            string secretKeyId,
-            string eaSessionId,
             string key,
             string keyType,
             string token,
@@ -16,8 +14,6 @@ namespace Trsys.CopyTrading.Abstractions
             string text)
         {
             ServerTimestamp = serverTimestamp;
-            SecretKeyId = secretKeyId;
-            EaSessionId = eaSessionId;
             Key = key;
             KeyType = keyType;
             Token = token;
@@ -26,10 +22,8 @@ namespace Trsys.CopyTrading.Abstractions
         }
 
         public DateTimeOffset ServerTimestamp { get; }
-        public string SecretKeyId { get; }
         public string Key { get; }
         public string KeyType { get; }
-        public string EaSessionId { get; }
         public string Token { get; }
         public string Version { get; }
         public IEnumerable<string> Lines { get; }
