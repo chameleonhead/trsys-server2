@@ -9,7 +9,7 @@ namespace Trsys.CopyTrading.Tests
     public class EaLogParserTest
     {
         [TestMethod]
-        public void InitLog_ShouldParsed()
+        public void PublisherTypicalLog_ShouldParsed()
         {
             var events = EaLogParser
                 .Parse(
