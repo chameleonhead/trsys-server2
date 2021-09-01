@@ -2,13 +2,13 @@
 
 namespace Trsys.CopyTrading.Abstractions
 {
-    public class PublisherOrderClosedEvent : IEvent
+    public class PublisherOrderOpenPublishedEvent : IEvent
     {
-        public PublisherOrderClosedEvent()
+        public PublisherOrderOpenPublishedEvent()
         {
         }
 
-        public PublisherOrderClosedEvent(PublisherOrder publisherOrder)
+        public PublisherOrderOpenPublishedEvent(PublisherOrder publisherOrder)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
@@ -25,7 +25,7 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "PublisherOrderClosed";
+        public string Type => "PublisherOrderOpenPublished";
         public string PublisherOrderId { get; set; }
         public string PublisherKey { get; set; }
         public string Text { get; set; }

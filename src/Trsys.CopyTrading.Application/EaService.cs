@@ -102,11 +102,11 @@ namespace Trsys.CopyTrading.Application
                 }
                 foreach (var item in result.Opened)
                 {
-                    publisher.Publish(new PublisherOrderOpenedEvent(item));
+                    publisher.Publish(new PublisherOrderOpenPublishedEvent(item));
                 }
                 foreach (var item in result.Closed)
                 {
-                    publisher.Publish(new PublisherOrderClosedEvent(item));
+                    publisher.Publish(new PublisherOrderClosePublishedEvent(item));
                 }
                 foreach (var item in result.Ignored)
                 {
@@ -123,11 +123,11 @@ namespace Trsys.CopyTrading.Application
             {
                 foreach (var item in diff.Opened)
                 {
-                    publisher.Publish(new SubscriberOrderOpenedEvent(item));
+                    publisher.Publish(new SubscriberOrderOpenDeliveredEvent(item));
                 }
                 foreach (var item in diff.Closed)
                 {
-                    publisher.Publish(new SubscriberOrderClosedEvent(item));
+                    publisher.Publish(new SubscriberOrderCloseDeliveredEvent(item));
                 }
             }
             return orderText.OrderText;
