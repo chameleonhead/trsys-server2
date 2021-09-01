@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Trsys.Backoffice.Infrastructure\Trsys.Backoffice.Infrastructure.csproj" />
     <ProjectReference Include="..\Trsys.CopyTrading.Application\Trsys.CopyTrading.Application.csproj" />
   </ItemGroup>
 
