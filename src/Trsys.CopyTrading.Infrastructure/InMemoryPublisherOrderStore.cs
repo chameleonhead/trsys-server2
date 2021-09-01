@@ -8,87 +8,38 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryPublisherOrderStore : IPublisherOrderStore
     {
-        private readonly Dictionary<string, Dictionary<int, PublisherOrder>> _store = new();
+        private readonly Dictionary<string, List<PublisherOrder>> _store = new();
 
         public Task<OrderDifference<PublisherOrder>> SetOrderTextAsync(string publisherKey, string text)
         {
             var orders = OrderText.Parse(text).Orders;
-            if (_store.TryGetValue(publisherKey, out var publisherOrdersDictionary) && publisherOrdersDictionary.Any())
+            var current = _store.TryGetValue(publisherKey, out var publisherOrders) ? publisherOrders : Array.Empty<PublisherOrder>() as IEnumerable<PublisherOrder>;
+            var diff = OrderDifference<PublisherOrder>.CalculateDifference(current, orders, (po, o) => po.TicketNo - o.TicketNo, lu => new PublisherOrder()
             {
-                if (orders.Any())
-                {
-                    var prevTicketNos = publisherOrdersDictionary.Values.Select(o => o.TicketNo);
-                    var nextTicketNos = orders.Select(o => o.TicketNo);
-                    var closed = prevTicketNos.Except(nextTicketNos);
-                    var notChanged = prevTicketNos.Intersect(nextTicketNos);
-                    var opened = nextTicketNos.Except(prevTicketNos);
-                    var notChangedOrders = publisherOrdersDictionary.Values.Where(kv => notChanged.Contains(kv.TicketNo));
-                    var openedOrders = orders.Where(o => opened.Contains(o.TicketNo)).Select(lu => new PublisherOrder()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        PublisherKey = publisherKey,
-                        Text = lu.Text,
-                        TicketNo = lu.TicketNo,
-                        Symbol = lu.Symbol,
-                        OrderType = lu.OrderType,
-                        Price = lu.Price,
-                        Lots = lu.Lots,
-                        Time = lu.Time,
-                    }).ToList();
-                    if (opened.Any() || closed.Any())
-                    {
-                        var newPublishedOrdersDictionary = new Dictionary<int, PublisherOrder>();
-                        foreach (var order in notChangedOrders)
-                        {
-                            newPublishedOrdersDictionary.Add(order.TicketNo, order);
-                        }
-                        foreach (var order in openedOrders)
-                        {
-                            newPublishedOrdersDictionary.Add(order.TicketNo, order);
-                        }
-                        _store[publisherKey] = newPublishedOrdersDictionary;
-                        return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders, closed.Select(o => publisherOrdersDictionary[o])));
-                    }
-                    else
-                    {
-                        return Task.FromResult(OrderDifference<PublisherOrder>.NoDifference);
-                    }
-                }
-                else
-                {
-                    _store.Remove(publisherKey);
-                    return Task.FromResult(new OrderDifference<PublisherOrder>(Array.Empty<PublisherOrder>(), publisherOrdersDictionary.Values.ToArray()));
-                }
-            }
-            else
+                Id = Guid.NewGuid().ToString(),
+                PublisherKey = publisherKey,
+                Text = lu.Text,
+                TicketNo = lu.TicketNo,
+                Symbol = lu.Symbol,
+                OrderType = lu.OrderType,
+                Price = lu.Price,
+                Lots = lu.Lots,
+                Time = lu.Time,
+            });
+            if (diff.HasDifference)
             {
-                if (orders.Any())
+                var newPublishedOrders = publisherOrders?.ToList() ?? new List<PublisherOrder>();
+                foreach (var order in diff.Opened)
                 {
-                    var openedOrders = orders.Select(lu => new PublisherOrder()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        PublisherKey = publisherKey,
-                        Text = lu.Text,
-                        TicketNo = lu.TicketNo,
-                        Symbol = lu.Symbol,
-                        OrderType = lu.OrderType,
-                        Price = lu.Price,
-                        Lots = lu.Lots,
-                        Time = lu.Time,
-                    }).ToList();
-                    var newPublishedOrdersDictionary = new Dictionary<int, PublisherOrder>();
-                    foreach (var order in openedOrders)
-                    {
-                        newPublishedOrdersDictionary.Add(order.TicketNo, order);
-                    }
-                    _store[publisherKey] = newPublishedOrdersDictionary;
-                    return Task.FromResult(new OrderDifference<PublisherOrder>(openedOrders.ToArray(), Array.Empty<PublisherOrder>()));
+                    newPublishedOrders.Add(order);
                 }
-                else
+                foreach (var order in diff.Closed)
                 {
-                    return Task.FromResult(OrderDifference<PublisherOrder>.NoDifference);
+                    newPublishedOrders.Remove(order);
                 }
+                _store[publisherKey] = newPublishedOrders;
             }
+            return Task.FromResult(diff);
         }
     }
 }
