@@ -36,8 +36,6 @@ namespace Trsys.CopyTrading.Infrastructure
             }
             var session = new EaSession()
             {
-                Id = Guid.NewGuid().ToString(),
-                SecretKeyId = secretKey.Id,
                 Key = secretKey.Key,
                 KeyType = secretKey.KeyType,
                 Token = Guid.NewGuid().ToString(),

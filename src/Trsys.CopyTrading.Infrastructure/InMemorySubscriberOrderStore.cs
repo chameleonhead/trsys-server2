@@ -14,11 +14,18 @@ namespace Trsys.CopyTrading.Infrastructure
         {
             var orders = activeOrder.Orders;
             var current = _store.TryGetValue(subscriberKey, out var subscriberOrders) ? subscriberOrders : Array.Empty<SubscriberOrder>() as IEnumerable<SubscriberOrder>;
-            var diff = OrderDifference<SubscriberOrder>.CalculateDifference(current, orders, (po, o) => po.PublisherOrderId.CompareTo(o.Id), lu => new SubscriberOrder()
+            var diff = OrderDifference<SubscriberOrder>.CalculateDifference(current, orders, (po, o) =>
             {
-                Id = Guid.NewGuid().ToString(),
+                var result = po.PublisherKey.CompareTo(o.PublisherKey);
+                if (result != 0)
+                {
+                    return result;
+                }
+                return po.TicketNo.CompareTo(o.TicketNo);
+            }, lu => new SubscriberOrder()
+            {
                 SubscriberKey = subscriberKey,
-                PublisherOrderId = lu.Id,
+                PublisherKey = lu.PublisherKey,
                 Text = lu.Text,
                 TicketNo = lu.TicketNo,
                 Symbol = lu.Symbol,

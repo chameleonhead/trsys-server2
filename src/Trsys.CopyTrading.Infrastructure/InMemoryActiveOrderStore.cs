@@ -22,7 +22,7 @@ namespace Trsys.CopyTrading.Infrastructure
                 {
                     foreach (var order in diff.Closed)
                     {
-                        var o = currentOrders.FirstOrDefault(o => o.Id == order.Id);
+                        var o = currentOrders.FirstOrDefault(o => o.PublisherKey == order.PublisherKey && o.TicketNo == order.TicketNo);
                         if (o != null)
                         {
                             currentOrders.Remove(o);
@@ -45,7 +45,7 @@ namespace Trsys.CopyTrading.Infrastructure
                     current.AddRange(opened);
                 }
             }
-            activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current); 
+            activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current);
             return Task.FromResult(new ActiveOrderSetResult(ignored, opened, closed, activeOrder));
         }
 

@@ -2,7 +2,6 @@
 {
     public class PublisherOrder
     {
-        public string Id { get; set; }
         public string PublisherKey { get; set; }
         public string Text { get; set; }
         public int TicketNo { get; set; }

@@ -16,7 +16,6 @@ namespace Trsys.CopyTrading.Infrastructure
             var current = _store.TryGetValue(publisherKey, out var publisherOrders) ? publisherOrders : Array.Empty<PublisherOrder>() as IEnumerable<PublisherOrder>;
             var diff = OrderDifference<PublisherOrder>.CalculateDifference(current, orders, (po, o) => po.TicketNo - o.TicketNo, lu => new PublisherOrder()
             {
-                Id = Guid.NewGuid().ToString(),
                 PublisherKey = publisherKey,
                 Text = lu.Text,
                 TicketNo = lu.TicketNo,

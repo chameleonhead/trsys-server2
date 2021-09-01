@@ -12,7 +12,6 @@ namespace Trsys.CopyTrading.Abstractions
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            EaSessionId = session.Id;
             Key = session.Key;
             KeyType = session.KeyType;
             Token = session.Token;

@@ -2,9 +2,8 @@
 {
     public class SubscriberOrder
     {
-        public string Id { get; set; }
         public string SubscriberKey { get; set; }
-        public string PublisherOrderId { get; set; }
+        public string PublisherKey { get; set; }
         public string Text { get; set; }
         public int TicketNo { get; set; }
         public string Symbol { get; set; }

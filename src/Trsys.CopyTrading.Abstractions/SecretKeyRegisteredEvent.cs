@@ -12,7 +12,6 @@ namespace Trsys.CopyTrading.Abstractions
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            SecretKeyId = secretKey.Id;
             Key = secretKey.Key;
             KeyType = secretKey.KeyType;
         }
@@ -20,7 +19,6 @@ namespace Trsys.CopyTrading.Abstractions
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public string Type => "SecretKeyRegistered";
-        public string SecretKeyId { get; set; }
         public string Key { get; set; }
         public string KeyType { get; set; }
     }

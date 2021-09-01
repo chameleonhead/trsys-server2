@@ -12,7 +12,6 @@ namespace Trsys.CopyTrading.Abstractions
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            PublisherOrderId = publisherOrder.Id;
             PublisherKey = publisherOrder.PublisherKey;
             Text = publisherOrder.Text;
             TicketNo = publisherOrder.TicketNo;
@@ -26,7 +25,6 @@ namespace Trsys.CopyTrading.Abstractions
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public string Type => "PublisherOrderIgnored";
-        public string PublisherOrderId { get; set; }
         public string PublisherKey { get; set; }
         public string Text { get; set; }
         public int TicketNo { get; set; }

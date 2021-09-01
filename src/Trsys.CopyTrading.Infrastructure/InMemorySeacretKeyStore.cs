@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
@@ -24,7 +23,6 @@ namespace Trsys.CopyTrading.Infrastructure
         {
             var secretKey = new SecretKey()
             {
-                Id = Guid.NewGuid().ToString(),
                 Key = key,
                 KeyType = keyType,
             };
