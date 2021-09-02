@@ -58,13 +58,15 @@ namespace Trsys.CopyTrading.Tests
                         "1629704001:DEBUG:Deinit. Reason = 9"
                     }))
                 .ToArray();
-            Assert.AreEqual(6, events.Count());
+            Assert.AreEqual(8, events.Count());
             Assert.AreEqual("EaLogInit", events[0].Type);
             Assert.AreEqual("EaLogServerOrderOpened", events[1].Type);
-            Assert.AreEqual("EaLogLocalOrderOpened", events[2].Type);
-            Assert.AreEqual("EaLogServerOrderClosed", events[3].Type);
-            Assert.AreEqual("EaLogLocalOrderClosed", events[4].Type);
-            Assert.AreEqual("EaLogDeinit", events[5].Type);
+            Assert.AreEqual("EaLogOrderSetupCurrencyInfoFetched", events[2].Type);
+            Assert.AreEqual("EaLogOrderSetupMarginCalculated", events[3].Type);
+            Assert.AreEqual("EaLogLocalOrderOpened", events[4].Type);
+            Assert.AreEqual("EaLogServerOrderClosed", events[5].Type);
+            Assert.AreEqual("EaLogLocalOrderClosed", events[6].Type);
+            Assert.AreEqual("EaLogDeinit", events[7].Type);
         }
     }
 }
