@@ -29,6 +29,8 @@ namespace Trsys.CopyTrading.Abstractions
             new("Deinit. Reason = (\\d)", (context, line, match) => new EaLogDeinitEvent(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, int.Parse(match.Groups[1].Value))),
             new("Local order opened. LocalOrder = (\\d+)/(\\d+)/(.*)/([01])", (context, line, match) => new EaLogLocalOrderOpenedEvent(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, long.Parse(match.Groups[1].Value), long.Parse(match.Groups[2].Value), match.Groups[3].Value, (OrderType) int.Parse(match.Groups[4].Value))),
             new("Local order closed. LocalOrder = (\\d+)/(\\d+)/(.*)/([01])", (context, line, match) => new EaLogLocalOrderClosedEvent(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, long.Parse(match.Groups[1].Value), long.Parse(match.Groups[2].Value), match.Groups[3].Value, (OrderType) int.Parse(match.Groups[4].Value))),
+            new("Server order opened. ServerOrder = (\\d+)/(.*)/([01])", (context, line, match) => new EaLogServerOrderOpenedEvent(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, long.Parse(match.Groups[1].Value), match.Groups[2].Value, (OrderType) int.Parse(match.Groups[3].Value))),
+            new("Server order closed. ServerOrder = (\\d+)/(.*)/([01])", (context, line, match) => new EaLogServerOrderClosedEvent(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, long.Parse(match.Groups[1].Value), match.Groups[2].Value, (OrderType) int.Parse(match.Groups[3].Value))),
         };
 
         public static IEnumerable<IEvent> Parse(
