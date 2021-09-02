@@ -14,5 +14,9 @@ namespace Trsys.Backoffice.Abstractions
             Emit(new UserCreatedEvent(username, passwordHash, name, role));
             return ExecutionResult.Success();
         }
+
+        public void Apply(UserCreatedEvent e)
+        {
+        }
     }
 }

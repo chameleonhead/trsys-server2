@@ -1,8 +1,9 @@
 ﻿using EventFlow;
-using EventFlow.Configuration;
+using EventFlow.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Trsys.Backoffice.Abstractions;
 using Trsys.Backoffice.Infrastructure;
 using Trsys.Backoffice.Infrastructure.ReadModels;
 using Trsys.Backoffice.ReadModels.Users;
@@ -17,7 +18,11 @@ namespace Trsys.Backoffice
             services.AddMediatR(typeof(UserQueryHandler).Assembly, typeof(UserCommandHandler).Assembly);
             services.AddDbContext<TrsysBackofficeContext>(options => options.UseSqlite("Data Source=backoffice.db"));
             services.AddTransient<IUserStore, UserStore>();
-            services.AddSingleton<IRootResolver>(EventFlowOptions.New.CreateResolver());
+            services.AddSingleton(EventFlowOptions.New
+                .AddCommands(new[] { typeof(UserCreateCommand) })
+                .AddEvents(new[] { typeof(UserCreatedEvent) })
+                .AddCommandHandlers(typeof(UserCommandHandler))
+                .CreateResolver());
             return services;
         }
     }
