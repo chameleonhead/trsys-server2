@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Analytics.EaLogs
 {
     public class EaLogLine
     {

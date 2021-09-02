@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Analytics.EaLogs
 {
-    public class EaLogOrderSetupMarginCalculatedEvent : IEvent
+    public class OrderSendExecutingLog : ILogInfo
     {
-        public EaLogOrderSetupMarginCalculatedEvent()
+        public OrderSendExecutingLog()
         {
         }
 
-        public EaLogOrderSetupMarginCalculatedEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token, decimal freeMargin, long leverage, decimal percentOfFreeMargin, decimal calculatedVolume)
+        public OrderSendExecutingLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, decimal freeMargin, long leverage, decimal percentOfFreeMargin, decimal calculatedVolume)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = timestamp;
@@ -24,7 +24,7 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaLogOrderSetupMarginCalculated";
+        public string Type => "EaLogOrderSendExecuting";
         public string Key { get; set; }
         public string KeyType { get; set; }
         public string Version { get; set; }

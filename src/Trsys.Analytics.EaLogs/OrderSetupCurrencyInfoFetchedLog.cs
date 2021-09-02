@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Analytics.EaLogs
 {
-    public class EaLogOrderSetupCurrencyInfoFetchedEvent : IEvent
+    public class OrderSetupCurrencyInfoFetchedLog : ILogInfo
     {
-        public EaLogOrderSetupCurrencyInfoFetchedEvent()
+        public OrderSetupCurrencyInfoFetchedLog()
         {
         }
 
-        public EaLogOrderSetupCurrencyInfoFetchedEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token, string symbol, decimal marginForOneLot, decimal step)
+        public OrderSetupCurrencyInfoFetchedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, string symbol, decimal marginForOneLot, decimal step)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = timestamp;

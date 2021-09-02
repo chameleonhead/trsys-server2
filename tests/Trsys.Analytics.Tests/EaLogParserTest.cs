@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Trsys.CopyTrading.Abstractions;
+using Trsys.Analytics.EaLogs;
 
-namespace Trsys.CopyTrading.Tests
+namespace Trsys.Analytics.Tests
 {
     [TestClass]
     public class EaLogParserTest

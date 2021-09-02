@@ -1,14 +1,14 @@
 using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Analytics.EaLogs
 {
-    public class EaLogDeinitEvent : IEvent
+    public class DeinitLog : ILogInfo
     {
-        public EaLogDeinitEvent()
+        public DeinitLog()
         {
         }
 
-        public EaLogDeinitEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token, int reason)
+        public DeinitLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, int reason)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = timestamp;

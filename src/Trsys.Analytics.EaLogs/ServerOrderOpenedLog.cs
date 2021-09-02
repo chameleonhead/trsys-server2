@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Analytics.EaLogs
 {
-    public class EaLogServerOrderClosedEvent : IEvent
+    public class ServerOrderOpenedLog : ILogInfo
     {
-        public EaLogServerOrderClosedEvent()
+        public ServerOrderOpenedLog()
         {
         }
 
-        public EaLogServerOrderClosedEvent(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, string symbol, OrderType orderType)
+        public ServerOrderOpenedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, string symbol, OrderType orderType)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = timestamp;
@@ -23,7 +23,7 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaLogServerOrderClosed";
+        public string Type => "EaLogServerOrderOpened";
         public string Key { get; set; }
         public string KeyType { get; set; }
         public string Version { get; set; }
