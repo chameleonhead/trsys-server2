@@ -2,32 +2,19 @@
 
 namespace Trsys.Analytics.EaLogs
 {
-    public class ServerOrderClosedLog : ILogInfo
+    public class ServerOrderClosedLog : LogBase
     {
         public ServerOrderClosedLog()
         {
         }
 
-        public ServerOrderClosedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, string symbol, OrderType orderType)
+        public ServerOrderClosedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, string symbol, OrderType orderType) : base(timestamp, key, keyType, version, token)
         {
-            Id = Guid.NewGuid().ToString();
-            Timestamp = timestamp;
-            Key = key;
-            KeyType = keyType;
-            Version = version;
-            Token = token;
             ServerTicketNo = serverTicketNo;
             Symbol = symbol;
             OrderType = orderType;
         }
 
-        public string Id { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaLogServerOrderClosed";
-        public string Key { get; set; }
-        public string KeyType { get; set; }
-        public string Version { get; set; }
-        public string Token { get; set; }
         public long ServerTicketNo { get; set; }
         public string Symbol { get; set; }
         public OrderType OrderType { get; set; }

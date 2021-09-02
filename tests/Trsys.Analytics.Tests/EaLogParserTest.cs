@@ -26,10 +26,10 @@ namespace Trsys.Analytics.Tests
                     }))
                 .ToArray();
             Assert.AreEqual(4, events.Count());
-            Assert.AreEqual("EaLogInit", events[0].Type);
-            Assert.AreEqual("EaLogLocalOrderOpened", events[1].Type);
-            Assert.AreEqual("EaLogLocalOrderClosed", events[2].Type);
-            Assert.AreEqual("EaLogDeinit", events[3].Type);
+            Assert.AreEqual("InitLog", events[0].Type);
+            Assert.AreEqual("LocalOrderOpenedLog", events[1].Type);
+            Assert.AreEqual("LocalOrderClosedLog", events[2].Type);
+            Assert.AreEqual("DeinitLog", events[3].Type);
         }
         [TestMethod]
         public void SubscriberTypicalLog_ShouldParsed()
@@ -59,16 +59,16 @@ namespace Trsys.Analytics.Tests
                     }))
                 .ToArray();
             Assert.AreEqual(10, events.Count());
-            Assert.AreEqual("EaLogInit", events[0].Type);
-            Assert.AreEqual("EaLogServerOrderOpened", events[1].Type);
-            Assert.AreEqual("EaLogOrderSetupCurrencyInfoFetched", events[2].Type);
-            Assert.AreEqual("EaLogOrderSetupMarginCalculated", events[3].Type);
-            Assert.AreEqual("EaLogOrderSendExecuting", events[4].Type);
+            Assert.AreEqual("InitLog", events[0].Type);
+            Assert.AreEqual("ServerOrderOpenedLog", events[1].Type);
+            Assert.AreEqual("OrderSetupCurrencyInfoFetchedLog", events[2].Type);
+            Assert.AreEqual("OrderSetupMarginCalculatedLog", events[3].Type);
+            Assert.AreEqual("OrderSendExecutingLog", events[4].Type);
             Assert.AreEqual("OrderSendExecutionSuccessLog", events[5].Type);
-            Assert.AreEqual("EaLogLocalOrderOpened", events[6].Type);
-            Assert.AreEqual("EaLogServerOrderClosed", events[7].Type);
-            Assert.AreEqual("EaLogLocalOrderClosed", events[8].Type);
-            Assert.AreEqual("EaLogDeinit", events[9].Type);
+            Assert.AreEqual("LocalOrderOpenedLog", events[6].Type);
+            Assert.AreEqual("ServerOrderClosedLog", events[7].Type);
+            Assert.AreEqual("LocalOrderClosedLog", events[8].Type);
+            Assert.AreEqual("DeinitLog", events[9].Type);
         }
     }
 }

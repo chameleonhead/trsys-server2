@@ -24,7 +24,7 @@ namespace Trsys.Analytics.EaLogs
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaLogOrderSendExecuting";
+        public string Type => "OrderSendExecutingLog";
         public string Key { get; set; }
         public string KeyType { get; set; }
         public string Version { get; set; }
