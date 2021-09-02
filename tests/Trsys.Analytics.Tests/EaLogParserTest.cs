@@ -58,7 +58,7 @@ namespace Trsys.Analytics.Tests
                         "1629704001:DEBUG:Deinit. Reason = 9"
                     }))
                 .ToArray();
-            Assert.AreEqual(12, events.Count());
+            Assert.AreEqual(14, events.Count());
             Assert.AreEqual("InitLog", events[0].Type);
             Assert.AreEqual("ServerOrderOpenedLog", events[1].Type);
             Assert.AreEqual("OrderSetupCurrencyInfoFetchedLog", events[2].Type);
@@ -66,11 +66,13 @@ namespace Trsys.Analytics.Tests
             Assert.AreEqual("OrderSendExecutingLog", events[4].Type);
             Assert.AreEqual("OrderSendExecutionSuccessLog", events[5].Type);
             Assert.AreEqual("LocalOrderOpenedLog", events[6].Type);
-            Assert.AreEqual("ServerOrderClosedLog", events[7].Type);
-            Assert.AreEqual("OrderCloseExecutingLog", events[8].Type);
-            Assert.AreEqual("OrderCloseExecutionSuccessLog", events[9].Type);
-            Assert.AreEqual("LocalOrderClosedLog", events[10].Type);
-            Assert.AreEqual("DeinitLog", events[11].Type);
+            Assert.AreEqual("OrderOpenedLog", events[7].Type);
+            Assert.AreEqual("ServerOrderClosedLog", events[8].Type);
+            Assert.AreEqual("OrderCloseExecutingLog", events[9].Type);
+            Assert.AreEqual("OrderCloseExecutionSuccessLog", events[10].Type);
+            Assert.AreEqual("LocalOrderClosedLog", events[11].Type);
+            Assert.AreEqual("OrderClosedLog", events[12].Type);
+            Assert.AreEqual("DeinitLog", events[13].Type);
         }
     }
 }
