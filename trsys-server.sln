@@ -37,11 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Backoffice.WriteModel
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analytics", "Analytics", "{69C91F56-2507-478F-B62B-5FC4A9B329AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Analytics", "src\Trsys.Analytics\Trsys.Analytics.csproj", "{0580379F-3B79-4375-9393-765F3E587F02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Analytics", "src\Trsys.Analytics\Trsys.Analytics.csproj", "{0580379F-3B79-4375-9393-765F3E587F02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Analytics.EaLogs", "src\Trsys.Analytics.EaLogs\Trsys.Analytics.EaLogs.csproj", "{837EF596-4C73-4EC1-9313-729A948D3187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Analytics.EaLogs", "src\Trsys.Analytics.EaLogs\Trsys.Analytics.EaLogs.csproj", "{837EF596-4C73-4EC1-9313-729A948D3187}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Analytics.Tests", "tests\Trsys.Analytics.Tests\Trsys.Analytics.Tests.csproj", "{14522F1C-BCF5-4C2C-9800-15483F44C542}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Analytics.Tests", "tests\Trsys.Analytics.Tests\Trsys.Analytics.Tests.csproj", "{14522F1C-BCF5-4C2C-9800-15483F44C542}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadTesting", "tests\LoadTesting\LoadTesting.csproj", "{B8C372F4-79B2-4B49-92AC-475E41974AF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,10 @@ Global
 		{14522F1C-BCF5-4C2C-9800-15483F44C542}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14522F1C-BCF5-4C2C-9800-15483F44C542}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14522F1C-BCF5-4C2C-9800-15483F44C542}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8C372F4-79B2-4B49-92AC-475E41974AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C372F4-79B2-4B49-92AC-475E41974AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C372F4-79B2-4B49-92AC-475E41974AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C372F4-79B2-4B49-92AC-475E41974AF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,6 +140,7 @@ Global
 		{0580379F-3B79-4375-9393-765F3E587F02} = {69C91F56-2507-478F-B62B-5FC4A9B329AA}
 		{837EF596-4C73-4EC1-9313-729A948D3187} = {69C91F56-2507-478F-B62B-5FC4A9B329AA}
 		{14522F1C-BCF5-4C2C-9800-15483F44C542} = {69C91F56-2507-478F-B62B-5FC4A9B329AA}
+		{B8C372F4-79B2-4B49-92AC-475E41974AF6} = {C1A70540-C1D0-472B-BDAF-3EFF51FDF3FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C04D48EA-152D-4D14-B109-AB8298E46165}
