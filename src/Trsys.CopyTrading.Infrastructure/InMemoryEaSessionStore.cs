@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
@@ -9,8 +9,8 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         private record DictionaryKey(string Key, string KeyType);
 
-        private readonly Dictionary<string, EaSession> _store = new();
-        private readonly Dictionary<DictionaryKey, EaSession> _byKeys = new();
+        private readonly ConcurrentDictionary<string, EaSession> _store = new();
+        private readonly ConcurrentDictionary<DictionaryKey, EaSession> _byKeys = new();
 
         public Task<EaSession> FindByTokenAsync(string token)
         {
@@ -43,15 +43,15 @@ namespace Trsys.CopyTrading.Infrastructure
                 KeyType = secretKey.KeyType,
                 Token = Guid.NewGuid().ToString(),
             };
-            _store.Add(session.Token, session);
-            _byKeys.Add(key, session);
+            _store.TryAdd(session.Token, session);
+            _byKeys.TryAdd(key, session);
             return Task.FromResult(session);
         }
 
         public Task RemoveAsync(EaSession session)
         {
-            _store.Remove(session.Token);
-            _byKeys.Remove(new DictionaryKey(session.Key, session.KeyType));
+            _store.TryRemove(session.Token, out var _);
+            _byKeys.TryRemove(new DictionaryKey(session.Key, session.KeyType), out var _);
             return Task.CompletedTask;
         }
     }
