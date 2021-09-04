@@ -25,7 +25,9 @@ namespace Trsys.Frontend.Web
             {
                 options.InputFormatters.Add(new TextPlainInputFormatter());
             });
-            services.AddInMemoryEaService();
+            services.AddEaService(options => {
+                options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
+            });
             services.AddBackofficeInfrastructure();
         }
 

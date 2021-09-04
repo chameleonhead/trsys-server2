@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Grpc.Net.Client;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.Service;
@@ -8,15 +9,15 @@ namespace Trsys.CopyTrading
 {
     class GrpcEaService : IEaService
     {
-        private readonly CopyTradingOptions options;
+        private readonly GrpcChannel channel;
 
-        public GrpcEaService(CopyTradingOptions options)
+        public GrpcEaService(GrpcChannel channel)
         {
-            this.options = options;
+            this.channel = channel;
         }
         public async Task AddSecretKeyAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.AddSecretKeyAsync(new AddSecretKeyRequest()
             {
                 Key = key,
@@ -33,7 +34,7 @@ namespace Trsys.CopyTrading
 
         public async Task RemvoeSecretKeyAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.RemvoeSecretKeyAsync(new RemvoeSecretKeyRequest()
             {
                 Key = key,
@@ -50,7 +51,7 @@ namespace Trsys.CopyTrading
 
         public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.GenerateSessionTokenAsync(new GenerateSessionTokenRequest()
             {
                 Key = key,
@@ -76,7 +77,7 @@ namespace Trsys.CopyTrading
 
         public async Task DiscardSessionTokenAsync(string token, string key, string keyType)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.DiscardSessionTokenAsync(new DiscardSessionTokenRequest()
             {
                 Key = key,
@@ -97,7 +98,7 @@ namespace Trsys.CopyTrading
 
         public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.ValidateSessionTokenAsync(new ValidateSessionTokenRequest()
             {
                 Key = key,
@@ -118,7 +119,7 @@ namespace Trsys.CopyTrading
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
             {
                 Key = key,
@@ -135,7 +136,7 @@ namespace Trsys.CopyTrading
 
         public async Task<OrderText> GetOrderTextAsync(string key)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.GetOrderTextAsync(new GetOrderTextRequest()
             {
                 Key = key,
@@ -151,7 +152,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
                 Key = key,
@@ -171,7 +172,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            var service = new Ea.EaClient(options.Channel);
+            var service = new Ea.EaClient(channel);
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
                 Key = key,
