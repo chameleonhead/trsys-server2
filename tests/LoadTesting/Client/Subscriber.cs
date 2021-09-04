@@ -1,43 +1,34 @@
-﻿using NBomber.Contracts;
+﻿using LoadTesting.Extensions;
+using NBomber.Contracts;
 using Serilog;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LoadTesting.Client
 {
     public class Subscriber : TokenClientBase
     {
-        private string orderText;
-        private string orderHash;
-
-        public Subscriber(HttpClient client, string secretKey) : base(client, secretKey)
+        public Subscriber(HttpClient client, string secretKey) : base(client, secretKey, "Subscriber")
         {
         }
 
+        public OrderResponse Order { get; private set; }
+
         protected override async Task<Response> OnExecuteAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/orders");
-            if (!string.IsNullOrEmpty(orderHash))
+            try
             {
-                request.Headers.Add("If-None-Match", orderHash);
-            }
-            var res = await Client.SendAsync(request);
-            if (res.StatusCode == HttpStatusCode.NotModified)
-            {
+                var order = await Client.SubscribeOrderAsync(SecretKey, "Subscriber", Order);
+                if (order != Order)
+                {
+                    Log.Logger.Information($"Subscriber:{SecretKey}:OrderChanged:{Order.Text}");
+                }
                 return Response.Ok();
             }
-            if (!res.IsSuccessStatusCode)
+            catch
             {
-                return Response.Fail($"Order response is not valid. Status code = {res.StatusCode}");
+                return Response.Fail($"Subscribe order failed.");
             }
-
-            orderHash = res.Headers.ETag.Tag;
-            orderText = await res.Content.ReadAsStringAsync();
-            Log.Logger.Information($"Subscriber:{SecretKey}:OrderChanged:{orderText}");
-            await Client.PostAsync("/api/logs", new StringContent($"OrderChanged:{orderText}", Encoding.UTF8, "text/plain"));
-            return Response.Ok();
         }
     }
 }

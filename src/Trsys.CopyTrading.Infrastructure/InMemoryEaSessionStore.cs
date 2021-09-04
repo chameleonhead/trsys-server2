@@ -7,8 +7,10 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryEaSessionStore : IEaSessionStore
     {
+        private record DictionaryKey(string Key, string KeyType);
+
         private readonly Dictionary<string, EaSession> _store = new();
-        private readonly Dictionary<string, EaSession> _byKeys = new();
+        private readonly Dictionary<DictionaryKey, EaSession> _byKeys = new();
 
         public Task<EaSession> FindByTokenAsync(string token)
         {
@@ -19,9 +21,9 @@ namespace Trsys.CopyTrading.Infrastructure
             return Task.FromResult(default(EaSession));
         }
 
-        public Task<EaSession> FindByKeyAsync(string key)
+        public Task<EaSession> FindByKeyAsync(string key, string keyType)
         {
-            if (_byKeys.TryGetValue(key, out var session))
+            if (_byKeys.TryGetValue(new DictionaryKey(key, keyType), out var session))
             {
                 return Task.FromResult(session);
             }
@@ -30,7 +32,8 @@ namespace Trsys.CopyTrading.Infrastructure
 
         public Task<EaSession> CreateSessionAsync(SecretKey secretKey)
         {
-            if (_byKeys.TryGetValue(secretKey.Key, out var _))
+            var key = new DictionaryKey(secretKey.Key, secretKey.KeyType);
+            if (_byKeys.TryGetValue(key, out var _))
             {
                 throw new EaSessionAlreadyExistsException();
             }
@@ -41,14 +44,14 @@ namespace Trsys.CopyTrading.Infrastructure
                 Token = Guid.NewGuid().ToString(),
             };
             _store.Add(session.Token, session);
-            _byKeys.Add(session.Key, session);
+            _byKeys.Add(key, session);
             return Task.FromResult(session);
         }
 
         public Task RemoveAsync(EaSession session)
         {
             _store.Remove(session.Token);
-            _byKeys.Remove(session.Key);
+            _byKeys.Remove(new DictionaryKey(session.Key, session.KeyType));
             return Task.CompletedTask;
         }
     }

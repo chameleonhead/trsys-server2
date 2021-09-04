@@ -7,6 +7,7 @@ namespace Trsys.CopyTrading.Application
     public interface IEaService
     {
         Task AddSecretKeyAsync(string key, string keyType);
+        Task RemvoeSecretKeyAsync(string key, string keyType);
         Task<EaSession> GenerateTokenAsync(string key, string keyType);
         Task<bool> InvalidateSessionAsync(string token, string key, string keyType);
         Task<bool> ValidateSessionAsync(string token, string key, string keyType);

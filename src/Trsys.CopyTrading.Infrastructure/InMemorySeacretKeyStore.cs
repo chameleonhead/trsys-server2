@@ -6,7 +6,7 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemorySecretKeyStore : ISecretKeyStore
     {
-        record DictionaryKey(string Key, string KeyType);
+        private record DictionaryKey(string Key, string KeyType);
 
         private Dictionary<DictionaryKey, SecretKey> _store = new();
 

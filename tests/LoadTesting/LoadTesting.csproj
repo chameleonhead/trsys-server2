@@ -6,24 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Server\appsettings.frontend.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Server\Frontend\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.9" />
     <PackageReference Include="NBomber" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Trsys.Frontend.Web\Trsys.Frontend.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Server\Frontend\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Setup\SecretKeys.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

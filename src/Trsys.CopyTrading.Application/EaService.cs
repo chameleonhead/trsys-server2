@@ -145,5 +145,14 @@ namespace Trsys.CopyTrading.Application
             publisher.Publish(new EaLogReceivedV2Event(serverTimestamp, eaTimestamp, key, keyType, version, text));
             return Task.CompletedTask;
         }
+
+        public async Task RemvoeSecretKeyAsync(string key, string keyType)
+        {
+            var session = await sessionStore.FindByKeyAsync(key, keyType);
+            await sessionStore.RemoveAsync(session);
+            var secretKey = await keyStore.RemoveAsync(key, keyType);
+            publisher.Publish(new EaSessionDestroyedEvent(session));
+            publisher.Publish(new SecretKeyUnregisteredEvent(secretKey));
+        }
     }
 }

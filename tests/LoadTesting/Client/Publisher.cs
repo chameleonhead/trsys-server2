@@ -1,7 +1,7 @@
-﻿using NBomber.Contracts;
+﻿using LoadTesting.Extensions;
+using NBomber.Contracts;
 using Serilog;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LoadTesting.Client
@@ -11,7 +11,7 @@ namespace LoadTesting.Client
         private readonly OrderProvider orderProvider;
         private string sentOrder;
 
-        public Publisher(HttpClient client, string secretKey, OrderProvider orderProvider) : base(client, secretKey)
+        public Publisher(HttpClient client, string secretKey, OrderProvider orderProvider) : base(client, secretKey, "Publisher")
         {
             this.orderProvider = orderProvider;
         }
@@ -21,10 +21,13 @@ namespace LoadTesting.Client
             var orderText = orderProvider.GetCurrentOrder();
             if (sentOrder != orderText)
             {
-                var res = await Client.PostAsync("/api/orders", new StringContent(orderText, Encoding.UTF8, "text/plain"));
-                if (!res.IsSuccessStatusCode)
+                try
                 {
-                    return Response.Fail($"Order response is not valid. Status code = {res.StatusCode}");
+                    await Client.PublishOrderAsync(SecretKey, Token, orderText);
+                }
+                catch
+                {
+                    return Response.Fail($"Publish order failed");
                 }
                 Log.Logger.Information($"Publisher:{SecretKey}:OrderUpdated:{orderText}");
                 sentOrder = orderText;

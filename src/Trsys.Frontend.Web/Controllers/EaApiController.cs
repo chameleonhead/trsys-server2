@@ -30,6 +30,15 @@ namespace Trsys.Frontend.Web.Controllers
             return Ok();
         }
 
+        [Route("api/keys/delete")]
+        [HttpPost]
+        [Consumes("text/plain")]
+        public async Task<IActionResult> PostDeleteKey([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
+        {
+            await service.RemvoeSecretKeyAsync(key, keyType);
+            return Ok();
+        }
+
         [Route("api/token")]
         [HttpPost]
         [Consumes("text/plain")]

@@ -1,8 +1,7 @@
-﻿using NBomber.Contracts;
-using Serilog;
+﻿using LoadTesting.Extensions;
+using NBomber.Contracts;
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,41 +9,31 @@ namespace LoadTesting.Client
 {
     public abstract class TokenClientBase
     {
-        protected string SecretKey { get; }
         protected HttpClient Client { get; }
+        protected string SecretKey { get; }
+        protected string KeyType { get; }
+        protected string Token { get; private set; }
 
-        private string secretToken;
         private bool isInit = false;
         private readonly SemaphoreSlim lockObject = new SemaphoreSlim(1);
 
-        public TokenClientBase(HttpClient client, string secretKey)
+        public TokenClientBase(HttpClient client, string secretKey, string keyType)
         {
             SecretKey = secretKey;
+            KeyType = keyType;
             Client = client;
         }
 
         public async Task InitializeAsync()
         {
-            Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Add("Version", "20210331");
-            var res = await Client.PostAsync("/api/token", new StringContent(SecretKey, Encoding.UTF8, "text/plain"));
-            res.EnsureSuccessStatusCode();
-            secretToken = await res.Content.ReadAsStringAsync();
-
-            Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Add("Version", "20210331");
-            Client.DefaultRequestHeaders.Add("X-Secret-Token", secretToken);
+            Token = await Client.GenerateTokenAsync(SecretKey, KeyType);
             isInit = true;
         }
 
         public async Task FinalizeAsync()
         {
-            Client.DefaultRequestHeaders.Clear();
-            Client.DefaultRequestHeaders.Add("Version", "20210331");
-            var res = await Client.PostAsync("/api/token/" + Uri.UnescapeDataString(secretToken) + "/release", new StringContent(SecretKey, Encoding.UTF8, "text/plain"));
-            res.EnsureSuccessStatusCode();
-            secretToken = null;
-            Client.DefaultRequestHeaders.Clear();
+            await Client.InvalidateTokenAsync(SecretKey, KeyType, Token);
+            Token = null;
             isInit = false;
         }
 

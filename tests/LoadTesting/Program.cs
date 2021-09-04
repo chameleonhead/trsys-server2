@@ -1,12 +1,15 @@
 ﻿using LoadTesting.Client;
+using LoadTesting.Extensions;
 using LoadTesting.Server.Frontend;
 using NBomber;
 using NBomber.Contracts;
 using NBomber.CSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,8 +24,9 @@ namespace LoadTesting
         static void Main(string[] args)
         {
             using var server = FrontendServer.CreateServer();
-            var secretKeys = WithRetry(() => GenerateSecretKeys(server.CreateClient(), COUNT_OF_CLIENTS + 1)).Result;
-            var feeds = Feed.CreateConstant("secret_keys", FeedData.ShuffleData(secretKeys));
+            var secretKeys = FeedData.FromJson<string>(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Setup/SecretKeys.json"));
+            WithRetry(() => RegisterKeys(server.CreateClient(), secretKeys)).Wait();
+            var feeds = Feed.CreateConstant("secret_keys", secretKeys);
             var orderProvider = new OrderProvider(TimeSpan.FromMinutes(LENGTH_OF_TEST_MINUTES));
             var subscribers = Enumerable.Range(1, COUNT_OF_CLIENTS).Select(i => new Subscriber(server.CreateClient(), secretKeys.Skip(i).First())).ToList();
             var publisher = new Publisher(server.CreateClient(), secretKeys.First(), orderProvider);
@@ -43,7 +47,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(publisher.FinalizeAsync());
-                    await DeleteSecretKeys(server.CreateClient(), secretKeys.Take(1));
+                    await UnregisterKeys(server.CreateClient(), secretKeys.Take(1));
                 });
 
 
@@ -55,7 +59,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(subscribers.Select(subscriber => subscriber.FinalizeAsync()));
-                    await DeleteSecretKeys(server.CreateClient(), secretKeys.Skip(1));
+                    await UnregisterKeys(server.CreateClient(), secretKeys.Skip(1));
                 });
 
             NBomberRunner
@@ -84,43 +88,22 @@ namespace LoadTesting
             throw new Exception("Failed to execute.", lastException);
         }
 
-        private static async Task<IEnumerable<string>> GenerateSecretKeys(HttpClient client, int count)
+        private static async Task<bool> RegisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys)
         {
-            var admin = new Admin(client, "admin", "P@ssw0rd");
-            await admin.LoginAsync();
-
-            var secretKeys = (await admin.GetSecretKeysAsync())
-                .Where(k => Guid.TryParse(k, out var _))
-                .ToList();
-            foreach (var secretKey in secretKeys)
+            foreach (var key in secretKeys)
             {
-                await admin.RevokeSecretKeyAsync(secretKey);
-                await admin.DeleteSecretKeyAsync(secretKey);
+                await httpClient.RegisterSecretKeyAsync(key, "Publisher");
+                await httpClient.RegisterSecretKeyAsync(key, "Subscriber");
             }
-
-            for (var i = 0; i < count; i++)
-            {
-                await admin.CreateKeyAsync();
-            }
-
-            secretKeys = (await admin.GetSecretKeysAsync())
-                .Where(k => Guid.TryParse(k, out var _))
-                .ToList();
-            foreach (var secretKey in secretKeys)
-            {
-                await admin.ApproveSecretKeyAsync(secretKey);
-            }
-            return secretKeys;
+            return true;
         }
 
-        private static async Task DeleteSecretKeys(HttpClient client, IEnumerable<string> secretKeys)
+        private static async Task UnregisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys)
         {
-            var admin = new Admin(client, "admin", "P@ssw0rd");
-            await admin.LoginAsync();
-            foreach (var secretKey in secretKeys)
+            foreach (var key in secretKeys)
             {
-                await admin.RevokeSecretKeyAsync(secretKey);
-                await admin.DeleteSecretKeyAsync(secretKey);
+                await httpClient.UnregisterSecretKeyAsync(key, "Publisher");
+                await httpClient.UnregisterSecretKeyAsync(key, "Subscriber");
             }
         }
     }
