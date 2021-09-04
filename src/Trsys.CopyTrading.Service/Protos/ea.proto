@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+option csharp_namespace = "Trsys.CopyTrading.Service";
+
+package trsys.ea;
+
+service Ea {
+  rpc AddSecretKey (AddSecretKeyRequest) returns (CommonResponse);
+  rpc RemvoeSecretKey (RemvoeSecretKeyRequest) returns (CommonResponse);
+  rpc GenerateSessionToken (GenerateSessionTokenRequest) returns (GenerateSessionTokenResponse);
+  rpc DiscardSessionToken (DiscardSessionTokenRequest) returns (SessionTokenResponse);
+  rpc ValidateSessionToken (ValidateSessionTokenRequest) returns (SessionTokenResponse);
+  rpc PublishOrderText (PublishOrderTextRequest) returns (CommonResponse);
+  rpc GetOrderText (GetOrderTextRequest) returns (GetOrderTextResponse);
+  rpc ReceiveLog (ReceiveLogRequest) returns (CommonResponse);
+}
+
+message CommonResponse {
+  enum Result {
+    SUCCESS = 0;
+    FAILURE = 1;
+  }
+  Result result = 1;
+  string message = 2;
+}
+
+message AddSecretKeyRequest {
+  string key = 1;
+  string keyType = 2;
+}
+
+message RemvoeSecretKeyRequest {
+  string key = 1;
+  string keyType = 2;
+}
+
+message GenerateSessionTokenRequest {
+  string key = 1;
+  string keyType = 2;
+}
+
+message GenerateSessionTokenResponse {
+  enum Result {
+    SUCCESS = 0;
+    KEY_IN_USE = 1;
+    INVALID_KEY = 2;
+    FAILURE = 3;
+  }
+  Result result = 1;
+  string token = 2;
+  string message = 3;
+}
+
+message SessionTokenResponse {
+  enum Result {
+    SUCCESS = 0;
+    TOKEN_NOT_FOUND = 1;
+    TOKEN_INVALID = 2;
+    FAILURE = 3;
+  }
+  Result result = 1;
+  string message = 2;
+}
+
+message DiscardSessionTokenRequest {
+  string token = 1;
+  string key = 2;
+  string keyType = 3;
+}
+
+message ValidateSessionTokenRequest {
+  string token = 1;
+  string key = 2;
+  string keyType = 3;
+}
+
+message ValidateSessionTokenResponse {
+  enum Result {
+    SUCCESS = 0;
+    INVALID_TOKEN = 1;
+    FAILURE = 2;
+  }
+  Result result = 1;
+  string message = 2;
+}
+
+message PublishOrderTextRequest {
+  string key = 1;
+  string keyType = 2;
+}
+
+message GetOrderTextRequest {
+  string key = 1;
+  string keyType = 2;
+}
+
+message GetOrderTextResponse {
+  enum Result {
+    SUCCESS = 0;
+    FAILURE = 1;
+  }
+  string text = 1;
+  string hash = 2;
+  string message = 3;
+}
+
+message ReceiveLogRequest {
+  string key = 1;
+  string keyType = 2;
+  string version = 3;
+  string token = 4;
+  string text = 5;
+}
+
+
+

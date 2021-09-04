@@ -64,12 +64,19 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostTokenRelease([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, string token)
         {
-            var result = await service.DiscardSessionTokenAsync(token, key, keyType);
-            if (!result)
+            try
+            {
+                await service.DiscardSessionTokenAsync(token, key, keyType);
+                return Ok();
+            }
+            catch (EaSessionTokenNotFoundException)
             {
                 return BadRequest("InvalidToken");
             }
-            return Ok();
+            catch (EaSessionTokenInvalidException)
+            {
+                return BadRequest("InvalidToken");
+            }
         }
 
         [Route("api/orders")]
@@ -79,27 +86,33 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Subscriber")]
         public async Task<IActionResult> GetOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token)
         {
-            var result = await service.ValidateSessionTokenAsync(token, key, "Subscriber");
-            if (!result)
+            try
+            {
+                await service.ValidateSessionTokenAsync(token, key, "Subscriber");
+                var orderText = await service.GetOrderTextAsync(key);
+                var etags = HttpContext.Request.Headers["If-None-Match"];
+                if (etags.Any())
+                {
+                    foreach (var etag in etags)
+                    {
+                        if (etag == $"\"{orderText.Hash}\"")
+                        {
+                            return StatusCode(304);
+                        }
+                    }
+                }
+
+                HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
+                return Ok(orderText.Text);
+            }
+            catch (EaSessionTokenNotFoundException)
             {
                 return BadRequest("InvalidToken");
             }
-
-            var orderText = await service.GetOrderTextAsync(key);
-            var etags = HttpContext.Request.Headers["If-None-Match"];
-            if (etags.Any())
+            catch (EaSessionTokenInvalidException)
             {
-                foreach (var etag in etags)
-                {
-                    if (etag == $"\"{orderText.Hash}\"")
-                    {
-                        return StatusCode(304);
-                    }
-                }
+                return BadRequest("InvalidToken");
             }
-
-            HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
-            return Ok(orderText.Text);
         }
 
         [Route("api/orders")]
@@ -109,16 +122,19 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Publisher")]
         public async Task<IActionResult> PostOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
-            var result = await service.ValidateSessionTokenAsync(token, key, "Publisher");
-            if (!result)
+            try
+            {
+                await service.ValidateSessionTokenAsync(token, key, "Publisher");
+                await service.PublishOrderTextAsync(key, text);
+                return Ok();
+            }
+            catch (EaSessionTokenNotFoundException)
             {
                 return BadRequest("InvalidToken");
             }
-
-            try
+            catch (EaSessionTokenInvalidException)
             {
-                await service.PublishOrderTextAsync(key, text);
-                return Ok();
+                return BadRequest("InvalidToken");
             }
             catch (OrderTextFormatException)
             {
