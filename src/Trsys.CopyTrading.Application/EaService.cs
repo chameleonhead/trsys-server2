@@ -35,7 +35,7 @@ namespace Trsys.CopyTrading.Application
             publisher.Publish(new SecretKeyRegisteredEvent(secretKey));
         }
 
-        public async Task<EaSession> GenerateTokenAsync(string key, string keyType)
+        public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
         {
             var secretKey = await keyStore.FindAsync(key, keyType);
             if (secretKey is null)
@@ -51,7 +51,7 @@ namespace Trsys.CopyTrading.Application
             return session;
         }
 
-        public async Task<bool> InvalidateSessionAsync(string token, string key, string keyType)
+        public async Task<bool> DiscardSessionTokenAsync(string token, string key, string keyType)
         {
             var session = await sessionStore.FindByTokenAsync(token);
             if (session is null)
@@ -67,11 +67,11 @@ namespace Trsys.CopyTrading.Application
                 return false;
             }
             await sessionStore.RemoveAsync(session);
-            publisher.Publish(new EaSessionDestroyedEvent(session));
+            publisher.Publish(new EaSessionDiscardedEvent(session));
             return true;
         }
 
-        public async Task<bool> ValidateSessionAsync(string token, string key, string keyType)
+        public async Task<bool> ValidateSessionTokenAsync(string token, string key, string keyType)
         {
             var session = await sessionStore.FindByTokenAsync(token);
             if (session is null)
@@ -152,7 +152,7 @@ namespace Trsys.CopyTrading.Application
             if (session != null)
             {
                 await sessionStore.RemoveAsync(session);
-                publisher.Publish(new EaSessionDestroyedEvent(session));
+                publisher.Publish(new EaSessionDiscardedEvent(session));
             }
             var secretKey = await keyStore.RemoveAsync(key, keyType);
             publisher.Publish(new SecretKeyUnregisteredEvent(secretKey));

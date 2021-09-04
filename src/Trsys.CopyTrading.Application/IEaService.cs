@@ -8,9 +8,9 @@ namespace Trsys.CopyTrading.Application
     {
         Task AddSecretKeyAsync(string key, string keyType);
         Task RemvoeSecretKeyAsync(string key, string keyType);
-        Task<EaSession> GenerateTokenAsync(string key, string keyType);
-        Task<bool> InvalidateSessionAsync(string token, string key, string keyType);
-        Task<bool> ValidateSessionAsync(string token, string key, string keyType);
+        Task<EaSession> GenerateSessionTokenAsync(string key, string keyType);
+        Task<bool> DiscardSessionTokenAsync(string token, string key, string keyType);
+        Task<bool> ValidateSessionTokenAsync(string token, string key, string keyType);
         Task PublishOrderTextAsync(string key, string text);
         Task<OrderText> GetOrderTextAsync(string key);
         Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text);

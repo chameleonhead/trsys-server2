@@ -2,13 +2,13 @@
 
 namespace Trsys.CopyTrading.Abstractions
 {
-    public class EaSessionDestroyedEvent : IEvent
+    public class EaSessionDiscardedEvent : IEvent
     {
-        public EaSessionDestroyedEvent()
+        public EaSessionDiscardedEvent()
         {
         }
 
-        public EaSessionDestroyedEvent(EaSession session)
+        public EaSessionDiscardedEvent(EaSession session)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
@@ -19,7 +19,7 @@ namespace Trsys.CopyTrading.Abstractions
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "EaSessionDestroyed";
+        public string Type => "EaSessionDiscarded";
         public string EaSessionId { get; set; }
         public string Key { get; set; }
         public string KeyType { get; set; }

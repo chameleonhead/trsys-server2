@@ -46,7 +46,7 @@ namespace Trsys.Frontend.Web.Controllers
         {
             try
             {
-                var session = await service.GenerateTokenAsync(key, keyType);
+                var session = await service.GenerateSessionTokenAsync(key, keyType);
                 if (session is null)
                 {
                     return BadRequest("InvalidSecretKey");
@@ -64,7 +64,7 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostTokenRelease([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, string token)
         {
-            var result = await service.InvalidateSessionAsync(token, key, keyType);
+            var result = await service.DiscardSessionTokenAsync(token, key, keyType);
             if (!result)
             {
                 return BadRequest("InvalidToken");
@@ -79,7 +79,7 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Subscriber")]
         public async Task<IActionResult> GetOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token)
         {
-            var result = await service.ValidateSessionAsync(token, key, "Subscriber");
+            var result = await service.ValidateSessionTokenAsync(token, key, "Subscriber");
             if (!result)
             {
                 return BadRequest("InvalidToken");
@@ -109,7 +109,7 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Publisher")]
         public async Task<IActionResult> PostOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
-            var result = await service.ValidateSessionAsync(token, key, "Publisher");
+            var result = await service.ValidateSessionTokenAsync(token, key, "Publisher");
             if (!result)
             {
                 return BadRequest("InvalidToken");
