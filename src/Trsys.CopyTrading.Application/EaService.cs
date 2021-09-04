@@ -149,9 +149,12 @@ namespace Trsys.CopyTrading.Application
         public async Task RemvoeSecretKeyAsync(string key, string keyType)
         {
             var session = await sessionStore.FindByKeyAsync(key, keyType);
-            await sessionStore.RemoveAsync(session);
+            if (session != null)
+            {
+                await sessionStore.RemoveAsync(session);
+                publisher.Publish(new EaSessionDestroyedEvent(session));
+            }
             var secretKey = await keyStore.RemoveAsync(key, keyType);
-            publisher.Publish(new EaSessionDestroyedEvent(session));
             publisher.Publish(new SecretKeyUnregisteredEvent(secretKey));
         }
     }

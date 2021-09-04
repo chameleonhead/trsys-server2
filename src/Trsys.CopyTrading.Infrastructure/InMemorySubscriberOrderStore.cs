@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemorySubscriberOrderStore : ISubscriberOrderStore
     {
-        private readonly Dictionary<string, List<SubscriberOrder>> _store = new();
+        private readonly ConcurrentDictionary<string, List<SubscriberOrder>> _store = new();
 
         public Task<OrderDifference<SubscriberOrder>> SetOrderTextAsync(string subscriberKey, ActiveOrder activeOrder)
         {

@@ -18,9 +18,10 @@ namespace LoadTesting.Client
         {
             try
             {
-                var order = await Client.SubscribeOrderAsync(SecretKey, "Subscriber", Order);
+                var order = await Client.SubscribeOrderAsync(SecretKey, Token, Order);
                 if (order != Order)
                 {
+                    Order = order;
                     Log.Logger.Information($"Subscriber:{SecretKey}:OrderChanged:{Order.Text}");
                 }
                 return Response.Ok();

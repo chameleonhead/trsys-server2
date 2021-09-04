@@ -76,7 +76,7 @@ namespace LoadTesting.Extensions
 
         public static async Task<OrderResponse> SubscribeOrderAsync(this HttpClient client, string key, string token, OrderResponse lastResponse)
         {
-            var response = await client.GetAsync("/api/orders", key, "Publisher", token: token, ifNoneMatch: lastResponse?.ETag);
+            var response = await client.GetAsync("/api/orders", key, "Subscriber", token: token, ifNoneMatch: lastResponse?.ETag);
             if (response.StatusCode == HttpStatusCode.NotModified)
             {
                 return lastResponse;

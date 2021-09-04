@@ -1,15 +1,12 @@
 ﻿using LoadTesting.Client;
 using LoadTesting.Extensions;
 using LoadTesting.Server.Frontend;
-using NBomber;
 using NBomber.Contracts;
 using NBomber.CSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,22 +15,25 @@ namespace LoadTesting
 
     class Program
     {
-        const int COUNT_OF_CLIENTS = 30;
+        const int COUNT_OF_CLIENTS = 50;
         const double LENGTH_OF_TEST_MINUTES = 3;
 
         static void Main(string[] args)
         {
             using var server = FrontendServer.CreateServer();
-            var secretKeys = FeedData.FromJson<string>(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Setup/SecretKeys.json"));
-            WithRetry(() => RegisterKeys(server.CreateClient(), secretKeys)).Wait();
-            var feeds = Feed.CreateConstant("secret_keys", secretKeys);
+            var publisherKey = "MT4/OANDA Corporation/899999999/2";
+            var subscriberKeys = Enumerable.Range(1, COUNT_OF_CLIENTS).Select(i => $"MT4/OANDA Corporation/8{i:00000000}/2").ToList();
+            WithRetry(() => RegisterKeys(server.CreateClient(), new[] { publisherKey }, "Publisher")).Wait();
+            WithRetry(() => RegisterKeys(server.CreateClient(), subscriberKeys, "Subscriber")).Wait();
+            var feeds = Feed.CreateConstant("secret_keys", subscriberKeys);
             var orderProvider = new OrderProvider(TimeSpan.FromMinutes(LENGTH_OF_TEST_MINUTES));
-            var subscribers = Enumerable.Range(1, COUNT_OF_CLIENTS).Select(i => new Subscriber(server.CreateClient(), secretKeys.Skip(i).First())).ToList();
-            var publisher = new Publisher(server.CreateClient(), secretKeys.First(), orderProvider);
+            var subscribers = subscriberKeys.Select(key => new Subscriber(server.CreateClient(), key)).ToList();
+            var publisher = new Publisher(server.CreateClient(), publisherKey, orderProvider);
             orderProvider.SetStart();
 
+            var random = new Random();
             var step1 = Step.Create("publisher", feeds, context => publisher.ExecuteAsync());
-            var step2 = Step.Create("subscriber", feeds, context => subscribers[context.InvocationCount % COUNT_OF_CLIENTS].ExecuteAsync());
+            var step2 = Step.Create("subscriber", feeds, context => subscribers[random.Next(0, COUNT_OF_CLIENTS - 1)].ExecuteAsync());
 
             var scenario1 = ScenarioBuilder
                 .CreateScenario("pub", step1)
@@ -47,7 +47,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(publisher.FinalizeAsync());
-                    await UnregisterKeys(server.CreateClient(), secretKeys.Take(1));
+                    await UnregisterKeys(server.CreateClient(), new[] { publisherKey }, "Publisher");
                 });
 
 
@@ -59,7 +59,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(subscribers.Select(subscriber => subscriber.FinalizeAsync()));
-                    await UnregisterKeys(server.CreateClient(), secretKeys.Skip(1));
+                    await UnregisterKeys(server.CreateClient(), subscriberKeys, "Subscriber");
                 });
 
             NBomberRunner
@@ -88,22 +88,20 @@ namespace LoadTesting
             throw new Exception("Failed to execute.", lastException);
         }
 
-        private static async Task<bool> RegisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys)
+        private static async Task<bool> RegisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys, string keyType)
         {
             foreach (var key in secretKeys)
             {
-                await httpClient.RegisterSecretKeyAsync(key, "Publisher");
-                await httpClient.RegisterSecretKeyAsync(key, "Subscriber");
+                await httpClient.RegisterSecretKeyAsync(key, keyType);
             }
             return true;
         }
 
-        private static async Task UnregisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys)
+        private static async Task UnregisterKeys(HttpClient httpClient, IEnumerable<string> secretKeys, string keyType)
         {
             foreach (var key in secretKeys)
             {
-                await httpClient.UnregisterSecretKeyAsync(key, "Publisher");
-                await httpClient.UnregisterSecretKeyAsync(key, "Subscriber");
+                await httpClient.UnregisterSecretKeyAsync(key, keyType);
             }
         }
     }
