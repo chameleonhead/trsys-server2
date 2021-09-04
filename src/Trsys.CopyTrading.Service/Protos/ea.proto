@@ -86,12 +86,11 @@ message ValidateSessionTokenResponse {
 
 message PublishOrderTextRequest {
   string key = 1;
-  string keyType = 2;
+  string text = 2;
 }
 
 message GetOrderTextRequest {
   string key = 1;
-  string keyType = 2;
 }
 
 message GetOrderTextResponse {
@@ -99,9 +98,10 @@ message GetOrderTextResponse {
     SUCCESS = 0;
     FAILURE = 1;
   }
-  string text = 1;
-  string hash = 2;
-  string message = 3;
+  Result result = 1;
+  string text = 2;
+  string hash = 3;
+  string message = 4;
 }
 
 message ReceiveLogRequest {

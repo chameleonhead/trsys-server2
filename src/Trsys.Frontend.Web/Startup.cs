@@ -25,7 +25,7 @@ namespace Trsys.Frontend.Web
             {
                 options.InputFormatters.Add(new TextPlainInputFormatter());
             });
-            services.AddEaServiceInfrastructure();
+            services.AddInMemoryEaService();
             services.AddBackofficeInfrastructure();
         }
 
