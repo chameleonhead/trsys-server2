@@ -8,6 +8,7 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         public static IServiceCollection AddInMemoryEaServiceInfrastructure(this IServiceCollection services)
         {
+            services.AddSingleton<InMemoryCopyTradingContext>();
             services.AddSingleton<IEaSessionStore, InMemoryEaSessionStore>();
             services.AddSingleton<ISecretKeyStore, InMemorySecretKeyStore>();
             services.AddSingleton<IPublisherOrderStore, InMemoryPublisherOrderStore>();

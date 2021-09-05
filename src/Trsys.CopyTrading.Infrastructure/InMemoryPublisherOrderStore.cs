@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,12 +8,17 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryPublisherOrderStore : IPublisherOrderStore
     {
-        private readonly ConcurrentDictionary<string, List<PublisherOrder>> _store = new();
+        private readonly InMemoryCopyTradingContext context;
+
+        public InMemoryPublisherOrderStore(InMemoryCopyTradingContext context)
+        {
+            this.context = context;
+        }
 
         public Task<OrderDifference<PublisherOrder>> SetOrderTextAsync(string publisherKey, string text)
         {
             var orders = OrderText.Parse(text).Orders;
-            var current = _store.TryGetValue(publisherKey, out var publisherOrders) ? publisherOrders : Array.Empty<PublisherOrder>() as IEnumerable<PublisherOrder>;
+            var current = context.PublisherOrderStore.TryGetValue(publisherKey, out var publisherOrders) ? publisherOrders : Array.Empty<PublisherOrder>() as IEnumerable<PublisherOrder>;
             var diff = OrderDifference<PublisherOrder>.CalculateDifference(current, orders, (po, o) => po.TicketNo - o.TicketNo, lu => new PublisherOrder()
             {
                 PublisherKey = publisherKey,
@@ -37,7 +41,7 @@ namespace Trsys.CopyTrading.Infrastructure
                 {
                     newPublishedOrders.Remove(order);
                 }
-                _store[publisherKey] = newPublishedOrders;
+                context.PublisherOrderStore[publisherKey] = newPublishedOrders;
             }
             return Task.FromResult(diff);
         }

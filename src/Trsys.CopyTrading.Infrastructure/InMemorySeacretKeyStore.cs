@@ -1,18 +1,20 @@
-﻿using System.Collections.Concurrent;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
 namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemorySecretKeyStore : ISecretKeyStore
     {
-        private record DictionaryKey(string Key, string KeyType);
+        private readonly InMemoryCopyTradingContext context;
 
-        private ConcurrentDictionary<DictionaryKey, SecretKey> _store = new();
+        public InMemorySecretKeyStore(InMemoryCopyTradingContext context)
+        {
+            this.context = context;
+        }
 
         public Task<SecretKey> FindAsync(string key, string keyType)
         {
-            if (_store.TryGetValue(new DictionaryKey(key, keyType), out var secretKey))
+            if (context.SecretKeyStore.TryGetValue(new InMemoryKeys.SecretKey(key, keyType), out var secretKey))
             {
                 return Task.FromResult(secretKey);
             }
@@ -26,14 +28,14 @@ namespace Trsys.CopyTrading.Infrastructure
                 Key = key,
                 KeyType = keyType,
             };
-            _store.TryAdd(new DictionaryKey(key, keyType), secretKey);
+            context.SecretKeyStore.TryAdd(new InMemoryKeys.SecretKey(key, keyType), secretKey);
             return Task.FromResult(secretKey);
         }
 
         public Task<SecretKey> RemoveAsync(string key, string keyType)
         {
-            var id = new DictionaryKey(key, keyType);
-            _store.TryRemove(id, out var secretKey);
+            var id = new InMemoryKeys.SecretKey(key, keyType);
+            context.SecretKeyStore.TryRemove(id, out var secretKey);
             return Task.FromResult(secretKey);
         }
     }

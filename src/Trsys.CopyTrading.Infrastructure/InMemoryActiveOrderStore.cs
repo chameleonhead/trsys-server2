@@ -7,11 +7,16 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryActiveOrderStore : IActiveOrderStore
     {
-        private ActiveOrder activeOrder = ActiveOrder.Empty;
+        private InMemoryCopyTradingContext context;
+
+        public InMemoryActiveOrderStore(InMemoryCopyTradingContext context)
+        {
+            this.context = context;
+        }
 
         public Task<ActiveOrderSetResult> ApplyChangesAsync(OrderDifference<PublisherOrder> diff)
         {
-            var activeOrder = this.activeOrder;
+            var activeOrder = context.ActiveOrder;
             var opened = new List<PublisherOrder>();
             var ignored = new List<PublisherOrder>();
             var closed = new List<PublisherOrder>();
@@ -46,13 +51,13 @@ namespace Trsys.CopyTrading.Infrastructure
                     current.AddRange(opened);
                 }
             }
-            this.activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current);
+            this.context.ActiveOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current);
             return Task.FromResult(new ActiveOrderSetResult(ignored, opened, closed, activeOrder));
         }
 
         public Task<ActiveOrder> GetActiveOrderAsync()
         {
-            return Task.FromResult(activeOrder);
+            return Task.FromResult(context.ActiveOrder);
         }
     }
 }

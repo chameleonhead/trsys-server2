@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 
@@ -7,14 +6,16 @@ namespace Trsys.CopyTrading.Infrastructure
 {
     public class InMemoryEaSessionStore : IEaSessionStore
     {
-        private record DictionaryKey(string Key, string KeyType);
+        private InMemoryCopyTradingContext context;
 
-        private readonly ConcurrentDictionary<string, EaSession> _store = new();
-        private readonly ConcurrentDictionary<DictionaryKey, EaSession> _byKeys = new();
+        public InMemoryEaSessionStore(InMemoryCopyTradingContext context)
+        {
+            this.context = context;
+        }
 
         public Task<EaSession> FindByTokenAsync(string token)
         {
-            if (_store.TryGetValue(token, out var session))
+            if (context.EaSessionStoreByToken.TryGetValue(token, out var session))
             {
                 return Task.FromResult(session);
             }
@@ -23,7 +24,7 @@ namespace Trsys.CopyTrading.Infrastructure
 
         public Task<EaSession> FindByKeyAsync(string key, string keyType)
         {
-            if (_byKeys.TryGetValue(new DictionaryKey(key, keyType), out var session))
+            if (context.EaSessionStoreByKey.TryGetValue(new InMemoryKeys.SecretKey(key, keyType), out var session))
             {
                 return Task.FromResult(session);
             }
@@ -32,8 +33,8 @@ namespace Trsys.CopyTrading.Infrastructure
 
         public Task<EaSession> CreateSessionAsync(SecretKey secretKey)
         {
-            var key = new DictionaryKey(secretKey.Key, secretKey.KeyType);
-            if (_byKeys.TryGetValue(key, out var _))
+            var key = new InMemoryKeys.SecretKey(secretKey.Key, secretKey.KeyType);
+            if (context.EaSessionStoreByKey.TryGetValue(key, out var _))
             {
                 throw new EaSessionAlreadyExistsException();
             }
@@ -43,15 +44,15 @@ namespace Trsys.CopyTrading.Infrastructure
                 KeyType = secretKey.KeyType,
                 Token = Guid.NewGuid().ToString(),
             };
-            _store.TryAdd(session.Token, session);
-            _byKeys.TryAdd(key, session);
+            context.EaSessionStoreByToken.TryAdd(session.Token, session);
+            context.EaSessionStoreByKey.TryAdd(key, session);
             return Task.FromResult(session);
         }
 
         public Task RemoveAsync(EaSession session)
         {
-            _store.TryRemove(session.Token, out var _);
-            _byKeys.TryRemove(new DictionaryKey(session.Key, session.KeyType), out var _);
+            context.EaSessionStoreByToken.TryRemove(session.Token, out var _);
+            context.EaSessionStoreByKey.TryRemove(new InMemoryKeys.SecretKey(session.Key, session.KeyType), out var _);
             return Task.CompletedTask;
         }
     }
