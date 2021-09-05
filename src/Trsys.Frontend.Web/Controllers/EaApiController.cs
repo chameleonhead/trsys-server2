@@ -115,7 +115,7 @@ namespace Trsys.Frontend.Web.Controllers
                         }
                     }
                 }
-
+                orderText = await service.GetOrderTextAsync(key);
                 HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
                 return Ok(orderText.Text);
             }
