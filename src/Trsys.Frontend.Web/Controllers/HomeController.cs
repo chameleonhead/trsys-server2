@@ -14,11 +14,13 @@ namespace Trsys.Frontend.Web.Controllers
             _logger = logger;
         }
 
+        [Route("")]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Route("/privacy")]
         public IActionResult Privacy()
         {
             return View();

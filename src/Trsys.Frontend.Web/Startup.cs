@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
+using Trsys.Frontend.Hubs;
 using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
 
@@ -26,7 +27,9 @@ namespace Trsys.Frontend.Web
             {
                 options.InputFormatters.Add(new TextPlainInputFormatter());
             });
-            services.AddEaService(options => {
+            services.AddSignalR();
+            services.AddEaService(options =>
+            {
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
             services.AddBackofficeInfrastructure();
@@ -52,9 +55,8 @@ namespace Trsys.Frontend.Web
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+                endpoints.MapHub<CopyTradingHub>("/copyTradingHub");
             });
         }
     }
