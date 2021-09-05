@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
+using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
 
 namespace Trsys.Frontend.Web
@@ -29,6 +30,7 @@ namespace Trsys.Frontend.Web
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
             services.AddBackofficeInfrastructure();
+            services.AddSingleton<CopyTradingCache>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

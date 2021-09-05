@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
+using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Filters;
 
 namespace Trsys.Frontend.Web.Controllers
@@ -15,10 +16,12 @@ namespace Trsys.Frontend.Web.Controllers
     public class EaApiController : ControllerBase
     {
         private readonly IEaService service;
+        private readonly CopyTradingCache cache;
 
-        public EaApiController(IEaService service)
+        public EaApiController(IEaService service, CopyTradingCache cache)
         {
             this.service = service;
+            this.cache = cache;
         }
 
         [Route("api/keys")]
@@ -51,6 +54,7 @@ namespace Trsys.Frontend.Web.Controllers
                 {
                     return BadRequest("InvalidSecretKey");
                 }
+                cache.UpdateValidEaSessionTokenValidity(session.Token);
                 return Ok(session.Token);
             }
             catch (EaSessionAlreadyExistsException)
@@ -67,6 +71,7 @@ namespace Trsys.Frontend.Web.Controllers
             try
             {
                 await service.DiscardSessionTokenAsync(token, key, keyType);
+                cache.RemoveValidEaSessionToken(token);
                 return Ok();
             }
             catch (EaSessionTokenNotFoundException)
@@ -88,8 +93,17 @@ namespace Trsys.Frontend.Web.Controllers
         {
             try
             {
-                await service.ValidateSessionTokenAsync(token, key, "Subscriber");
-                var orderText = await service.GetOrderTextAsync(key);
+                if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
+                {
+                    await service.ValidateSessionTokenAsync(token, key, "Subscriber");
+                    cache.UpdateValidEaSessionTokenValidity(token);
+                }
+                var orderText = cache.GetOrderTextHash(key);
+                if (orderText == null)
+                {
+                    orderText = await service.GetOrderTextAsync(key);
+                    cache.UpdateOrderTextCache(key, orderText);
+                }
                 var etags = HttpContext.Request.Headers["If-None-Match"];
                 if (etags.Any())
                 {
@@ -124,7 +138,11 @@ namespace Trsys.Frontend.Web.Controllers
         {
             try
             {
-                await service.ValidateSessionTokenAsync(token, key, "Publisher");
+                if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
+                {
+                    await service.ValidateSessionTokenAsync(token, key, "Publisher");
+                    cache.UpdateValidEaSessionTokenValidity(token);
+                }
                 await service.PublishOrderTextAsync(key, text);
                 return Ok();
             }
