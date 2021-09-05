@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Infrastructure
+namespace Trsys.Events.Infrastructure
 {
     public class ConsoleEventPublisher : IEventPublisher
     {

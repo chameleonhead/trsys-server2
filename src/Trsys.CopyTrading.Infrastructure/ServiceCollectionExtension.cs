@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Abstractions;
-using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Infrastructure
 {
@@ -14,7 +13,6 @@ namespace Trsys.CopyTrading.Infrastructure
             services.AddSingleton<IPublisherOrderStore, InMemoryPublisherOrderStore>();
             services.AddSingleton<IActiveOrderStore, InMemoryActiveOrderStore>();
             services.AddSingleton<ISubscriberOrderStore, InMemorySubscriberOrderStore>();
-            services.AddSingleton<IEventPublisher, ConsoleEventPublisher>();
             return services;
         }
     }

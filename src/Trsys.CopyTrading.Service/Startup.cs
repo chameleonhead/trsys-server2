@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.Infrastructure;
+using Trsys.Events;
 
 namespace Trsys.CopyTrading.Service
 {
@@ -17,6 +18,7 @@ namespace Trsys.CopyTrading.Service
             services.AddGrpc();
             services.AddSingleton<IEaService, Application.EaService>();
             services.AddInMemoryEaServiceInfrastructure();
+            services.AddEvents();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
