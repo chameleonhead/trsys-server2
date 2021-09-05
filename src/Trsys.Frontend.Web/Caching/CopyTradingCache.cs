@@ -61,10 +61,7 @@ namespace Trsys.Frontend.Web.Caching
             }
             if (DateTimeOffset.UtcNow > orderCache.nextSyncTime)
             {
-                lock (this)
-                {
-                    _orderCache = null;
-                }
+                _orderCache = null;
                 return null;
             }
             return orderCache.orderText;
@@ -78,18 +75,12 @@ namespace Trsys.Frontend.Web.Caching
             {
                 if (nextSyncTime > orderCache.nextSyncTime)
                 {
-                    lock (this)
-                    {
-                        _orderCache = new OrderTextCache(orderText, nextSyncTime);
-                    }
+                    _orderCache = new OrderTextCache(orderText, nextSyncTime);
                 }
             }
             else
             {
-                lock (this)
-                {
-                    _orderCache = new OrderTextCache(orderText, nextSyncTime);
-                }
+                _orderCache = new OrderTextCache(orderText, nextSyncTime);
             }
         }
 
