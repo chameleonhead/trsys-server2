@@ -80,6 +80,7 @@ namespace Trsys.CopyTrading
             var service = new Ea.EaClient(channel);
             var response = await service.DiscardSessionTokenAsync(new DiscardSessionTokenRequest()
             {
+                Token = token,
                 Key = key,
                 KeyType = keyType,
             });
@@ -101,6 +102,7 @@ namespace Trsys.CopyTrading
             var service = new Ea.EaClient(channel);
             var response = await service.ValidateSessionTokenAsync(new ValidateSessionTokenRequest()
             {
+                Token = token,
                 Key = key,
                 KeyType = keyType,
             });

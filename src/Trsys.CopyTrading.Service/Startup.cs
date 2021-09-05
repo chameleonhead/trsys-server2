@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Trsys.CopyTrading.Application;
+using Trsys.CopyTrading.Infrastructure;
 
 namespace Trsys.CopyTrading.Service
 {
@@ -13,6 +15,8 @@ namespace Trsys.CopyTrading.Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddSingleton<IEaService, Application.EaService>();
+            services.AddInMemoryEaServiceInfrastructure();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
