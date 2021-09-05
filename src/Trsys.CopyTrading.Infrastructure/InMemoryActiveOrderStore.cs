@@ -11,6 +11,7 @@ namespace Trsys.CopyTrading.Infrastructure
 
         public Task<ActiveOrderSetResult> ApplyChangesAsync(OrderDifference<PublisherOrder> diff)
         {
+            var activeOrder = this.activeOrder;
             var opened = new List<PublisherOrder>();
             var ignored = new List<PublisherOrder>();
             var closed = new List<PublisherOrder>();
@@ -45,7 +46,7 @@ namespace Trsys.CopyTrading.Infrastructure
                     current.AddRange(opened);
                 }
             }
-            activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current);
+            this.activeOrder = new ActiveOrder(OrderText.Parse(string.Join("@", current.Select(c => c.Text))), current);
             return Task.FromResult(new ActiveOrderSetResult(ignored, opened, closed, activeOrder));
         }
 
