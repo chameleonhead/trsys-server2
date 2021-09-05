@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace LoadTesting.Client
+namespace LoadTesting.Server
 {
     public static class HttpClientFactory
     {

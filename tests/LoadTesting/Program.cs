@@ -1,5 +1,6 @@
 ﻿using LoadTesting.Client;
 using LoadTesting.Extensions;
+using LoadTesting.Server.CopyTrading;
 using LoadTesting.Server.Frontend;
 using NBomber.Contracts;
 using NBomber.CSharp;
@@ -20,15 +21,16 @@ namespace LoadTesting
 
         static void Main(string[] args)
         {
-            using var server = FrontendServer.CreateServer();
+            using var copyTradingServer = CopyTradingServer.CreateServer();
+            using var frontendServer = FrontendServer.CreateServer();
             var publisherKey = "MT4/OANDA Corporation/899999999/2";
             var subscriberKeys = Enumerable.Range(1, COUNT_OF_CLIENTS).Select(i => $"MT4/OANDA Corporation/8{i:00000000}/2").ToList();
-            WithRetry(() => RegisterKeys(server.CreateClient(), new[] { publisherKey }, "Publisher")).Wait();
-            WithRetry(() => RegisterKeys(server.CreateClient(), subscriberKeys, "Subscriber")).Wait();
+            WithRetry(() => RegisterKeys(frontendServer.CreateClient(), new[] { publisherKey }, "Publisher")).Wait();
+            WithRetry(() => RegisterKeys(frontendServer.CreateClient(), subscriberKeys, "Subscriber")).Wait();
             var feeds = Feed.CreateConstant("secret_keys", subscriberKeys);
             var orderProvider = new OrderProvider(TimeSpan.FromMinutes(LENGTH_OF_TEST_MINUTES));
-            var subscribers = subscriberKeys.Select(key => new Subscriber(server.CreateClient(), key)).ToList();
-            var publisher = new Publisher(server.CreateClient(), publisherKey, orderProvider);
+            var subscribers = subscriberKeys.Select(key => new Subscriber(frontendServer.CreateClient(), key)).ToList();
+            var publisher = new Publisher(frontendServer.CreateClient(), publisherKey, orderProvider);
             orderProvider.SetStart();
 
             var random = new Random();
@@ -47,7 +49,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(publisher.FinalizeAsync());
-                    await UnregisterKeys(server.CreateClient(), new[] { publisherKey }, "Publisher");
+                    await UnregisterKeys(frontendServer.CreateClient(), new[] { publisherKey }, "Publisher");
                 });
 
 
@@ -59,7 +61,7 @@ namespace LoadTesting
                 .WithClean(async context =>
                 {
                     await Task.WhenAll(subscribers.Select(subscriber => subscriber.FinalizeAsync()));
-                    await UnregisterKeys(server.CreateClient(), subscriberKeys, "Subscriber");
+                    await UnregisterKeys(frontendServer.CreateClient(), subscriberKeys, "Subscriber");
                 });
 
             NBomberRunner

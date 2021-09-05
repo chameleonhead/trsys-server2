@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
@@ -11,33 +10,39 @@ namespace LoadTesting.Server.Frontend
 {
     public class FrontendServer : IDisposable
     {
-        private readonly TestServer testServer;
+        private readonly IWebHost server;
 
         public FrontendServer()
         {
-            var path = Assembly.GetAssembly(typeof(FrontendServer))
-              .Location;
+            var path = Assembly
+                .GetAssembly(typeof(FrontendServer))
+                .Location;
 
-            var hostBuilder = new WebHostBuilder()
+            server = new WebHostBuilder()
                 .UseContentRoot(Path.GetDirectoryName(path))
+                .UseUrls("https://localhost:5001", "http://localhost:5000")
+                .UseKestrel()
                 .ConfigureAppConfiguration(cb =>
                 {
                     cb.AddJsonFile("Server/Frontend/appsettings.json");
-                }).UseStartup<Startup>();
-
-            testServer = new TestServer(hostBuilder);
+                })
+                .UseStartup<Startup>()
+                .Build();
+            server.StartAsync().Wait();
         }
 
         public HttpClient CreateClient()
         {
-            return testServer.CreateClient();
+            return HttpClientFactory.Create("https://localhost:5001", true);
         }
 
         public void Dispose()
         {
-            testServer.Dispose();
+            server.WaitForShutdown();
+            server.Dispose();
             GC.SuppressFinalize(this);
         }
+
         public static FrontendServer CreateServer()
         {
             return new FrontendServer();

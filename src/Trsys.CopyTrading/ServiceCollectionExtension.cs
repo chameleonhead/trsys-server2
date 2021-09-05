@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Application;
@@ -19,7 +21,11 @@ namespace Trsys.CopyTrading
             }
             else
             {
-                services.AddSingleton<IEaService>(new GrpcEaService(GrpcChannel.ForAddress(options.ServiceEndpoint)));
+                var httpHandler = new HttpClientHandler();
+                // Return `true` to allow certificates that are untrusted/invalid
+                httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                var channel = GrpcChannel.ForAddress(options.ServiceEndpoint, new GrpcChannelOptions { HttpHandler = httpHandler });
+                services.AddSingleton<IEaService>(new GrpcEaService(channel));
             }
             return services;
         }
