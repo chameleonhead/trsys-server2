@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
@@ -157,6 +158,7 @@ namespace Trsys.CopyTrading
             var service = new Ea.EaClient(channel);
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
+                ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
                 Key = key,
                 KeyType = keyType,
                 Version = version,
@@ -177,6 +179,7 @@ namespace Trsys.CopyTrading
             var service = new Ea.EaClient(channel);
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
+                ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
                 Key = key,
                 KeyType = keyType,
                 Version = version,

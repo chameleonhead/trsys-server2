@@ -209,7 +209,7 @@ namespace Trsys.CopyTrading.Service
         {
             try
             {
-                await service.ReceiveLogAsync(DateTimeOffset.UtcNow, request.Key, request.KeyType, request.Version, request.Token, request.Text);
+                await service.ReceiveLogAsync(request.ServerTimestamp.ToDateTimeOffset(), request.Key, request.KeyType, request.Version, request.Token, request.Text);
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Success,
