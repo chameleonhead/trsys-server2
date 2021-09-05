@@ -45,7 +45,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.Analytics.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadTesting", "tests\LoadTesting\LoadTesting.csproj", "{B8C372F4-79B2-4B49-92AC-475E41974AF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.CopyTrading.Service", "src\Trsys.CopyTrading.Service\Trsys.CopyTrading.Service.csproj", "{04A27942-B34B-43CC-B23A-7606A6D13FE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trsys.CopyTrading.Service", "src\Trsys.CopyTrading.Service\Trsys.CopyTrading.Service.csproj", "{04A27942-B34B-43CC-B23A-7606A6D13FE3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{F1FBDDAC-0DEE-4175-A883-967CF627F33C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Events", "src\Trsys.Events\Trsys.Events.csproj", "{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trsys.Events.Abstractions", "src\Trsys.Events.Abstractions\Trsys.Events.Abstractions.csproj", "{802510D5-F923-4D0A-BC01-CB7C921825AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +131,14 @@ Global
 		{04A27942-B34B-43CC-B23A-7606A6D13FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04A27942-B34B-43CC-B23A-7606A6D13FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04A27942-B34B-43CC-B23A-7606A6D13FE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802510D5-F923-4D0A-BC01-CB7C921825AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802510D5-F923-4D0A-BC01-CB7C921825AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802510D5-F923-4D0A-BC01-CB7C921825AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802510D5-F923-4D0A-BC01-CB7C921825AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +162,8 @@ Global
 		{14522F1C-BCF5-4C2C-9800-15483F44C542} = {69C91F56-2507-478F-B62B-5FC4A9B329AA}
 		{B8C372F4-79B2-4B49-92AC-475E41974AF6} = {C1A70540-C1D0-472B-BDAF-3EFF51FDF3FF}
 		{04A27942-B34B-43CC-B23A-7606A6D13FE3} = {5B000294-0DE8-43CE-84C1-9CEDFCBEC91E}
+		{A89A3BD9-B7D5-4DA6-B921-6C3C91D53CC6} = {F1FBDDAC-0DEE-4175-A883-967CF627F33C}
+		{802510D5-F923-4D0A-BC01-CB7C921825AF} = {F1FBDDAC-0DEE-4175-A883-967CF627F33C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C04D48EA-152D-4D14-B109-AB8298E46165}

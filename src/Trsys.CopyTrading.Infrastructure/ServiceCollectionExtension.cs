@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Infrastructure
 {

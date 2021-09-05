@@ -1,4 +1,4 @@
-﻿namespace Trsys.CopyTrading.Abstractions
+﻿namespace Trsys.Events.Abstractions
 {
     public interface IEventPublisher
     {

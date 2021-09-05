@@ -1,4 +1,5 @@
 ﻿using System;
+using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Abstractions
 {

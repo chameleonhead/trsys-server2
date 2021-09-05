@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Application
 {

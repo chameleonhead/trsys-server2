@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.Events.Abstractions
 {
     public interface IEvent
     {
