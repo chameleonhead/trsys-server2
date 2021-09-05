@@ -54,11 +54,12 @@ namespace Trsys.Frontend.Web.Caching
 
         public OrderText GetOrderTextHash(string key)
         {
-            if (_orderCache == null)
+            var orderCache = _orderCache;
+            if (orderCache == null)
             {
                 return null;
             }
-            if (DateTimeOffset.UtcNow > _orderCache.nextSyncTime)
+            if (DateTimeOffset.UtcNow > orderCache.nextSyncTime)
             {
                 lock (this)
                 {
@@ -66,15 +67,16 @@ namespace Trsys.Frontend.Web.Caching
                 }
                 return null;
             }
-            return _orderCache.orderText;
+            return orderCache.orderText;
         }
 
         public void UpdateOrderTextCache(string key, OrderText orderText)
         {
             var nextSyncTime = DateTimeOffset.UtcNow.AddMilliseconds(100);
-            if (_orderCache != null)
+            var orderCache = _orderCache;
+            if (orderCache != null)
             {
-                if (nextSyncTime > _orderCache.nextSyncTime)
+                if (nextSyncTime > orderCache.nextSyncTime)
                 {
                     lock (this)
                     {

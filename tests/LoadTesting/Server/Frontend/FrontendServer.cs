@@ -38,6 +38,7 @@ namespace LoadTesting.Server.Frontend
 
         public void Dispose()
         {
+            server.StopAsync();
             server.WaitForShutdown();
             server.Dispose();
             GC.SuppressFinalize(this);
