@@ -2,7 +2,7 @@ version: "3.5"
 services:
   frontend:
     image: mcr.microsoft.com/dotnet/sdk:5.0
-    command: bash -c "cp -ruf /workspace/* /app && dotnet run --launch-profile Docker --project src/Trsys.Frontend.Web/Trsys.Frontend.Web.csproj"
+    command: bash -c "cp -rf /workspace/* /app && dotnet run --launch-profile Docker --project src/Trsys.Frontend.Web/Trsys.Frontend.Web.csproj"
     working_dir: /app
     volumes:
       - .:/workspace
@@ -13,7 +13,7 @@ services:
       - Trsys_CopyTradingEndpoint=https://copy_trading:5003
   copy_trading:
     image: mcr.microsoft.com/dotnet/sdk:5.0
-    command: bash -c "cp -ruf /workspace/* /app && dotnet run --launch-profile Docker --project src/Trsys.CopyTrading.Service/Trsys.CopyTrading.Service.csproj"
+    command: bash -c "cp -rf /workspace/* /app && dotnet run --launch-profile Docker --project src/Trsys.CopyTrading.Service/Trsys.CopyTrading.Service.csproj"
     working_dir: /app
     volumes:
       - .:/workspace
