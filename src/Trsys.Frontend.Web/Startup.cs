@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
+using Trsys.CopyTrading.Application;
 using Trsys.Events;
 using Trsys.Frontend.Hubs;
 using Trsys.Frontend.Web.Caching;
@@ -34,7 +35,11 @@ namespace Trsys.Frontend.Web
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
             services.AddBackofficeInfrastructure();
-            services.AddEvents();
+            if (Configuration.GetValue<string>("Trsys:CopyTradingEndpoint") == "InMemory")
+            {
+                services.AddEventHandlers(new[] { typeof(CopyTradingEventHandler) })
+                    .AddInMemoryEventInfrastructure();
+            }
             services.AddSingleton<CopyTradingCache>();
         }
 

@@ -18,7 +18,8 @@ namespace Trsys.CopyTrading.Service
             services.AddGrpc();
             services.AddSingleton<IEaService, Application.EaService>();
             services.AddInMemoryEaServiceInfrastructure();
-            services.AddEvents();
+            services.AddEventHandlers(new[] { typeof(CopyTradingEventHandler) })
+                .AddInMemoryEventInfrastructure();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

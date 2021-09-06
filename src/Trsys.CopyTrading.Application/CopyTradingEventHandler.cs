@@ -5,7 +5,7 @@ using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Application
 {
-    public class CopyTradingEventHandler
+    public class CopyTradingEventHandler : IEventHandler
     {
         public Task Handle(IEvent e, CancellationToken cancellationToken)
         {

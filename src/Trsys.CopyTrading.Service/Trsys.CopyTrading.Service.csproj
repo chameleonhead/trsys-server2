@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Trsys.CopyTrading.Application\Trsys.CopyTrading.Application.csproj" />
     <ProjectReference Include="..\Trsys.CopyTrading.Infrastructure\Trsys.CopyTrading.Infrastructure.csproj" />
     <ProjectReference Include="..\Trsys.Events\Trsys.Events.csproj" />
+    <ProjectReference Include="..\Trsys.Events.InMemory\Trsys.Events.InMemory.csproj" />
   </ItemGroup>
 
 </Project>

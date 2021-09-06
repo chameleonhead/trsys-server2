@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Trsys.Backoffice\Trsys.Backoffice.csproj" />
     <ProjectReference Include="..\Trsys.CopyTrading\Trsys.CopyTrading.csproj" />
     <ProjectReference Include="..\Trsys.Events\Trsys.Events.csproj" />
+    <ProjectReference Include="..\Trsys.Events.InMemory\Trsys.Events.InMemory.csproj" />
   </ItemGroup>
 
 </Project>

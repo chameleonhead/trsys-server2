@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Trsys.Events.Abstractions;
 using Trsys.Events.Infrastructure;
 
@@ -6,9 +8,12 @@ namespace Trsys.Events
 {
     public static class ServiceCollectionExtension
     {
-        public static IServiceCollection AddEvents(this IServiceCollection services)
+        public static IServiceCollection AddEventHandlers(this IServiceCollection services, IEnumerable<Type> handlerTypes)
         {
-            services.AddSingleton<IEventPublisher, ConsoleEventPublisher>();
+            services.Configure<EventsOptions>(options =>
+            {
+                options.EventHandlerTypes = handlerTypes;
+            });
             return services;
         }
     }
