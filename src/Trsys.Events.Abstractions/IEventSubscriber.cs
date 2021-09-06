@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 namespace Trsys.Events.Abstractions
 {
     public interface IEventSubscriber
     {
-        void Subscribe(Func<IEvent, Task> eventHandler);
+        void Subscribe(IEventHandler handler);
+        void Subscribe(IEnumerable<IEventHandler> handlers);
     }
 }
