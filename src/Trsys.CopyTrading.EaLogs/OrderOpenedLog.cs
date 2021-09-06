@@ -1,6 +1,6 @@
 using System;
 
-namespace Trsys.Analytics.EaLogs
+namespace Trsys.CopyTrading.EaLogs
 {
     public class OrderOpenedLog : LogBase
     {

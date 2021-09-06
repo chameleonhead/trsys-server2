@@ -1,14 +1,14 @@
 using System;
 
-namespace Trsys.Analytics.EaLogs
+namespace Trsys.CopyTrading.EaLogs
 {
-    public class LocalOrderClosedLog : LogBase
+    public class LocalOrderOpenedLog : LogBase
     {
-        public LocalOrderClosedLog()
+        public LocalOrderOpenedLog()
         {
         }
 
-        public LocalOrderClosedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, long localTicketNo, string symbol, OrderType orderType) : base(timestamp, key, keyType, version, token)
+        public LocalOrderOpenedLog(DateTimeOffset timestamp, string key, string keyType, string version, string token, long serverTicketNo, long localTicketNo, string symbol, OrderType orderType) : base(timestamp, key, keyType, version, token)
         {
             ServerTicketNo = serverTicketNo;
             LocalTicketNo = localTicketNo;

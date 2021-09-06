@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Trsys.Analytics.EaLogs
+namespace Trsys.CopyTrading.EaLogs
 {
     public class EaLogParser
     {

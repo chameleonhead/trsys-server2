@@ -1,4 +1,4 @@
-﻿namespace Trsys.Analytics.EaLogs
+﻿namespace Trsys.CopyTrading.EaLogs
 {
     public enum OrderType
     {
