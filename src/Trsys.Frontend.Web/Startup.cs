@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
+using Trsys.Events;
 using Trsys.Frontend.Hubs;
 using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
@@ -33,6 +34,7 @@ namespace Trsys.Frontend.Web
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
             services.AddBackofficeInfrastructure();
+            services.AddEvents();
             services.AddSingleton<CopyTradingCache>();
         }
 
