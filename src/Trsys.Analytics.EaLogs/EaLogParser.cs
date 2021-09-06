@@ -53,13 +53,19 @@ namespace Trsys.Analytics.EaLogs
             var events = new List<ILogInfo>();
             foreach (var line in context.Lines.ToArray())
             {
+                var parsed = false;
                 foreach (var parser in Parsers)
                 {
                     if (parser.TryConvert(context, line, out var ev))
                     {
+                        parsed = true;
                         events.Add(ev);
                         break;
                     }
+                }
+                if (!parsed)
+                {
+                    events.Add(new UnknownLog(line.Timestamp.Value, context.Key, context.KeyType, context.Version, context.Token, line.LogLevel, line.Message));
                 }
             }
             return events;
