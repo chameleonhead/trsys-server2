@@ -17,6 +17,7 @@ namespace Trsys.CopyTrading
             if (options.ServiceEndpoint == "InMemory")
             {
                 services.AddSingleton<IEaService, EaService>();
+                services.AddSingleton<CopyTradingEventHandler>();
                 services.AddInMemoryEaServiceInfrastructure();
             }
             else

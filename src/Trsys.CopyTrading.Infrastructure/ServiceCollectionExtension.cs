@@ -8,7 +8,7 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         public static IServiceCollection AddInMemoryEaServiceInfrastructure(this IServiceCollection services)
         {
-            services.AddSingleton<IEventQueue, EventQueue>();
+            services.AddSingleton<IEventQueue, BlockingEventQueue>();
             services.AddSingleton<InMemoryCopyTradingContext>();
             services.AddSingleton<IEaStore, InMemoryEaStore>();
             services.AddSingleton<IEaLogAnalyzer, EaLogAnalyzer>();

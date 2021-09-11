@@ -90,5 +90,12 @@ namespace Trsys.CopyTrading.Abstractions
             }
             return currentOrderText;
         }
+
+        public override void Dispose()
+        {
+            orderBus.OrderOpenPublished -= OnOrderOpenPublished;
+            orderBus.OrderClosePublished -= OnOrderClosePublished;
+            base.Dispose();
+        }
     }
 }

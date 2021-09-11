@@ -17,6 +17,7 @@ namespace Trsys.CopyTrading.Service
         {
             services.AddGrpc();
             services.AddSingleton<IEaService, Application.EaService>();
+            services.AddSingleton<CopyTradingEventHandler>();
             services.AddInMemoryEaServiceInfrastructure();
             services.AddEventHandlers(new[] { typeof(CopyTradingEventHandler) })
                 .AddInMemoryEventInfrastructure();
