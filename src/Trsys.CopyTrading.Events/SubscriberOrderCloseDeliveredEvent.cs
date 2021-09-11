@@ -1,7 +1,7 @@
 ﻿using System;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.CopyTrading.Events
 {
     public class SubscriberOrderCloseDeliveredEvent : IEvent
     {
@@ -9,19 +9,19 @@ namespace Trsys.CopyTrading.Abstractions
         {
         }
 
-        public SubscriberOrderCloseDeliveredEvent(SubscriberOrder subscriberOrder)
+        public SubscriberOrderCloseDeliveredEvent(string subscriberKey, string publisherKey, string text, int ticketNo, string symbol, string orderType, decimal price, decimal lots, long time)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            SubscriberKey = subscriberOrder.SubscriberKey;
-            PublisherKey = subscriberOrder.PublisherKey;
-            Text = subscriberOrder.Text;
-            TicketNo = subscriberOrder.TicketNo;
-            Symbol = subscriberOrder.Symbol;
-            OrderType = subscriberOrder.OrderType;
-            Price = subscriberOrder.Price;
-            Lots = subscriberOrder.Lots;
-            Time = subscriberOrder.Time;
+            SubscriberKey = subscriberKey;
+            PublisherKey = publisherKey;
+            Text = text;
+            TicketNo = ticketNo;
+            Symbol = symbol;
+            OrderType = orderType;
+            Price = price;
+            Lots = lots;
+            Time = time;
         }
 
         public string Id { get; set; }
@@ -32,7 +32,7 @@ namespace Trsys.CopyTrading.Abstractions
         public string Text { get; set; }
         public int TicketNo { get; set; }
         public string Symbol { get; set; }
-        public OrderType OrderType { get; set; }
+        public string OrderType { get; set; }
         public decimal Price { get; set; }
         public decimal Lots { get; set; }
         public long Time { get; set; }

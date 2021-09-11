@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.CopyTrading.Events;
 using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Application
@@ -33,7 +35,7 @@ namespace Trsys.CopyTrading.Application
         public async Task AddSecretKeyAsync(string key, string keyType)
         {
             var secretKey = await keyStore.AddAsync(key, keyType);
-            publisher.Publish(new SecretKeyRegisteredEvent(secretKey));
+            publisher.Publish(new SecretKeyRegisteredEvent(secretKey.Key, secretKey.KeyType));
         }
 
         public async Task RemvoeSecretKeyAsync(string key, string keyType)
@@ -42,12 +44,12 @@ namespace Trsys.CopyTrading.Application
             if (session != null)
             {
                 await sessionStore.RemoveAsync(session);
-                publisher.Publish(new EaSessionDiscardedEvent(session));
+                publisher.Publish(new EaSessionDiscardedEvent(session.Key, session.KeyType, session.Token));
             }
             var secretKey = await keyStore.RemoveAsync(key, keyType);
             if (secretKey != null)
             {
-                publisher.Publish(new SecretKeyUnregisteredEvent(secretKey));
+                publisher.Publish(new SecretKeyUnregisteredEvent(secretKey.Key, secretKey.KeyType));
             }
         }
 
@@ -59,7 +61,7 @@ namespace Trsys.CopyTrading.Application
                 return null;
             }
             var session = await sessionStore.CreateSessionAsync(secretKey);
-            publisher.Publish(new EaSessionGeneratedEvent(session));
+            publisher.Publish(new EaSessionGeneratedEvent(session.Key, session.KeyType, session.Token));
             return session;
         }
 
@@ -75,7 +77,7 @@ namespace Trsys.CopyTrading.Application
                 throw new EaSessionTokenInvalidException();
             }
             await sessionStore.RemoveAsync(session);
-            publisher.Publish(new EaSessionDiscardedEvent(session));
+            publisher.Publish(new EaSessionDiscardedEvent(session.Key, session.KeyType, session.Token));
         }
 
         public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
@@ -89,7 +91,7 @@ namespace Trsys.CopyTrading.Application
             {
                 throw new EaSessionTokenInvalidException();
             }
-            publisher.Publish(new EaSessionValidatedEvent(session));
+            publisher.Publish(new EaSessionValidatedEvent(session.Key, session.KeyType, session.Token));
         }
 
         public async Task PublishOrderTextAsync(string key, string text)
@@ -101,19 +103,53 @@ namespace Trsys.CopyTrading.Application
                 publisher.Publish(new OrderTextPublishedEvent(key, text));
                 if (result.Changed)
                 {
-                    publisher.Publish(new ActiveOrderPublishedEvent(key, result.ActiveOrder));
+                    publisher.Publish(new ActiveOrderPublishedEvent(key, result.ActiveOrder.OrderText.Text, result.ActiveOrder.Orders.Select(e => new ActiveOrderPublishedEvent.PublisherOrderDto
+                    {
+                        PublisherKey = e.PublisherKey,
+                        Text = e.Text,
+                        TicketNo = e.TicketNo,
+                        Symbol = e.Symbol,
+                        OrderType = e.OrderType.ToString(),
+                        Price = e.Price,
+                        Lots = e.Lots,
+                        Time = e.Time,
+                    })));
                 }
                 foreach (var item in result.Opened)
                 {
-                    publisher.Publish(new PublisherOrderOpenPublishedEvent(item));
+                    publisher.Publish(new PublisherOrderOpenPublishedEvent(
+                        item.PublisherKey,
+                        item.Text,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType.ToString(),
+                        item.Price,
+                        item.Lots,
+                        item.Time));
                 }
                 foreach (var item in result.Closed)
                 {
-                    publisher.Publish(new PublisherOrderClosePublishedEvent(item));
+                    publisher.Publish(new PublisherOrderClosePublishedEvent(
+                        item.PublisherKey,
+                        item.Text,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType.ToString(),
+                        item.Price,
+                        item.Lots,
+                        item.Time));
                 }
                 foreach (var item in result.Ignored)
                 {
-                    publisher.Publish(new PublisherOrderIgnoredEvent(item));
+                    publisher.Publish(new PublisherOrderIgnoredEvent(
+                        item.PublisherKey,
+                        item.Text,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType.ToString(),
+                        item.Price,
+                        item.Lots,
+                        item.Time));
                 }
             }
         }
@@ -126,11 +162,29 @@ namespace Trsys.CopyTrading.Application
             {
                 foreach (var item in diff.Opened)
                 {
-                    publisher.Publish(new SubscriberOrderOpenDeliveredEvent(item));
+                    publisher.Publish(new SubscriberOrderOpenDeliveredEvent(
+                        item.SubscriberKey,
+                        item.PublisherKey,
+                        item.Text,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType.ToString(),
+                        item.Price,
+                        item.Lots,
+                        item.Time));
                 }
                 foreach (var item in diff.Closed)
                 {
-                    publisher.Publish(new SubscriberOrderCloseDeliveredEvent(item));
+                    publisher.Publish(new SubscriberOrderCloseDeliveredEvent(
+                        item.SubscriberKey,
+                        item.PublisherKey,
+                        item.Text,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType.ToString(),
+                        item.Price,
+                        item.Lots,
+                        item.Time));
                 }
             }
             return orderText.OrderText;

@@ -1,25 +1,25 @@
 ﻿using System;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.CopyTrading.Events
 {
-    public class SecretKeyUnregisteredEvent : IEvent
+    public class SecretKeyRegisteredEvent : IEvent
     {
-        public SecretKeyUnregisteredEvent()
+        public SecretKeyRegisteredEvent()
         {
         }
 
-        public SecretKeyUnregisteredEvent(SecretKey secretKey)
+        public SecretKeyRegisteredEvent(string key, string keyType)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            Key = secretKey.Key;
-            KeyType = secretKey.KeyType;
+            Key = key;
+            KeyType = keyType;
         }
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "SecretKeyUnregistered";
+        public string Type => "SecretKeyRegistered";
         public string Key { get; set; }
         public string KeyType { get; set; }
     }

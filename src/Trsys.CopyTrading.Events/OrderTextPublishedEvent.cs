@@ -1,7 +1,7 @@
 ﻿using System;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.CopyTrading.Events
 {
     public class OrderTextPublishedEvent : IEvent
     {

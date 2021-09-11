@@ -1,7 +1,7 @@
 ﻿using System;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.CopyTrading.Events
 {
     public class EaSessionValidatedEvent : IEvent
     {
@@ -9,13 +9,13 @@ namespace Trsys.CopyTrading.Abstractions
         {
         }
 
-        public EaSessionValidatedEvent(EaSession session)
+        public EaSessionValidatedEvent(string key, string keyType, string token)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            Key = session.Key;
-            KeyType = session.KeyType;
-            Token = session.Token;
+            Key = key;
+            KeyType = keyType;
+            Token = token;
         }
 
         public string Id { get; set; }

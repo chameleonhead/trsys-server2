@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Trsys.CopyTrading.EaLogs\Trsys.CopyTrading.EaLogs.csproj" />
     <ProjectReference Include="..\Trsys.CopyTrading.Abstractions\Trsys.CopyTrading.Abstractions.csproj" />
+    <ProjectReference Include="..\Trsys.CopyTrading.Events\Trsys.CopyTrading.Events.csproj" />
   </ItemGroup>
 
   <ItemGroup>

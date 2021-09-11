@@ -1,7 +1,7 @@
 ﻿using System;
 using Trsys.Events.Abstractions;
 
-namespace Trsys.CopyTrading.Abstractions
+namespace Trsys.CopyTrading.Events
 {
     public class PublisherOrderIgnoredEvent : IEvent
     {
@@ -9,18 +9,18 @@ namespace Trsys.CopyTrading.Abstractions
         {
         }
 
-        public PublisherOrderIgnoredEvent(PublisherOrder publisherOrder)
+        public PublisherOrderIgnoredEvent(string publisherKey, string text, int ticketNo, string symbol, string orderType, decimal price, decimal lots, long time)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
-            PublisherKey = publisherOrder.PublisherKey;
-            Text = publisherOrder.Text;
-            TicketNo = publisherOrder.TicketNo;
-            Symbol = publisherOrder.Symbol;
-            OrderType = publisherOrder.OrderType;
-            Price = publisherOrder.Price;
-            Lots = publisherOrder.Lots;
-            Time = publisherOrder.Time;
+            PublisherKey = publisherKey;
+            Text = text;
+            TicketNo = ticketNo;
+            Symbol = symbol;
+            OrderType = orderType;
+            Price = price;
+            Lots = lots;
+            Time = time;
         }
 
         public string Id { get; set; }
@@ -30,7 +30,7 @@ namespace Trsys.CopyTrading.Abstractions
         public string Text { get; set; }
         public int TicketNo { get; set; }
         public string Symbol { get; set; }
-        public OrderType OrderType { get; set; }
+        public string OrderType { get; set; }
         public decimal Price { get; set; }
         public decimal Lots { get; set; }
         public long Time { get; set; }
