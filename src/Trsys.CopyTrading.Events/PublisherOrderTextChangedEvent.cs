@@ -3,13 +3,13 @@ using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Events
 {
-    public class OrderTextPublishedEvent : IEvent
+    public class PublisherOrderTextChangedEvent : IEvent
     {
-        public OrderTextPublishedEvent()
+        public PublisherOrderTextChangedEvent()
         {
         }
 
-        public OrderTextPublishedEvent(string publisherKey, string text)
+        public PublisherOrderTextChangedEvent(string publisherKey, string text)
         {
             Id = Guid.NewGuid().ToString();
             Timestamp = DateTimeOffset.UtcNow;
@@ -19,7 +19,7 @@ namespace Trsys.CopyTrading.Events
 
         public string Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }
-        public string Type => "OrderTextPublished";
+        public string Type => "PublisherOrderTextChanged";
         public string PublisherKey { get; set; }
         public string Text { get; set; }
     }

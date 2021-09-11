@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
+using System;
+using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.Service;
@@ -61,12 +61,7 @@ namespace Trsys.CopyTrading
             switch (response.Result)
             {
                 case GenerateSessionTokenResponse.Types.Result.Success:
-                    return new EaSession()
-                    {
-                        Key = key,
-                        KeyType = keyType,
-                        Token = response.Token
-                    };
+                    return new EaSession(key, keyType, response.Token);
                 case GenerateSessionTokenResponse.Types.Result.KeyInUse:
                     throw new EaSessionAlreadyExistsException();
                 case GenerateSessionTokenResponse.Types.Result.InvalidKey:

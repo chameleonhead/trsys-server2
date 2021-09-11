@@ -2,8 +2,15 @@
 {
     public class EaSession
     {
-        public string Token { get; set; }
-        public string Key { get; set; }
-        public string KeyType { get; set; }
+        public EaSession(string key, string keyType, string token)
+        {
+            Key = key;
+            KeyType = keyType;
+            Token = token;
+        }
+
+        public string Key { get; }
+        public string KeyType { get; }
+        public string Token { get; }
     }
 }

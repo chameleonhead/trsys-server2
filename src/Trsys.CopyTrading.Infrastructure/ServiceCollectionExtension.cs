@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.CopyTrading.EaLogs;
 
 namespace Trsys.CopyTrading.Infrastructure
 {
@@ -7,12 +8,10 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         public static IServiceCollection AddInMemoryEaServiceInfrastructure(this IServiceCollection services)
         {
+            services.AddSingleton<IEventQueue, EventQueue>();
             services.AddSingleton<InMemoryCopyTradingContext>();
-            services.AddSingleton<IEaSessionStore, InMemoryEaSessionStore>();
-            services.AddSingleton<ISecretKeyStore, InMemorySecretKeyStore>();
-            services.AddSingleton<IPublisherOrderStore, InMemoryPublisherOrderStore>();
-            services.AddSingleton<IActiveOrderStore, InMemoryActiveOrderStore>();
-            services.AddSingleton<ISubscriberOrderStore, InMemorySubscriberOrderStore>();
+            services.AddSingleton<IEaStore, InMemoryEaStore>();
+            services.AddSingleton<IEaLogAnalyzer, EaLogAnalyzer>();
             return services;
         }
     }

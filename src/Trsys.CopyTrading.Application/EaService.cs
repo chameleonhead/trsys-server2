@@ -2,203 +2,96 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.CopyTrading.EaLogs;
 using Trsys.CopyTrading.Events;
-using Trsys.Events.Abstractions;
 
 namespace Trsys.CopyTrading.Application
 {
     public class EaService : IEaService
     {
-        private readonly ISecretKeyStore keyStore;
-        private readonly IEaSessionStore sessionStore;
-        private readonly IPublisherOrderStore publisherOrderStore;
-        private readonly IActiveOrderStore activeOrderStore;
-        private readonly ISubscriberOrderStore subscriberOrderStore;
-        private readonly IEventPublisher publisher;
+        private readonly IEaStore eaStore;
+        private readonly IEaLogAnalyzer eaLogAnalyzer;
 
-        public EaService(
-            ISecretKeyStore keyStore,
-            IEaSessionStore sessionStore,
-            IPublisherOrderStore publisherOrderStore,
-            IActiveOrderStore activeOrderStore,
-            ISubscriberOrderStore subscriberOrderStore,
-            IEventPublisher publisher)
+        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer)
         {
-            this.keyStore = keyStore;
-            this.sessionStore = sessionStore;
-            this.publisherOrderStore = publisherOrderStore;
-            this.activeOrderStore = activeOrderStore;
-            this.subscriberOrderStore = subscriberOrderStore;
-            this.publisher = publisher;
+            this.eaStore = eaStore;
+            this.eaLogAnalyzer = eaLogAnalyzer;
         }
 
-        public async Task AddSecretKeyAsync(string key, string keyType)
+        public Task AddSecretKeyAsync(string key, string keyType)
         {
-            var secretKey = await keyStore.AddAsync(key, keyType);
-            publisher.Publish(new SecretKeyRegisteredEvent(secretKey.Key, secretKey.KeyType));
+            eaStore.Add(key, keyType);
+            return Task.CompletedTask;
         }
 
-        public async Task RemvoeSecretKeyAsync(string key, string keyType)
+        public Task RemvoeSecretKeyAsync(string key, string keyType)
         {
-            var session = await sessionStore.FindByKeyAsync(key, keyType);
-            if (session != null)
+            eaStore.Remove(key, keyType);
+            return Task.CompletedTask;
+        }
+
+        public Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
+        {
+            var ea = eaStore.Find(key, keyType);
+            if (ea == null)
             {
-                await sessionStore.RemoveAsync(session);
-                publisher.Publish(new EaSessionDiscardedEvent(session.Key, session.KeyType, session.Token));
+                return Task.FromResult(default(EaSession));
             }
-            var secretKey = await keyStore.RemoveAsync(key, keyType);
-            if (secretKey != null)
-            {
-                publisher.Publish(new SecretKeyUnregisteredEvent(secretKey.Key, secretKey.KeyType));
-            }
+            return Task.FromResult(ea.GenerateSession());
         }
 
-        public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
+        public Task DiscardSessionTokenAsync(string token, string key, string keyType)
         {
-            var secretKey = await keyStore.FindAsync(key, keyType);
-            if (secretKey is null)
-            {
-                return null;
-            }
-            var session = await sessionStore.CreateSessionAsync(secretKey);
-            publisher.Publish(new EaSessionGeneratedEvent(session.Key, session.KeyType, session.Token));
-            return session;
-        }
-
-        public async Task DiscardSessionTokenAsync(string token, string key, string keyType)
-        {
-            var session = await sessionStore.FindByTokenAsync(token);
-            if (session is null)
+            var ea = eaStore.Find(key, keyType);
+            if (ea == null)
             {
                 throw new EaSessionTokenNotFoundException();
             }
-            if (session.Key != key || session.KeyType != keyType)
-            {
-                throw new EaSessionTokenInvalidException();
-            }
-            await sessionStore.RemoveAsync(session);
-            publisher.Publish(new EaSessionDiscardedEvent(session.Key, session.KeyType, session.Token));
+            ea.DiscardSession(token);
+            return Task.CompletedTask;
         }
 
-        public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
+        public Task ValidateSessionTokenAsync(string token, string key, string keyType)
         {
-            var session = await sessionStore.FindByTokenAsync(token);
-            if (session is null)
+            var ea = eaStore.Find(key, keyType);
+            if (ea == null)
             {
                 throw new EaSessionTokenNotFoundException();
             }
-            if (session.Key != key || session.KeyType != keyType)
-            {
-                throw new EaSessionTokenInvalidException();
-            }
-            publisher.Publish(new EaSessionValidatedEvent(session.Key, session.KeyType, session.Token));
+            ea.ValidateSession(token);
+            return Task.CompletedTask;
         }
 
-        public async Task PublishOrderTextAsync(string key, string text)
+        public Task PublishOrderTextAsync(string key, string text)
         {
-            var diff = await publisherOrderStore.SetOrderTextAsync(key, text);
-            if (diff.HasDifference)
+            var publisher = eaStore.Find(key, "Publisher") as Publisher;
+            if (publisher == null)
             {
-                var result = await activeOrderStore.ApplyChangesAsync(diff);
-                publisher.Publish(new OrderTextPublishedEvent(key, text));
-                if (result.Changed)
-                {
-                    publisher.Publish(new ActiveOrderPublishedEvent(key, result.ActiveOrder.OrderText.Text, result.ActiveOrder.Orders.Select(e => new ActiveOrderPublishedEvent.PublisherOrderDto
-                    {
-                        PublisherKey = e.PublisherKey,
-                        Text = e.Text,
-                        TicketNo = e.TicketNo,
-                        Symbol = e.Symbol,
-                        OrderType = e.OrderType.ToString(),
-                        Price = e.Price,
-                        Lots = e.Lots,
-                        Time = e.Time,
-                    })));
-                }
-                foreach (var item in result.Opened)
-                {
-                    publisher.Publish(new PublisherOrderOpenPublishedEvent(
-                        item.PublisherKey,
-                        item.Text,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType.ToString(),
-                        item.Price,
-                        item.Lots,
-                        item.Time));
-                }
-                foreach (var item in result.Closed)
-                {
-                    publisher.Publish(new PublisherOrderClosePublishedEvent(
-                        item.PublisherKey,
-                        item.Text,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType.ToString(),
-                        item.Price,
-                        item.Lots,
-                        item.Time));
-                }
-                foreach (var item in result.Ignored)
-                {
-                    publisher.Publish(new PublisherOrderIgnoredEvent(
-                        item.PublisherKey,
-                        item.Text,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType.ToString(),
-                        item.Price,
-                        item.Lots,
-                        item.Time));
-                }
+                throw new EaSessionTokenNotFoundException();
             }
+            publisher.UpdateOrderText(text);
+            return Task.CompletedTask;
         }
 
-        public async Task<OrderText> GetOrderTextAsync(string key)
+        public Task<OrderText> GetOrderTextAsync(string key)
         {
-            var orderText = await activeOrderStore.GetActiveOrderAsync();
-            var diff = await subscriberOrderStore.SetOrderTextAsync(key, orderText);
-            if (diff.HasDifference)
+            var subscriber = eaStore.Find(key, "Subscriber") as Subscriber;
+            if (subscriber == null)
             {
-                foreach (var item in diff.Opened)
-                {
-                    publisher.Publish(new SubscriberOrderOpenDeliveredEvent(
-                        item.SubscriberKey,
-                        item.PublisherKey,
-                        item.Text,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType.ToString(),
-                        item.Price,
-                        item.Lots,
-                        item.Time));
-                }
-                foreach (var item in diff.Closed)
-                {
-                    publisher.Publish(new SubscriberOrderCloseDeliveredEvent(
-                        item.SubscriberKey,
-                        item.PublisherKey,
-                        item.Text,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType.ToString(),
-                        item.Price,
-                        item.Lots,
-                        item.Time));
-                }
+                throw new EaSessionTokenNotFoundException();
             }
-            return orderText.OrderText;
+            return Task.FromResult(subscriber.GetOrderText());
         }
 
         public Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)
         {
-            publisher.Publish(new EaLogReceivedEvent(timestamp, key, keyType, version, text));
+            eaLogAnalyzer.AnalyzeLog(timestamp, key, keyType, version, token, text);
             return Task.CompletedTask;
         }
 
         public Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            publisher.Publish(new EaLogReceivedV2Event(serverTimestamp, eaTimestamp, key, keyType, version, text));
+            eaLogAnalyzer.AnalyzeLog(serverTimestamp, eaTimestamp, key, keyType, version, token, text);
             return Task.CompletedTask;
         }
     }

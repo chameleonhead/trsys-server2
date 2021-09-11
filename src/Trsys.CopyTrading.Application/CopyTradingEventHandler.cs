@@ -22,7 +22,7 @@ namespace Trsys.CopyTrading.Application
                     break;
                 case EaSessionValidatedEvent ev:
                     break;
-                case OrderTextPublishedEvent ev:
+                case PublisherOrderTextChangedEvent ev:
                     break;
                 case PublisherOrderOpenPublishedEvent ev:
                     break;
@@ -35,10 +35,6 @@ namespace Trsys.CopyTrading.Application
                 case SubscriberOrderOpenDeliveredEvent ev:
                     break;
                 case SubscriberOrderCloseDeliveredEvent ev:
-                    break;
-                case EaLogReceivedEvent ev:
-                    break;
-                case EaLogReceivedV2Event ev:
                     break;
             }
             return Task.CompletedTask;
