@@ -9,9 +9,9 @@ namespace Trsys.CopyTrading.Application
     {
         private readonly IEaStore eaStore;
         private readonly IEaLogAnalyzer eaLogAnalyzer;
-        private readonly OrderNotificationBus orderBus;
+        private readonly IOrderNotificationBus orderBus;
 
-        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, OrderNotificationBus orderBus)
+        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, IOrderNotificationBus orderBus)
         {
             this.eaStore = eaStore;
             this.eaLogAnalyzer = eaLogAnalyzer;

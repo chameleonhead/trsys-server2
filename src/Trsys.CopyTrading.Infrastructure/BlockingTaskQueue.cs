@@ -22,6 +22,19 @@ namespace Trsys.CopyTrading.Infrastructure
             }
         }
 
+        public void Enqueue(Action func)
+        {
+            events.Add(token =>
+            {
+                func.Invoke();
+                return Task.CompletedTask;
+            });
+            if (Interlocked.CompareExchange(ref lockValue, 1, 0) == 0)
+            {
+                task = Task.Run(() => StartProcess(source.Token));
+            }
+        }
+
         public async Task StartProcess(CancellationToken cancellationToken)
         {
             try

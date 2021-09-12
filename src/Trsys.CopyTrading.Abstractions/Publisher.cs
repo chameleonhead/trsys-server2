@@ -5,9 +5,9 @@ namespace Trsys.CopyTrading.Abstractions
     public class Publisher : EaBase
     {
         private OrderText CurrentOrder = OrderText.Empty;
-        private OrderNotificationBus orderBus;
+        private IOrderNotificationBus orderBus;
 
-        public Publisher(string key, IEventQueue events, OrderNotificationBus orderBus) : base(key, "Publisher", events)
+        public Publisher(string key, IEventQueue events, IOrderNotificationBus orderBus) : base(key, "Publisher", events)
         {
             this.orderBus = orderBus;
         }

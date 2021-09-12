@@ -7,9 +7,9 @@ namespace Trsys.CopyTrading.Infrastructure
     {
         private readonly InMemoryCopyTradingContext context;
         private readonly IEventQueue events;
-        private readonly OrderNotificationBus orderBus;
+        private readonly IOrderNotificationBus orderBus;
 
-        public InMemoryEaStore(InMemoryCopyTradingContext context, IEventQueue events, OrderNotificationBus orderBus)
+        public InMemoryEaStore(InMemoryCopyTradingContext context, IEventQueue events, IOrderNotificationBus orderBus)
         {
             this.context = context;
             this.events = events;

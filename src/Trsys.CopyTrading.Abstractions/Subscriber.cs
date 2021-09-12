@@ -6,13 +6,13 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public class Subscriber : EaBase
     {
-        private OrderNotificationBus orderBus;
+        private IOrderNotificationBus orderBus;
         private HashSet<PublisherOrderKey> currentOrders = new();
         private OrderText currentOrderText = OrderText.Empty;
         private HashSet<PublisherOrderKey> publishedOrders = new();
         private OrderText publishedOrderText = null;
 
-        public Subscriber(string key, IEventQueue events, OrderNotificationBus orderBus) : base(key, "Subscriber", events)
+        public Subscriber(string key, IEventQueue events, IOrderNotificationBus orderBus) : base(key, "Subscriber", events)
         {
             this.orderBus = orderBus;
             this.orderBus.OrderOpenPublished += OnOrderOpenPublished;
