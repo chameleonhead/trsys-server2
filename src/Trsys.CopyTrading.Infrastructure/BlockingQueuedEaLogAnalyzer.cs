@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
+using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.EaLogs;
 
 namespace Trsys.CopyTrading.Infrastructure
@@ -22,8 +23,10 @@ namespace Trsys.CopyTrading.Infrastructure
                 var logs = EaLogParser.Parse(serverTimestamp, key, keyType, token, version, text);
                 foreach (var log in logs)
                 {
-                    switch (log)
+                    var e = LogEventMapper.Map(log);
+                    if (e != null)
                     {
+                        events.Enqueue(e);
                     }
                 }
                 return Task.CompletedTask;
@@ -37,8 +40,10 @@ namespace Trsys.CopyTrading.Infrastructure
                 var logs = EaLogParser.Parse(timestamp, key, keyType, token, version, text);
                 foreach (var log in logs)
                 {
-                    switch (log)
+                    var e = LogEventMapper.Map(log);
+                    if (e != null)
                     {
+                        events.Enqueue(e);
                     }
                 }
                 return Task.CompletedTask;
