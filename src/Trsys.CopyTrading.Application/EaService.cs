@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.EaLogs;
-using Trsys.CopyTrading.Events;
 
 namespace Trsys.CopyTrading.Application
 {
@@ -11,11 +9,13 @@ namespace Trsys.CopyTrading.Application
     {
         private readonly IEaStore eaStore;
         private readonly IEaLogAnalyzer eaLogAnalyzer;
+        private readonly OrderNotificationBus orderBus;
 
-        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer)
+        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, OrderNotificationBus orderBus)
         {
             this.eaStore = eaStore;
             this.eaLogAnalyzer = eaLogAnalyzer;
+            this.orderBus = orderBus;
         }
 
         public Task AddSecretKeyAsync(string key, string keyType)
@@ -93,6 +93,16 @@ namespace Trsys.CopyTrading.Application
         {
             eaLogAnalyzer.AnalyzeLog(serverTimestamp, eaTimestamp, key, keyType, version, token, text);
             return Task.CompletedTask;
+        }
+
+        public void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        {
+            orderBus.AddSubscriberOrderUpdateHandler(handler);
+        }
+
+        public void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        {
+            orderBus.RemoveSubscriberOrderUpdateHandler(handler);
         }
     }
 }

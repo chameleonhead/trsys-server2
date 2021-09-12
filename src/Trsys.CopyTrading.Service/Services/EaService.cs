@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
@@ -223,6 +224,36 @@ namespace Trsys.CopyTrading.Service
                     Message = ex.Message,
                 };
             }
+        }
+
+
+        public override async Task GetOrderTextStream(GetOrderTextStreamRequest request, IServerStreamWriter<GetOrderTextStreamResponse> responseStream, ServerCallContext context)
+        {
+            Action<string, OrderText> handler = async (string subscriberKey, OrderText text) =>
+            {
+                try
+                {
+                    await responseStream.WriteAsync(new GetOrderTextStreamResponse()
+                    {
+                        Key = subscriberKey,
+                        Hash = text.Hash,
+                        Text = text.Text,
+                    });
+                }
+                catch
+                {
+                }
+            };
+            service.SubscribeSubscriberOrderUpdate(handler);
+            context.CancellationToken.Register(() => service.UnsubscribeSubscriberOrderUpdate(handler));
+            await AwaitCancellation(context.CancellationToken);
+        }
+
+        private static Task AwaitCancellation(CancellationToken token)
+        {
+            var completion = new TaskCompletionSource<object>();
+            token.Register(() => completion.SetResult(null));
+            return completion.Task;
         }
     }
 }

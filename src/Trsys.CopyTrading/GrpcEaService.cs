@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
@@ -188,6 +189,22 @@ namespace Trsys.CopyTrading
                 default:
                     throw new Exception(response.Message);
             }
+        }
+
+        public async void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        {
+            var service = new Ea.EaClient(channel);
+            using var stream = service.GetOrderTextStream(new GetOrderTextStreamRequest());
+            var reader = stream.ResponseStream;
+            while (await reader.MoveNext(CancellationToken.None))
+            {
+                var response = reader.Current;
+                handler.Invoke(response.Key, OrderText.Parse(response.Text));
+            }
+        }
+
+        public void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        {
         }
     }
 }

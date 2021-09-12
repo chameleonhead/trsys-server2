@@ -15,5 +15,7 @@ namespace Trsys.CopyTrading.Application
         Task<OrderText> GetOrderTextAsync(string key);
         Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text);
         Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text);
+        void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler);
+        void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler);
     }
 }

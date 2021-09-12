@@ -6,7 +6,6 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public class Subscriber : EaBase
     {
-        record PublisherOrderKey(string PublisherKey, int TicketNo);
         private OrderNotificationBus orderBus;
         private HashSet<PublisherOrderKey> currentOrders = new();
         private OrderText currentOrderText = OrderText.Empty;
@@ -28,6 +27,7 @@ namespace Trsys.CopyTrading.Abstractions
             }
             currentOrders.Add(new PublisherOrderKey(e.PublisherKey, e.OrderText.TicketNo));
             currentOrderText = OrderText.Parse(e.OrderText.Text);
+            orderBus.UpdateSubscriberOrder(Key, currentOrderText);
         }
 
         private void OnOrderClosePublished(object sender, OrderEventArgs e)
@@ -36,9 +36,12 @@ namespace Trsys.CopyTrading.Abstractions
             {
                 return;
             }
-            if (currentOrders.Contains(new PublisherOrderKey(e.PublisherKey, e.OrderText.TicketNo)))
+            var key = new PublisherOrderKey(e.PublisherKey, e.OrderText.TicketNo);
+            if (currentOrders.Contains(key))
             {
+                currentOrders.Remove(key);
                 currentOrderText = OrderText.Empty;
+                orderBus.UpdateSubscriberOrder(Key, currentOrderText);
             }
         }
 
@@ -97,5 +100,6 @@ namespace Trsys.CopyTrading.Abstractions
             orderBus.OrderClosePublished -= OnOrderClosePublished;
             base.Dispose();
         }
+        record PublisherOrderKey(string PublisherKey, int TicketNo);
     }
 }
