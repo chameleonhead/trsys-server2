@@ -1,5 +1,6 @@
 ﻿using LoadTesting.Client;
 using LoadTesting.Extensions;
+using LoadTesting.Server;
 using LoadTesting.Server.CopyTrading;
 using LoadTesting.Server.Frontend;
 using NBomber.Contracts;
@@ -21,6 +22,7 @@ namespace LoadTesting
 
         static void Main(string[] args)
         {
+            using var zipkin = new ProcessRunner("docker", "run --rm -p 9411:9411 openzipkin/zipkin");
             using var copyTradingServer = CopyTradingServer.CreateServer();
             using var frontendServer = FrontendServer.CreateServer();
             var publisherKey = "MT4/OANDA Corporation/899999999/2";
