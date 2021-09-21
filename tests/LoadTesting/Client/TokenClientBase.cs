@@ -1,6 +1,7 @@
 ﻿using LoadTesting.Extensions;
 using NBomber.Contracts;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace LoadTesting.Client
 {
     public abstract class TokenClientBase
     {
+        protected readonly static ActivitySource source = new("Trsys.Server.Client");
         protected HttpClient Client { get; }
         protected string SecretKey { get; }
         protected string KeyType { get; }
@@ -26,12 +28,14 @@ namespace LoadTesting.Client
 
         public async Task InitializeAsync()
         {
+            using var activity = source.StartActivity("GenerateToken", ActivityKind.Client);
             Token = await Client.GenerateTokenAsync(SecretKey, KeyType);
             isInit = true;
         }
 
         public async Task FinalizeAsync()
         {
+            using var activity = source.StartActivity("InvalidateToken", ActivityKind.Client);
             await Client.InvalidateTokenAsync(SecretKey, KeyType, Token);
             Token = null;
             isInit = false;

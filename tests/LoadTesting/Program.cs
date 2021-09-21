@@ -5,8 +5,12 @@ using LoadTesting.Server.CopyTrading;
 using LoadTesting.Server.Frontend;
 using NBomber.Contracts;
 using NBomber.CSharp;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -22,6 +26,15 @@ namespace LoadTesting
 
         static void Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            Activity.ForceDefaultIdFormat = true;
+            using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+                .SetSampler(new AlwaysOnSampler())
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("LoadTesting"))
+                .AddSource("Trsys.Server.Client")
+                .AddZipkinExporter()
+                .Build();
+
             using var zipkin = new ProcessRunner("docker", "run --rm -p 9411:9411 openzipkin/zipkin");
             using var copyTradingServer = CopyTradingServer.CreateServer();
             using var frontendServer = FrontendServer.CreateServer();
