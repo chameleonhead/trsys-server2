@@ -7,9 +7,9 @@ namespace Trsys.CopyTrading.Abstractions
         event EventHandler<OrderEventArgs> OrderOpenPublished;
         event EventHandler<OrderEventArgs> OrderClosePublished;
 
-        void PublishOpen(string publisherKey, OrderTextItem orderTextItem);
+        void PublishOpen(PublisherOrder order);
 
-        void PublishClose(string publisherKey, OrderTextItem orderTextItem);
+        void PublishClose(PublisherOrder order);
 
         void UpdateSubscriberOrder(string subscriberKey, OrderText text);
 

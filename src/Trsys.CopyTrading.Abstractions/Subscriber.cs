@@ -25,8 +25,8 @@ namespace Trsys.CopyTrading.Abstractions
             {
                 return;
             }
-            currentOrders.Add(new PublisherOrderKey(e.PublisherKey, e.OrderText.TicketNo));
-            currentOrderText = OrderText.Parse(e.OrderText.Text);
+            currentOrders.Add(new PublisherOrderKey(e.Order.PublisherKey, e.Order.TicketNo));
+            currentOrderText = OrderText.Parse(e.Order.Text);
             orderBus.UpdateSubscriberOrder(Key, currentOrderText);
         }
 
@@ -36,7 +36,7 @@ namespace Trsys.CopyTrading.Abstractions
             {
                 return;
             }
-            var key = new PublisherOrderKey(e.PublisherKey, e.OrderText.TicketNo);
+            var key = new PublisherOrderKey(e.Order.PublisherKey, e.Order.TicketNo);
             if (currentOrders.Contains(key))
             {
                 currentOrders.Remove(key);

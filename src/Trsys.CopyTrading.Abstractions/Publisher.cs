@@ -22,7 +22,15 @@ namespace Trsys.CopyTrading.Abstractions
                 Events.Enqueue(new PublisherOrderTextChangedEvent(Key, text));
                 foreach (var item in diff.Opened)
                 {
-                    orderBus.PublishOpen(Key, item);
+                    orderBus.PublishOpen(new PublisherOrder(
+                        Key,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType,
+                        item.Price,
+                        item.Lots,
+                        item.Time,
+                        item.Text));
                     Events.Enqueue(new PublisherOrderOpenPublishedEvent(
                         Key,
                         item.Text,
@@ -35,7 +43,15 @@ namespace Trsys.CopyTrading.Abstractions
                 }
                 foreach (var item in diff.Closed)
                 {
-                    orderBus.PublishClose(Key, item);
+                    orderBus.PublishClose(new PublisherOrder(
+                        Key,
+                        item.TicketNo,
+                        item.Symbol,
+                        item.OrderType,
+                        item.Price,
+                        item.Lots,
+                        item.Time,
+                        item.Text));
                     Events.Enqueue(new PublisherOrderClosePublishedEvent(
                         Key,
                         item.Text,

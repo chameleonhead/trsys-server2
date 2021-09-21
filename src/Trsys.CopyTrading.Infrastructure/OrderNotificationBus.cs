@@ -11,19 +11,19 @@ namespace Trsys.CopyTrading.Infrastructure
         public event EventHandler<OrderEventArgs> OrderClosePublished;
         private List<Action<string, OrderText>> handlers = new();
 
-        public void PublishOpen(string publisherKey, OrderTextItem orderTextItem)
+        public void PublishOpen(PublisherOrder order)
         {
             queue.Enqueue(() =>
             {
-                OrderOpenPublished?.Invoke(this, new OrderEventArgs(publisherKey, orderTextItem));
+                OrderOpenPublished?.Invoke(this, new OrderEventArgs(order));
             });
         }
 
-        public void PublishClose(string publisherKey, OrderTextItem orderTextItem)
+        public void PublishClose(PublisherOrder order)
         {
             queue.Enqueue(() =>
             {
-                OrderClosePublished?.Invoke(this, new OrderEventArgs(publisherKey, orderTextItem));
+                OrderClosePublished?.Invoke(this, new OrderEventArgs(order));
             });
         }
 

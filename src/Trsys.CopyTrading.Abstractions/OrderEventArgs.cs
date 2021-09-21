@@ -4,13 +4,11 @@ namespace Trsys.CopyTrading.Abstractions
 {
     public class OrderEventArgs : EventArgs
     {
-        public OrderEventArgs(string publisherKey, OrderTextItem orderText)
+        public OrderEventArgs(PublisherOrder order)
         {
-            PublisherKey = publisherKey;
-            OrderText = orderText;
+            Order = order;
         }
 
-        public string PublisherKey { get; }
-        public OrderTextItem OrderText { get; }
+        public PublisherOrder Order { get; }
     }
 }
