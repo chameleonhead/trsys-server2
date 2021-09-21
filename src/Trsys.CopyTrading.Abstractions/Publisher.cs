@@ -1,10 +1,12 @@
-﻿using Trsys.CopyTrading.Events;
+﻿using System.Collections.Generic;
+using Trsys.CopyTrading.Events;
 
 namespace Trsys.CopyTrading.Abstractions
 {
     public class Publisher : EaBase
     {
         private OrderText CurrentOrder = OrderText.Empty;
+        private Dictionary<int, PublisherOrder> publisherOrders = new();
         private IOrderNotificationBus orderBus;
 
         public Publisher(string key, IEventQueue events, IOrderNotificationBus orderBus) : base(key, "Publisher", events)
@@ -12,17 +14,16 @@ namespace Trsys.CopyTrading.Abstractions
             this.orderBus = orderBus;
         }
 
-        public void UpdateOrderText(string text)
+        public void UpdateOrderText(OrderText orderText)
         {
-            var orderText = OrderText.Parse(text);
             var diff = OrderDifference.CalculateDifference(CurrentOrder, orderText);
             if (diff.HasDifference)
             {
                 CurrentOrder = orderText;
-                Events.Enqueue(new PublisherOrderTextChangedEvent(Key, text));
+                Events.Enqueue(new PublisherOrderTextChangedEvent(Key, orderText.Text));
                 foreach (var item in diff.Opened)
                 {
-                    orderBus.PublishOpen(new PublisherOrder(
+                    var order = new PublisherOrder(
                         Key,
                         item.TicketNo,
                         item.Symbol,
@@ -30,7 +31,9 @@ namespace Trsys.CopyTrading.Abstractions
                         item.Price,
                         item.Lots,
                         item.Time,
-                        item.Text));
+                        item.Text);
+                    publisherOrders.Add(order.TicketNo, order);
+                    orderBus.PublishOpen(order);
                     Events.Enqueue(new PublisherOrderOpenPublishedEvent(
                         Key,
                         item.Text,
@@ -43,15 +46,9 @@ namespace Trsys.CopyTrading.Abstractions
                 }
                 foreach (var item in diff.Closed)
                 {
-                    orderBus.PublishClose(new PublisherOrder(
-                        Key,
-                        item.TicketNo,
-                        item.Symbol,
-                        item.OrderType,
-                        item.Price,
-                        item.Lots,
-                        item.Time,
-                        item.Text));
+                    var order = publisherOrders[item.TicketNo];
+                    publisherOrders.Remove(item.TicketNo);
+                    orderBus.PublishClose(order);
                     Events.Enqueue(new PublisherOrderClosePublishedEvent(
                         Key,
                         item.Text,

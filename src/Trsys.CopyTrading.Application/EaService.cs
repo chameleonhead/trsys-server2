@@ -69,7 +69,8 @@ namespace Trsys.CopyTrading.Application
             {
                 throw new EaSessionTokenNotFoundException();
             }
-            publisher.UpdateOrderText(text);
+            var orderText = OrderText.Parse(text);
+            publisher.UpdateOrderText(orderText);
             return Task.CompletedTask;
         }
 
