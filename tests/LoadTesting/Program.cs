@@ -35,7 +35,7 @@ namespace LoadTesting
                 .AddZipkinExporter()
                 .Build();
 
-            using var zipkin = new ProcessRunner("docker", "run --rm -p 9411:9411 openzipkin/zipkin");
+            using var zipkin = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml up");
             using var copyTradingServer = CopyTradingServer.CreateServer();
             using var frontendServer = FrontendServer.CreateServer();
             var publisherKey = "MT4/OANDA Corporation/899999999/2";

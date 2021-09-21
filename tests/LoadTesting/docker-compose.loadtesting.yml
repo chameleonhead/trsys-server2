@@ -1,0 +1,13 @@
+﻿version: "3.5"
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    environment:
+      - JAVA_OPTS=-Xms256m -Xms256m -XX:+ExitOnOutOfMemoryError
+      - STORAGE_PORT_3306_TCP_ADDR=zipkin-storage
+    depends_on:
+      - zipkin-storage
+  zipkin-storage:
+    image: openzipkin/zipkin-mysql
