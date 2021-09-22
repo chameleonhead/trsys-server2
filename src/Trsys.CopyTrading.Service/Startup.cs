@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
@@ -25,7 +25,8 @@ namespace Trsys.CopyTrading.Service
             services.AddInMemoryEaServiceInfrastructure();
             services.AddEventHandlers(new[] { typeof(CopyTradingEventHandler) })
                 .AddInMemoryEventInfrastructure();
-            services.AddOpenTelemetryTracing(builder => {
+            services.AddOpenTelemetryTracing(builder =>
+            {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") ?? "copy-trading-server"))
                     .AddAspNetCoreInstrumentation()

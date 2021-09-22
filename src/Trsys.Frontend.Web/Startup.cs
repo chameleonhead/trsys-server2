@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
-using System.Collections.Generic;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
 using Trsys.CopyTrading.Application;
@@ -46,7 +44,8 @@ namespace Trsys.Frontend.Web
                     .AddInMemoryEventInfrastructure();
             }
             services.AddSingleton<CopyTradingCache>();
-            services.AddOpenTelemetryTracing(builder => {
+            services.AddOpenTelemetryTracing(builder =>
+            {
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") ?? "trsys-server"))
                     .AddAspNetCoreInstrumentation()
