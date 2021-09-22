@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net.Http;
-using Grpc.Core;
+using System.Net.Security;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Trsys.CopyTrading.Application;
@@ -22,11 +22,15 @@ namespace Trsys.CopyTrading
             }
             else
             {
-                var httpHandler = new HttpClientHandler();
-                // Return `true` to allow certificates that are untrusted/invalid
-                httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                var httpHandler = new SocketsHttpHandler();
+                httpHandler.SslOptions = new SslClientAuthenticationOptions()
+                {
+                    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+                };
+                httpHandler.EnableMultipleHttp2Connections = true;
+
                 var channel = GrpcChannel.ForAddress(options.ServiceEndpoint, new GrpcChannelOptions { HttpHandler = httpHandler });
-                services.AddSingleton<IEaService>(new GrpcEaService(channel));
+                services.AddTransient<IEaService>(service => new GrpcEaService(channel));
             }
             return services;
         }

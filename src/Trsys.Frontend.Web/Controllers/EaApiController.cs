@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
@@ -29,7 +30,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostKey([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
+            Activity.Current.AddEvent(new ActivityEvent("PostKeyStart"));
             await service.AddSecretKeyAsync(key, keyType);
+            Activity.Current.AddEvent(new ActivityEvent("PostKeySuccess"));
             return Ok();
         }
 
@@ -38,7 +41,9 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostDeleteKey([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
+            Activity.Current.AddEvent(new ActivityEvent("DeleteKeyStart"));
             await service.RemvoeSecretKeyAsync(key, keyType);
+            Activity.Current.AddEvent(new ActivityEvent("DeleteKeySuccess"));
             return Ok();
         }
 
@@ -47,18 +52,22 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostToken([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType)
         {
+            Activity.Current.AddEvent(new ActivityEvent("PostTokenStart"));
             try
             {
                 var session = await service.GenerateSessionTokenAsync(key, keyType);
                 if (session is null)
                 {
+                    Activity.Current.AddEvent(new ActivityEvent("PostTokenSessionNotFound"));
                     return BadRequest("InvalidSecretKey");
                 }
                 cache.UpdateValidEaSessionTokenValidity(session.Token);
+                Activity.Current.AddEvent(new ActivityEvent("PostTokenSuccess"));
                 return Ok(session.Token);
             }
             catch (EaSessionAlreadyExistsException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("PostTokenKeyInUse"));
                 return BadRequest("SecretKeyInUse");
             }
         }
@@ -68,18 +77,22 @@ namespace Trsys.Frontend.Web.Controllers
         [Consumes("text/plain")]
         public async Task<IActionResult> PostTokenRelease([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Ea-Type")] string keyType, string token)
         {
+            Activity.Current.AddEvent(new ActivityEvent("DeleteTokenStart"));
             try
             {
                 await service.DiscardSessionTokenAsync(token, key, keyType);
                 cache.RemoveValidEaSessionToken(token);
+                Activity.Current.AddEvent(new ActivityEvent("DeleteTokenSuccess"));
                 return Ok();
             }
             catch (EaSessionTokenNotFoundException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("DeleteTokenUnknownToken"));
                 return BadRequest("InvalidToken");
             }
             catch (EaSessionTokenInvalidException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("DeleteTokenInvalidToken"));
                 return BadRequest("InvalidToken");
             }
         }
@@ -91,16 +104,19 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Subscriber")]
         public async Task<IActionResult> GetOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token)
         {
+            Activity.Current.AddEvent(new ActivityEvent("GetOrdersStart"));
             try
             {
                 if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
                 {
+                    Activity.Current.AddEvent(new ActivityEvent("GetOrdersSessionCacheNotHit"));
                     await service.ValidateSessionTokenAsync(token, key, "Subscriber");
                     cache.UpdateValidEaSessionTokenValidity(token);
                 }
                 var orderText = cache.GetOrderTextCache();
                 if (orderText == null)
                 {
+                    Activity.Current.AddEvent(new ActivityEvent("GetOrdersOrderTextCacheNotHit"));
                     orderText = await service.GetCurrentOrderTextAsync();
                     cache.UpdateOrderTextCache(orderText);
                 }
@@ -111,20 +127,24 @@ namespace Trsys.Frontend.Web.Controllers
                     {
                         if (etag == $"\"{orderText.Hash}\"")
                         {
+                            Activity.Current.AddEvent(new ActivityEvent("GetOrdersNotModified"));
                             return StatusCode(304);
                         }
                     }
                 }
                 await service.SubscribeOrderTextAsync(key, orderText.Text);
                 HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
+                Activity.Current.AddEvent(new ActivityEvent("GetOrdersSuccess"));
                 return Ok(orderText.Text);
             }
             catch (EaSessionTokenNotFoundException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("GetOrdersUnknownToken"));
                 return BadRequest("InvalidToken");
             }
             catch (EaSessionTokenInvalidException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("GetOrdersInvalidToken"));
                 return BadRequest("InvalidToken");
             }
         }
@@ -136,27 +156,33 @@ namespace Trsys.Frontend.Web.Controllers
         [RequireKeyType("Publisher")]
         public async Task<IActionResult> PostOrders([FromHeader(Name = "X-Ea-Id")] string key, [FromHeader(Name = "X-Secret-Token")] string token, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string text)
         {
+            Activity.Current.AddEvent(new ActivityEvent("PostOrdersStart"));
             try
             {
                 if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
                 {
+                    Activity.Current.AddEvent(new ActivityEvent("PostOrdersSessionCacheNotHit"));
                     await service.ValidateSessionTokenAsync(token, key, "Publisher");
                     cache.UpdateValidEaSessionTokenValidity(token);
                 }
                 await service.PublishOrderTextAsync(key, text);
                 cache.RemoveOrderTextCache();
+                Activity.Current.AddEvent(new ActivityEvent("PostOrdersSuccess"));
                 return Ok();
             }
             catch (EaSessionTokenNotFoundException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("PostOrdersUnknownToken"));
                 return BadRequest("InvalidToken");
             }
             catch (EaSessionTokenInvalidException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("PostOrdersInvalidToken"));
                 return BadRequest("InvalidToken");
             }
             catch (OrderTextFormatException)
             {
+                Activity.Current.AddEvent(new ActivityEvent("PostOrdersInvalidOrderTextFormat"));
                 return BadRequest("InvalidOrderText");
             }
         }

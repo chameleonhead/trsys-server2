@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
@@ -11,15 +12,19 @@ namespace Trsys.CopyTrading
 {
     class GrpcEaService : IEaService
     {
+        private readonly static ActivitySource source = new ActivitySource("Trsys.CopyTrading.GrpcClient");
+
         private readonly GrpcChannel channel;
+        private readonly Ea.EaClient service;
 
         public GrpcEaService(GrpcChannel channel)
         {
             this.channel = channel;
+            this.service = new Ea.EaClient(channel);
         }
         public async Task AddSecretKeyAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("AddSecretKeyAsync");
             var response = await service.AddSecretKeyAsync(new AddSecretKeyRequest()
             {
                 Key = key,
@@ -36,7 +41,7 @@ namespace Trsys.CopyTrading
 
         public async Task RemvoeSecretKeyAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("RemvoeSecretKeyAsync");
             var response = await service.RemvoeSecretKeyAsync(new RemvoeSecretKeyRequest()
             {
                 Key = key,
@@ -53,7 +58,7 @@ namespace Trsys.CopyTrading
 
         public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("GenerateSessionTokenAsync");
             var response = await service.GenerateSessionTokenAsync(new GenerateSessionTokenRequest()
             {
                 Key = key,
@@ -74,7 +79,7 @@ namespace Trsys.CopyTrading
 
         public async Task DiscardSessionTokenAsync(string token, string key, string keyType)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("DiscardSessionTokenAsync");
             var response = await service.DiscardSessionTokenAsync(new DiscardSessionTokenRequest()
             {
                 Token = token,
@@ -96,6 +101,7 @@ namespace Trsys.CopyTrading
 
         public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
         {
+            using var activity = source.StartActivity("ValidateSessionTokenAsync");
             var service = new Ea.EaClient(channel);
             var response = await service.ValidateSessionTokenAsync(new ValidateSessionTokenRequest()
             {
@@ -118,7 +124,7 @@ namespace Trsys.CopyTrading
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("PublishOrderTextAsync");
             var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
             {
                 Key = key,
@@ -135,6 +141,7 @@ namespace Trsys.CopyTrading
 
         public async Task<OrderText> GetCurrentOrderTextAsync()
         {
+            using var activity = source.StartActivity("GetCurrentOrderTextAsync");
             var service = new Ea.EaClient(channel);
             var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
             switch (response.Result)
@@ -148,7 +155,7 @@ namespace Trsys.CopyTrading
 
         public async Task SubscribeOrderTextAsync(string key, string text)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("SubscribeOrderTextAsync");
             var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
             {
                 Key = key,
@@ -165,7 +172,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("ReceiveLogAsync");
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
                 ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
@@ -186,7 +193,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("ReceiveLogAsync");
             var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
             {
                 ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
@@ -207,7 +214,7 @@ namespace Trsys.CopyTrading
 
         public async void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
         {
-            var service = new Ea.EaClient(channel);
+            using var activity = source.StartActivity("SubscribeSubscriberOrderUpdate");
             using var stream = service.GetCurrentOrderTextStream(new GetCurrentOrderTextRequest());
             var reader = stream.ResponseStream;
             while (await reader.MoveNext(CancellationToken.None))
@@ -219,6 +226,7 @@ namespace Trsys.CopyTrading
 
         public void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
         {
+            using var activity = source.StartActivity("UnsubscribeSubscriberOrderUpdate");
         }
     }
 }
