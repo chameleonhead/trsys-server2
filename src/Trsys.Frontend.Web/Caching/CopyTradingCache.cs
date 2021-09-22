@@ -52,7 +52,7 @@ namespace Trsys.Frontend.Web.Caching
             _tokenCache.TryRemove(token, out var _);
         }
 
-        public OrderText GetOrderTextHash(string key)
+        public OrderText GetOrderTextCache()
         {
             var orderCache = _orderCache;
             if (orderCache == null)
@@ -67,7 +67,7 @@ namespace Trsys.Frontend.Web.Caching
             return orderCache.orderText;
         }
 
-        public void UpdateOrderTextCache(string key, OrderText orderText)
+        public void UpdateOrderTextCache(OrderText orderText)
         {
             var nextSyncTime = DateTimeOffset.UtcNow.AddMilliseconds(100);
             var orderCache = _orderCache;
@@ -84,7 +84,7 @@ namespace Trsys.Frontend.Web.Caching
             }
         }
 
-        public void RemoveOrderTextCache(string key)
+        public void RemoveOrderTextCache()
         {
             _orderCache = null;
         }

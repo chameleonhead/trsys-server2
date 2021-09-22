@@ -98,11 +98,11 @@ namespace Trsys.Frontend.Web.Controllers
                     await service.ValidateSessionTokenAsync(token, key, "Subscriber");
                     cache.UpdateValidEaSessionTokenValidity(token);
                 }
-                var orderText = cache.GetOrderTextHash(key);
+                var orderText = cache.GetOrderTextCache();
                 if (orderText == null)
                 {
-                    orderText = await service.GetOrderTextAsync(key);
-                    cache.UpdateOrderTextCache(key, orderText);
+                    orderText = await service.GetCurrentOrderTextAsync();
+                    cache.UpdateOrderTextCache(orderText);
                 }
                 var etags = HttpContext.Request.Headers["If-None-Match"];
                 if (etags.Any())
@@ -115,7 +115,7 @@ namespace Trsys.Frontend.Web.Controllers
                         }
                     }
                 }
-                orderText = await service.GetOrderTextAsync(key);
+                await service.SubscribeOrderTextAsync(key, orderText.Text);
                 HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
                 return Ok(orderText.Text);
             }
@@ -144,6 +144,7 @@ namespace Trsys.Frontend.Web.Controllers
                     cache.UpdateValidEaSessionTokenValidity(token);
                 }
                 await service.PublishOrderTextAsync(key, text);
+                cache.RemoveOrderTextCache();
                 return Ok();
             }
             catch (EaSessionTokenNotFoundException)

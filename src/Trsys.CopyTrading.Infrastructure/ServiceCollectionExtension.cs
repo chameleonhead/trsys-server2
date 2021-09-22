@@ -12,6 +12,7 @@ namespace Trsys.CopyTrading.Infrastructure
             services.AddSingleton<InMemoryCopyTradingContext>();
             services.AddSingleton<IOrderNotificationBus, OrderNotificationBus>();
             services.AddSingleton<IEaStore, InMemoryEaStore>();
+            services.AddSingleton<IOrderStore, InMemoryOrderStore>();
             services.AddSingleton<IEaLogAnalyzer, BlockingQueuedEaLogAnalyzer>();
             return services;
         }

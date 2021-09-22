@@ -15,8 +15,6 @@ namespace Trsys.CopyTrading.Abstractions
         public Subscriber(string key, IEventQueue events, IOrderNotificationBus orderBus) : base(key, "Subscriber", events)
         {
             this.orderBus = orderBus;
-            this.orderBus.OrderOpenPublished += OnOrderOpenPublished;
-            this.orderBus.OrderClosePublished += OnOrderClosePublished;
         }
 
         private void OnOrderOpenPublished(object sender, OrderEventArgs e)

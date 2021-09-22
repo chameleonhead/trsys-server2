@@ -1,8 +1,8 @@
+using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Grpc.Core;
-using Microsoft.Extensions.Logging;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
 
@@ -185,22 +185,42 @@ namespace Trsys.CopyTrading.Service
             }
         }
 
-        public override async Task<GetOrderTextResponse> GetOrderText(GetOrderTextRequest request, ServerCallContext context)
+        public override async Task<GetCurrentOrderTextResponse> GetCurrentOrderText(GetCurrentOrderTextRequest request, ServerCallContext context)
         {
             try
             {
-                var orderText = await service.GetOrderTextAsync(request.Key);
-                return new GetOrderTextResponse()
+                var orderText = await service.GetCurrentOrderTextAsync();
+                return new GetCurrentOrderTextResponse()
                 {
-                    Result = GetOrderTextResponse.Types.Result.Success,
+                    Result = GetCurrentOrderTextResponse.Types.Result.Success,
                     Text = orderText.Text,
                 };
             }
             catch (Exception ex)
             {
-                return new GetOrderTextResponse()
+                return new GetCurrentOrderTextResponse()
                 {
-                    Result = GetOrderTextResponse.Types.Result.Failure,
+                    Result = GetCurrentOrderTextResponse.Types.Result.Failure,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public override async Task<CommonResponse> SubscribeOrderText(SubscribeOrderTextRequest request, ServerCallContext context)
+        {
+            try
+            {
+                await service.SubscribeOrderTextAsync(request.Key, request.Text);
+                return new CommonResponse()
+                {
+                    Result = CommonResponse.Types.Result.Success,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResponse()
+                {
+                    Result = CommonResponse.Types.Result.Failure,
                     Message = ex.Message,
                 };
             }
@@ -227,16 +247,14 @@ namespace Trsys.CopyTrading.Service
         }
 
 
-        public override async Task GetOrderTextStream(GetOrderTextStreamRequest request, IServerStreamWriter<GetOrderTextStreamResponse> responseStream, ServerCallContext context)
+        public override async Task GetCurrentOrderTextStream(GetCurrentOrderTextRequest request, IServerStreamWriter<GetCurrentOrderTextResponse> responseStream, ServerCallContext context)
         {
             Action<string, OrderText> handler = async (string subscriberKey, OrderText text) =>
             {
                 try
                 {
-                    await responseStream.WriteAsync(new GetOrderTextStreamResponse()
+                    await responseStream.WriteAsync(new GetCurrentOrderTextResponse()
                     {
-                        Key = subscriberKey,
-                        Hash = text.Hash,
                         Text = text.Text,
                     });
                 }

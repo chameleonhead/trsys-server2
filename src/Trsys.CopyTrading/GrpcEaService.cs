@@ -133,17 +133,31 @@ namespace Trsys.CopyTrading
             }
         }
 
-        public async Task<OrderText> GetOrderTextAsync(string key)
+        public async Task<OrderText> GetCurrentOrderTextAsync()
         {
             var service = new Ea.EaClient(channel);
-            var response = await service.GetOrderTextAsync(new GetOrderTextRequest()
+            var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
+            switch (response.Result)
+            {
+                case GetCurrentOrderTextResponse.Types.Result.Success:
+                    return OrderText.Parse(response.Text);
+                default:
+                    throw new Exception(response.Message);
+            }
+        }
+
+        public async Task SubscribeOrderTextAsync(string key, string text)
+        {
+            var service = new Ea.EaClient(channel);
+            var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
             {
                 Key = key,
+                Text = text,
             });
             switch (response.Result)
             {
-                case GetOrderTextResponse.Types.Result.Success:
-                    return OrderText.Parse(response.Text);
+                case CommonResponse.Types.Result.Success:
+                    break;
                 default:
                     throw new Exception(response.Message);
             }
@@ -194,12 +208,12 @@ namespace Trsys.CopyTrading
         public async void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
         {
             var service = new Ea.EaClient(channel);
-            using var stream = service.GetOrderTextStream(new GetOrderTextStreamRequest());
+            using var stream = service.GetCurrentOrderTextStream(new GetCurrentOrderTextRequest());
             var reader = stream.ResponseStream;
             while (await reader.MoveNext(CancellationToken.None))
             {
                 var response = reader.Current;
-                handler.Invoke(response.Key, OrderText.Parse(response.Text));
+                handler.Invoke("", OrderText.Parse(response.Text));
             }
         }
 

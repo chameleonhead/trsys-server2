@@ -13,8 +13,9 @@ service Ea {
   rpc DiscardSessionToken (DiscardSessionTokenRequest) returns (SessionTokenResponse);
   rpc ValidateSessionToken (ValidateSessionTokenRequest) returns (SessionTokenResponse);
   rpc PublishOrderText (PublishOrderTextRequest) returns (CommonResponse);
-  rpc GetOrderText (GetOrderTextRequest) returns (GetOrderTextResponse);
-  rpc GetOrderTextStream (GetOrderTextStreamRequest) returns (stream GetOrderTextStreamResponse);
+  rpc GetCurrentOrderText (GetCurrentOrderTextRequest) returns (GetCurrentOrderTextResponse);
+  rpc GetCurrentOrderTextStream (GetCurrentOrderTextRequest) returns (stream GetCurrentOrderTextResponse);
+  rpc SubscribeOrderText (SubscribeOrderTextRequest) returns (CommonResponse);
   rpc ReceiveLog (ReceiveLogRequest) returns (CommonResponse);
 }
 
@@ -96,30 +97,22 @@ message GetOrderTextRequest {
   string key = 1;
 }
 
-message GetOrderTextStreamRequest {
+message GetCurrentOrderTextRequest {
 }
 
-message GetOrderTextResponse {
+message GetCurrentOrderTextResponse {
   enum Result {
     SUCCESS = 0;
     FAILURE = 1;
   }
   Result result = 1;
   string text = 2;
-  string hash = 3;
-  string message = 4;
+  string message = 3;
 }
 
-message GetOrderTextStreamResponse {
-  enum Result {
-    SUCCESS = 0;
-    FAILURE = 1;
-  }
-  Result result = 1;
-  string key = 2;
-  string text = 3;
-  string hash = 4;
-  string message = 5;
+message SubscribeOrderTextRequest {
+  string key = 1;
+  string text = 2;
 }
 
 message ReceiveLogRequest {

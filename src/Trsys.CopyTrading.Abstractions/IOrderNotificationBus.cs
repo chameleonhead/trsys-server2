@@ -16,5 +16,6 @@ namespace Trsys.CopyTrading.Abstractions
         void AddSubscriberOrderUpdateHandler(Action<string, OrderText> handler);
 
         void RemoveSubscriberOrderUpdateHandler(Action<string, OrderText> handler);
+        void UpdateOrderText(OrderText currentOrderText);
     }
 }

@@ -10,12 +10,14 @@ namespace Trsys.CopyTrading.Application
         private readonly IEaStore eaStore;
         private readonly IEaLogAnalyzer eaLogAnalyzer;
         private readonly IOrderNotificationBus orderBus;
+        private readonly IOrderStore orderStore;
 
-        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, IOrderNotificationBus orderBus)
+        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, IOrderNotificationBus orderBus, IOrderStore orderStore)
         {
             this.eaStore = eaStore;
             this.eaLogAnalyzer = eaLogAnalyzer;
             this.orderBus = orderBus;
+            this.orderStore = orderStore;
         }
 
         public Task AddSecretKeyAsync(string key, string keyType)
@@ -74,7 +76,12 @@ namespace Trsys.CopyTrading.Application
             return Task.CompletedTask;
         }
 
-        public Task<OrderText> GetOrderTextAsync(string key)
+        public Task<OrderText> GetCurrentOrderTextAsync()
+        {
+            return Task.FromResult(orderStore.GetOrderText());
+        }
+
+        public Task SubscribeOrderTextAsync(string key, string text)
         {
             var subscriber = eaStore.Find(key, "Subscriber") as Subscriber;
             if (subscriber == null)
@@ -83,7 +90,6 @@ namespace Trsys.CopyTrading.Application
             }
             return Task.FromResult(subscriber.GetOrderText());
         }
-
         public Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)
         {
             eaLogAnalyzer.AnalyzeLog(timestamp, key, keyType, version, token, text);

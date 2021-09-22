@@ -47,5 +47,9 @@ namespace Trsys.CopyTrading.Infrastructure
         {
             handlers.Remove(handler);
         }
+
+        public void UpdateOrderText(OrderText currentOrderText)
+        {
+        }
     }
 }
