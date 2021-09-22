@@ -1,7 +1,6 @@
 ﻿using LoadTesting.Extensions;
 using NBomber.Contracts;
 using Serilog;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,7 +18,6 @@ namespace LoadTesting.Client
         {
             try
             {
-                using var activity = source.StartActivity("SubscribeOrder", ActivityKind.Client);
                 var order = await Client.SubscribeOrderAsync(SecretKey, Token, Order);
                 if (order != Order)
                 {
