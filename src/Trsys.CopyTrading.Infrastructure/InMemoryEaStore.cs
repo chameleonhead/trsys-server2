@@ -24,7 +24,7 @@ namespace Trsys.CopyTrading.Infrastructure
                     context.EaStore.TryAdd(new InMemoryKeys.SecretKey(key, keyType), new Publisher(key, events, orderBus));
                     break;
                 case "Subscriber":
-                    context.EaStore.TryAdd(new InMemoryKeys.SecretKey(key, keyType), new Subscriber(key, events, orderBus));
+                    context.EaStore.TryAdd(new InMemoryKeys.SecretKey(key, keyType), new Subscriber(key, events));
                     break;
                 default:
                     throw new ArgumentException("Invalid key type", nameof(keyType));

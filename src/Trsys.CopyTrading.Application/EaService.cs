@@ -88,7 +88,9 @@ namespace Trsys.CopyTrading.Application
             {
                 throw new EaSessionTokenNotFoundException();
             }
-            return Task.FromResult(subscriber.GetOrderText());
+            var orderText = OrderText.Parse(text);
+            subscriber.SubscribeOrderText(orderText);
+            return Task.CompletedTask;
         }
         public Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)
         {

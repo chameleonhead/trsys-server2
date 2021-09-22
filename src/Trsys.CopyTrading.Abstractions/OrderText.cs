@@ -63,5 +63,45 @@ namespace Trsys.CopyTrading.Abstractions
             var str = BitConverter.ToString(hash);
             return str.Replace("-", string.Empty);
         }
+
+        public override bool Equals(object other)
+        {
+            if (other is OrderText ot)
+            {
+                return Text == ot.Text;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Hash.GetHashCode();
+        }
+
+        public static bool operator ==(OrderText left, OrderText right)
+        {
+            if (left is null && right is null)
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return false;
+            }
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(OrderText left, OrderText right)
+        {
+            if (left is null && right is null)
+            {
+                return false;
+            }
+            else if (left is null)
+            {
+                return true;
+            }
+            return !left.Equals(right);
+        }
     }
 }
