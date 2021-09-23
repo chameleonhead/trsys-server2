@@ -9,7 +9,7 @@ namespace Trsys.CopyTrading.Infrastructure
         private readonly BlockingTaskQueue queue = new();
         public event EventHandler<OrderEventArgs> OrderOpenPublished;
         public event EventHandler<OrderEventArgs> OrderClosePublished;
-        private List<Action<string, OrderText>> handlers = new();
+        private List<Action<OrderText>> handlers = new();
 
         public void PublishOpen(PublisherOrder order)
         {
@@ -27,29 +27,25 @@ namespace Trsys.CopyTrading.Infrastructure
             });
         }
 
-        public void UpdateSubscriberOrder(string subscriberKey, OrderText text)
+        public void AddOrderTextUpdatedHandler(Action<OrderText> handler)
+        {
+            handlers.Add(handler);
+        }
+
+        public void RemoveOrderTextUpdatedHandler(Action<OrderText> handler)
+        {
+            handlers.Remove(handler);
+        }
+
+        public void UpdateOrderText(OrderText orderText)
         {
             queue.Enqueue(() =>
             {
                 foreach (var handler in handlers.ToArray())
                 {
-                    handler.Invoke(subscriberKey, text);
+                    handler.Invoke(orderText);
                 }
             });
-        }
-
-        public void AddSubscriberOrderUpdateHandler(Action<string, OrderText> handler)
-        {
-            handlers.Add(handler);
-        }
-
-        public void RemoveSubscriberOrderUpdateHandler(Action<string, OrderText> handler)
-        {
-            handlers.Remove(handler);
-        }
-
-        public void UpdateOrderText(OrderText currentOrderText)
-        {
         }
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
-namespace Trsys.Frontend.Hubs
+namespace Trsys.Frontend.Web.Hubs
 {
     public class CopyTradingHub : Hub
     {

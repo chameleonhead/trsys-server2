@@ -11,11 +11,10 @@ namespace Trsys.CopyTrading.Abstractions
 
         void PublishClose(PublisherOrder order);
 
-        void UpdateSubscriberOrder(string subscriberKey, OrderText text);
+        void AddOrderTextUpdatedHandler(Action<OrderText> handler);
 
-        void AddSubscriberOrderUpdateHandler(Action<string, OrderText> handler);
+        void RemoveOrderTextUpdatedHandler(Action<OrderText> handler);
 
-        void RemoveSubscriberOrderUpdateHandler(Action<string, OrderText> handler);
         void UpdateOrderText(OrderText currentOrderText);
     }
 }

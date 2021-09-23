@@ -10,9 +10,10 @@ using Trsys.Backoffice;
 using Trsys.CopyTrading;
 using Trsys.CopyTrading.Application;
 using Trsys.Events;
-using Trsys.Frontend.Hubs;
 using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
+using Trsys.Frontend.Web.Hubs;
+using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web
 {
@@ -33,17 +34,15 @@ namespace Trsys.Frontend.Web
                 options.InputFormatters.Add(new TextPlainInputFormatter());
             });
             services.AddSignalR();
+
             services.AddEaService(options =>
             {
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
-            services.AddBackofficeInfrastructure();
-            if (Configuration.GetValue<string>("Trsys:CopyTradingEndpoint") == "InMemory")
-            {
-                services.AddEventHandlers(new[] { typeof(CopyTradingEventHandler) })
-                    .AddInMemoryEventInfrastructure();
-            }
             services.AddSingleton<CopyTradingCache>();
+            services.AddHostedService<CopyTradingBackgroundWorker>();
+
+            services.AddBackofficeInfrastructure();
             services.AddOpenTelemetryTracing(builder =>
             {
                 builder

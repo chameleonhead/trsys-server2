@@ -249,21 +249,21 @@ namespace Trsys.CopyTrading.Service
 
         public override async Task GetCurrentOrderTextStream(GetCurrentOrderTextRequest request, IServerStreamWriter<GetCurrentOrderTextResponse> responseStream, ServerCallContext context)
         {
-            Action<string, OrderText> handler = async (string subscriberKey, OrderText text) =>
+            Action<OrderText> handler = async orderText =>
             {
                 try
                 {
                     await responseStream.WriteAsync(new GetCurrentOrderTextResponse()
                     {
-                        Text = text.Text,
+                        Text = orderText.Text,
                     });
                 }
                 catch
                 {
                 }
             };
-            service.SubscribeSubscriberOrderUpdate(handler);
-            context.CancellationToken.Register(() => service.UnsubscribeSubscriberOrderUpdate(handler));
+            service.SubscribeOrderTextUpdated(handler);
+            context.CancellationToken.Register(() => service.UnsubscribeOrderTextUpdated(handler));
             await AwaitCancellation(context.CancellationToken);
         }
 

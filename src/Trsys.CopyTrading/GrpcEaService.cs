@@ -248,7 +248,7 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        public async void SubscribeOrderTextUpdated(Action<OrderText> handler)
         {
             await ExecuteAsync(async service =>
             {
@@ -258,12 +258,12 @@ namespace Trsys.CopyTrading
                 while (await reader.MoveNext(CancellationToken.None))
                 {
                     var response = reader.Current;
-                    handler.Invoke("", OrderText.Parse(response.Text));
+                    handler.Invoke(OrderText.Parse(response.Text));
                 }
             });
         }
 
-        public void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        public void UnsubscribeOrderTextUpdated(Action<OrderText> handler)
         {
             using var activity = source.StartActivity("UnsubscribeSubscriberOrderUpdate");
         }

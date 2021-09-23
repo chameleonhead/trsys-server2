@@ -104,14 +104,14 @@ namespace Trsys.CopyTrading.Application
             return Task.CompletedTask;
         }
 
-        public void SubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        public void SubscribeOrderTextUpdated(Action<OrderText> handler)
         {
-            orderBus.AddSubscriberOrderUpdateHandler(handler);
+            orderBus.AddOrderTextUpdatedHandler(handler);
         }
 
-        public void UnsubscribeSubscriberOrderUpdate(Action<string, OrderText> handler)
+        public void UnsubscribeOrderTextUpdated(Action<OrderText> handler)
         {
-            orderBus.RemoveSubscriberOrderUpdateHandler(handler);
+            orderBus.RemoveOrderTextUpdatedHandler(handler);
         }
     }
 }
