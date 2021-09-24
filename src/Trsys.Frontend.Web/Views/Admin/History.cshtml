@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "注文履歴";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<div>
+    <h3>検索条件</h3>
+    <div>
+        <div class="form-row">
+            <div class="d-none d-sm-block col-3">
+                <h5 class="my-2">期間</h5>
+            </div>
+            <div class="col-12 col-sm-9">
+                <div class="btn-group btn-block btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-outline-primary active">
+                        <input type="radio" name="options" autocomplete="off" checked> 直近
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="options" autocomplete="off"> 範囲指定
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="options" autocomplete="off"> 日次
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="options" autocomplete="off"> 週次
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="options" autocomplete="off"> 月次
+                    </label>
+                </div>
+                <div class="recent my-3">
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <input type="number" class="form-control" value="7" />
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-day">
+                                    <option value="日">日</option>
+                                    <option value="週">週</option>
+                                    <option value="月">月</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="from-to my-3">
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <label>FROM</label>
+                            <input type="datetime-local" class="form-control" />
+                        </div>
+                        <div class="col-auto">
+                            <label>TO</label>
+                            <input type="datetime-local" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="daily my-3">
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-year">
+                                    <option value="2021">2021</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-year">年</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-month">
+                                    <option value="9">9</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-month">月</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-day">
+                                    <option value="9">9</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-day">日</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weekly my-3">
+                    <div class="form-row align-items-center">
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-year">
+                                    <option value="2021">2021</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-year">年</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-week">
+                                    <option value="9">9</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-week">週</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-auto">
+                            <div class="p-2">
+                                <small><b>FROM</b></small> 2021-09-20  <small><b>TO</b></small> 2021-09-26
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="monthly my-3">
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-year">
+                                    <option value="2021">2021</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-year">年</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <select class="custom-select" id="search-month">
+                                    <option value="9">9</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <label class="input-group-text" for="search-month">月</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<h3>検索結果</h3>
+
+<div class="list-group">
+    <a asp-action="HistoryDetails" asp-route-id="1" class="list-group-item list-group-item-action">
+        <div class="form-row">
+            <div class="col-12 col-sm-auto">
+                <div class="form-row">
+                    <h5 class="col-auto">2021-09-24 #101</h5>
+                    <div class="col-auto">USDJPY</div>
+                    <div class="col-auto">買い</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col text-sm-right"><b>損益</b></div>
+                    <div class="col-auto text-right"><span class="text-success">900,000 JPY</span></div>
+                </div>
+            </div>
+        </div>
+    </a>
+    <a asp-action="HistoryDetails" asp-route-id="1" class="list-group-item list-group-item-action">
+        <div class="form-row">
+            <div class="col-12 col-sm-auto">
+                <div class="form-row">
+                    <h5 class="col-auto">2021-09-24 #101</h5>
+                    <div class="col-auto">USDJPY</div>
+                    <div class="col-auto">買い</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col text-sm-right"><b>損益</b></div>
+                    <div class="col-auto text-right"><span class="text-success">900,000 JPY</span></div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
