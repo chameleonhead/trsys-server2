@@ -1,21 +1,25 @@
 ﻿@{
-    ViewData["Title"] = "シークレットキー編集";
+    ViewData["Title"] = "シークレットキー追加";
 }
 
-<div class="row">
-    <h3 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811631031/2</h3>
-    <small class="col-auto">Publisher</small>
-</div>
-<div class="d-flex justify-content-between">
-    <div>山根さん</div>
-</div>
-<div><span class="badge badge-warning">無効</span></div>
-
+<h2>シークレットキー追加</h2>
 <hr />
 
-<h3>編集</h3>
-
 <form>
+    <div class="form-group">
+        <label for="key-type">種類</label>
+        <select class="custom-select" id="key-type">
+            <option value=""></option>
+            <option value="Publisher">Publisher</option>
+            <option value="Subscriber">Subscriber</option>
+        </select>
+        <small id="key-type-help" class="form-text text-muted">シークレットキーの種類を選択します。</small>
+    </div>
+    <div class="form-group">
+        <label for="description">シークレットキー</label>
+        <input type="text" class="form-control" id="key" aria-describedby="key-help" autocomplete="off">
+        <small id="key-help" class="form-text text-muted">シークレットキーを記載します。</small>
+    </div>
     <div class="form-group">
         <label for="description">説明</label>
         <input type="text" class="form-control" id="description" aria-describedby="description-help" autocomplete="off">
@@ -31,7 +35,7 @@
     </div>
     <div class="form-row">
         <div class="col-auto">
-            <a asp-action="ClientDetails" asp-route-id="1" class=" btn btn-block btn-outline-secondary">キャンセル</a>
+            <a asp-action="Clients" class=" btn btn-block btn-outline-secondary">キャンセル</a>
         </div>
         <div class="col-auto">
             <button type="submit" class=" btn btn-block btn-primary">完了</button>

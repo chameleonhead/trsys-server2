@@ -24,6 +24,12 @@ namespace Trsys.Frontend.Web.Controllers
             return View();
         }
 
+        [HttpGet("clients/add")]
+        public ActionResult ClientAdd()
+        {
+            return View();
+        }
+
         [HttpGet("clients/{id}")]
         public ActionResult ClientDetails(string id)
         {

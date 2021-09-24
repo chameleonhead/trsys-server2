@@ -26,7 +26,6 @@
                         </div>
                     </div>
                     <a asp-action="Clients" class="card-link">一覧</a>
-                    <a href="#" class="card-link">EAの追加</a>
                 </div>
             </div>
         </div>
@@ -89,7 +88,7 @@
 <h3>メッセージ</h3>
 
 <div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action">
+    <a asp-action="ClientEdit" asp-route-id="1" class="list-group-item list-group-item-action">
         <p class="m-0">承認待ちの EA があります。</p>
     </a>
 </div>

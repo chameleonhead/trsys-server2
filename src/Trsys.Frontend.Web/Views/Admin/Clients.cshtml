@@ -2,7 +2,12 @@
     ViewData["Title"] = "シークレットキー一覧";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="row align-items-center">
+    <h2 class="col-12 col-sm">@ViewData["Title"]</h2>
+    <div class="col-auto">
+        <a asp-action="ClientAdd" class="btn btn-secondary">追加</a>
+    </div>
+</div>
 <hr />
 
 <div>
