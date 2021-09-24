@@ -1,5 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
+using Trsys.Frontend.Application.Admin.Clients;
+using Trsys.Frontend.Application.Admin.Dashboard;
+using Trsys.Frontend.Application.Dtos;
 using Trsys.Frontend.Web.Models.Admin;
 
 namespace Trsys.Frontend.Web.Controllers
@@ -7,6 +13,13 @@ namespace Trsys.Frontend.Web.Controllers
     [Route("admin")]
     public class AdminController : Controller
     {
+        private readonly IMediator mediator;
+
+        public AdminController(IMediator mediator)
+        {
+            this.mediator = mediator;
+        }
+
         [HttpGet("")]
         public ActionResult Index()
         {
@@ -14,8 +27,9 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("dashboard")]
-        public ActionResult Dashboard()
+        public async Task<ActionResult> Dashboard()
         {
+            var response = await mediator.Send(new DashboardSearchRequest());
             var vm = new DashboardViewModel();
             vm.DashboardItems.Add(new DashboardItemViewModel()
             {
@@ -28,12 +42,12 @@ namespace Trsys.Frontend.Web.Controllers
                     new()
                     {
                         Title = "Publisher",
-                        Value = "1 台",
+                        Value = $"{response.ConnectedKeys.Where(e => e.KeyType == "Publisher").Count():#,0} 台",
                     },
                     new()
                     {
                         Title = "Subscriber",
-                        Value = "10 台",
+                        Value = $"{response.ConnectedKeys.Where(e => e.KeyType == "Subscriber").Count():#,0} 台",
                     },
                 }
             });
@@ -89,14 +103,14 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult Clients([FromQuery] ClientsSearchConditionsViewModel clientsSearchConditions)
+        public ActionResult Clients([FromQuery] ClientsSearchRequest request)
         {
             var vm = new ClientsViewModel()
             {
-                SearchConditions = clientsSearchConditions ?? new ClientsSearchConditionsViewModel(),
+                SearchConditions = request ?? new ClientsSearchRequest(),
                 Clients = new()
                 {
-                    new ClientSummaryViewModel()
+                    new SecretKeyDto()
                     {
                         Id = "1",
                         Key = "MT4/OANDA Corporation/811631031/2",
@@ -105,7 +119,7 @@ namespace Trsys.Frontend.Web.Controllers
                         IsActive = false,
                         IsConnected = false,
                     },
-                    new ClientSummaryViewModel()
+                    new SecretKeyDto()
                     {
                         Id = "2",
                         Key = "MT4/OANDA Corporation/811653730/2",

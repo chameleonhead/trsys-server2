@@ -8,8 +8,7 @@ using OpenTelemetry.Trace;
 using System;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
-using Trsys.CopyTrading.Application;
-using Trsys.Events;
+using Trsys.Frontend.Infrastructure;
 using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
 using Trsys.Frontend.Web.Hubs;
@@ -41,6 +40,8 @@ namespace Trsys.Frontend.Web
             });
             services.AddSingleton<CopyTradingCache>();
             services.AddHostedService<CopyTradingBackgroundWorker>();
+
+            services.AddFrontendInfrastructure();
 
             services.AddBackofficeInfrastructure();
             services.AddOpenTelemetryTracing(builder =>
