@@ -30,6 +30,12 @@ namespace Trsys.Frontend.Web.Controllers
             return View();
         }
 
+        [HttpGet("clients/{id}/edit")]
+        public ActionResult ClientEdit(string id)
+        {
+            return View();
+        }
+
         [HttpGet("order")]
         public ActionResult Order()
         {
