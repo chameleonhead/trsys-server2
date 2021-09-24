@@ -18,6 +18,24 @@ namespace Trsys.Frontend.Web.Controllers
             return View();
         }
 
+        [HttpGet("clients")]
+        public ActionResult Clients()
+        {
+            return View();
+        }
+
+        [HttpGet("order")]
+        public ActionResult Order()
+        {
+            return View();
+        }
+
+        [HttpGet("history")]
+        public ActionResult History()
+        {
+            return View();
+        }
+
         public ActionResult Details(int id)
         {
             return View();
