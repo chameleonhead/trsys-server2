@@ -54,6 +54,12 @@ namespace Trsys.Frontend.Web.Controllers
             return View();
         }
 
+        [HttpGet("history/{id}")]
+        public ActionResult HistoryDetails(string id)
+        {
+            return View();
+        }
+
         public ActionResult Details(int id)
         {
             return View();
