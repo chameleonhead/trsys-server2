@@ -8,7 +8,7 @@
 <div>
     <h3>検索条件</h3>
     <div>
-        <div class="row">
+        <div class="form-row">
             <div class="d-none d-sm-block col-3">
                 <h5 class="my-2">属性</h5>
             </div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="form-row">
             <div class="col-3 d-none d-sm-block">
                 <h5 class="my-2">テキスト</h5>
             </div>
@@ -47,18 +47,18 @@
 <h3>検索結果</h3>
 
 <div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">MT4/OANDA Corporation/811631031/2</h5>
-            <small>Publisher</small>
+    <a asp-action="ClientDetails" asp-route-id="1" class="list-group-item list-group-item-action">
+        <div class="row">
+            <h5 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811631031/2</h5>
+            <small class="col-auto">Publisher</small>
         </div>
         <div>山根さん</div>
         <div><span class="badge badge-warning">無効</span></div>
     </a>
-    <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">MT4/OANDA Corporation/811653730/2</h5>
-            <small>Subscriber</small>
+    <a asp-action="ClientDetails" asp-route-id="2" class="list-group-item list-group-item-action">
+        <div class="row">
+            <h5 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811653730/2</h5>
+            <small class="col-auto">Subscriber</small>
         </div>
         <div>大川さん</div>
         <div><span class="badge badge-primary">接続中</span></div>
