@@ -61,17 +61,17 @@ namespace Trsys.Frontend.Web.Controllers
                 {
                     new()
                     {
-                        Title = "注文状況",
-                        Value = "USDJPY/買い",
-                        ValueClass = "text-danger",
+                        Title = "通貨ペア",
+                        Value = response.CurrentOrderText == null ? "" : response.CurrentOrderText.Symbol,
                     },
                     new()
                     {
-                        Title = "更新時刻",
-                        Value = "2021-09-24 12:01:00",
+                        Title = "ポジション",
+                        Value = response.CurrentOrderText == null ? "" : response.CurrentOrderText.OrderType == "BUY" ? "買い" : "売り",
                     },
                 }
             });
+            var totalProfit = response.Trades.Sum(t => t.TotalProfit);
             vm.DashboardItems.Add(new DashboardItemViewModel()
             {
                 Header = "履歴",
@@ -83,13 +83,13 @@ namespace Trsys.Frontend.Web.Controllers
                     new()
                     {
                         Title = "取引数",
-                        Value = "3 件",
+                        Value = $"{response.Trades.Count} 件",
                     },
                     new()
                     {
                         Title = "損益",
-                        Value = "- 320,300 JPY",
-                        ValueClass = "text-danger",
+                        Value = $"{totalProfit:#,#0} JPY",
+                        ValueClass = totalProfit == 0 ? null : totalProfit > 0 ? "text-success" : "text-danger",
                     },
                 }
             });

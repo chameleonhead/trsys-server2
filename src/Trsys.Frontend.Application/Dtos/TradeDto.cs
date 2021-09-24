@@ -2,5 +2,6 @@
 {
     public class TradeDto
     {
+        public decimal TotalProfit { get; set; }
     }
 }
