@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.DashboardViewModel
+
+@{
     ViewData["Title"] = "Dashboard";
 }
 <h2>@ViewData["Title"]</h2>
@@ -9,46 +11,36 @@
 
 <div class="mt-3">
     <div class="row">
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">接続中のEA</h5>
-                    <div class="card-text mb-3">
-                        <hr />
-                        <div class="row">
-                            <div class="col"><b>Publisher</b></div>
-                            <div class="col-auto text-right">1 台</div>
+        @foreach (var item in Model.DashboardItems)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Header</h5>
+                        <div class="card-text mb-3">
+                            @foreach (var line in item.Lines)
+                            {
+                                <hr />
+                                <div class="row">
+                                    <div class="col font-weight-bold">@line.Title</div>
+                                    <div class="col-auto text-right">
+                                        @if (string.IsNullOrEmpty(line.ValueClass))
+                                        {
+                                            <span>@line.Value</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="@line.ValueClass">@line.Value</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        <hr />
-                        <div class="row">
-                            <div class="col"><b>Subscriber</b></div>
-                            <div class="col-auto text-right">10 台</div>
-                        </div>
+                        <a href="@item.LinkUri" title="@item.LinkTitle" class="card-link">@item.LinkText</a>
                     </div>
-                    <a asp-action="Clients" class="card-link">一覧</a>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">コピートレード</h5>
-                    <div class="card-text mb-3">
-                        <hr />
-                        <div class="row">
-                            <div class="col"><b>注文状況</b></div>
-                            <div class="col-auto text-right text-danger">USDJPY/買い</div>
-                        </div>
-                        <hr />
-                        <div class="row">
-                            <div class="col"><b>更新時刻</b></div>
-                            <div class="col-auto text-right">2021-09-24 12:01:00</div>
-                        </div>
-                    </div>
-                    <a asp-action="Order" class="card-link">詳細</a>
-                </div>
-            </div>
-        </div>
+        }
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card mb-3">
                 <div class="card-body">
@@ -85,10 +77,16 @@
     </div>
 </div>
 
-<h3>メッセージ</h3>
+@if (Model.Messages.Any())
+{
+    <h3>メッセージ</h3>
 
-<div class="list-group">
-    <a asp-action="ClientEdit" asp-route-id="1" class="list-group-item list-group-item-action">
-        <p class="m-0">承認待ちの EA があります。</p>
-    </a>
-</div>
+    <div class="list-group">
+        @foreach (var message in Model.Messages)
+        {
+            <a href="@message.Uri" class="list-group-item list-group-item-action">
+                <p class="m-0">@message.Message</p>
+            </a>
+        }
+    </div>
+}

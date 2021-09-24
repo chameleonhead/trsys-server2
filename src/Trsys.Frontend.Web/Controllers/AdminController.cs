@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Trsys.Frontend.Web.Models.Admin;
 
 namespace Trsys.Frontend.Web.Controllers
 {
@@ -15,7 +16,76 @@ namespace Trsys.Frontend.Web.Controllers
         [HttpGet("dashboard")]
         public ActionResult Dashboard()
         {
-            return View();
+            var vm = new DashboardViewModel();
+            vm.DashboardItems.Add(new DashboardItemViewModel()
+            {
+                Header = "接続中のEA",
+                LinkText = "一覧",
+                LinkTitle = "シークレットキー一覧",
+                LinkUri = Url.Action(nameof(Clients)),
+                Lines = new()
+                {
+                    new()
+                    {
+                        Title = "Publisher",
+                        Value = "1 台",
+                    },
+                    new()
+                    {
+                        Title = "Subscriber",
+                        Value = "10 台",
+                    },
+                }
+            });
+            vm.DashboardItems.Add(new DashboardItemViewModel()
+            {
+                Header = "コピートレード",
+                LinkText = "詳細",
+                LinkTitle = "コピートレード",
+                LinkUri = Url.Action(nameof(Order)),
+                Lines = new()
+                {
+                    new()
+                    {
+                        Title = "注文状況",
+                        Value = "USDJPY/買い",
+                        ValueClass = "text-danger",
+                    },
+                    new()
+                    {
+                        Title = "更新時刻",
+                        Value = "2021-09-24 12:01:00",
+                    },
+                }
+            });
+            vm.DashboardItems.Add(new DashboardItemViewModel()
+            {
+                Header = "履歴",
+                LinkText = "一覧",
+                LinkTitle = "注文履歴",
+                LinkUri = Url.Action(nameof(History)),
+                Lines = new()
+                {
+                    new()
+                    {
+                        Title = "取引数",
+                        Value = "3 件",
+                    },
+                    new()
+                    {
+                        Title = "損益",
+                        Value = "- 320,300 JPY",
+                        ValueClass = "text-danger",
+                    },
+                }
+            });
+
+            vm.Messages.Add(new DashboardMessageViewModel()
+            {
+                Message = "承認待ちのシークレットキーがあります。",
+                Uri = Url.Action(nameof(ClientDetails), new { id = "1" })
+            });
+            return View(vm);
         }
 
         [HttpGet("clients")]
@@ -28,6 +98,20 @@ namespace Trsys.Frontend.Web.Controllers
         public ActionResult ClientAdd()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ClientAdd(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Clients));
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         [HttpGet("clients/{id}")]
@@ -58,68 +142,6 @@ namespace Trsys.Frontend.Web.Controllers
         public ActionResult HistoryDetails(string id)
         {
             return View();
-        }
-
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
