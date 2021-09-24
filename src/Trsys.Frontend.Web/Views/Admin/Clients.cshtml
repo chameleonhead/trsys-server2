@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.ClientsViewModel
+
+@{
     ViewData["Title"] = "シークレットキー一覧";
 }
 
@@ -13,7 +15,7 @@
 <div>
     <h3>検索条件</h3>
     <div>
-        <div class="form-row">
+        <div class="form-row mb-2">
             <div class="d-none d-sm-block col-3">
                 <h5 class="my-2">属性</h5>
             </div>
@@ -37,12 +39,19 @@
                 </div>
             </div>
         </div>
-        <div class="form-row">
+        <div class="form-row mb-2">
             <div class="col-3 d-none d-sm-block">
                 <h5 class="my-2">テキスト</h5>
             </div>
             <div class="col-12 col-sm-9">
-                <input type="text" class="form-control d-block" />
+                <input type="text" class="form-control d-block" asp-for="SearchConditions.Text" />
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col-3 d-none d-sm-block">
+            </div>
+            <div class="col-12 col-sm-9">
+                <button type="button" class="btn btn-primary">検索</button>
             </div>
         </div>
     </div>
@@ -51,21 +60,35 @@
 
 <h3>検索結果</h3>
 
-<div class="list-group">
-    <a asp-action="ClientDetails" asp-route-id="1" class="list-group-item list-group-item-action">
-        <div class="row">
-            <h5 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811631031/2</h5>
-            <small class="col-auto">Publisher</small>
-        </div>
-        <div>山根さん</div>
-        <div><span class="badge badge-warning">無効</span></div>
-    </a>
-    <a asp-action="ClientDetails" asp-route-id="2" class="list-group-item list-group-item-action">
-        <div class="row">
-            <h5 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811653730/2</h5>
-            <small class="col-auto">Subscriber</small>
-        </div>
-        <div>大川さん</div>
-        <div><span class="badge badge-primary">接続中</span></div>
-    </a>
-</div>
+@if (Model.Clients.Any())
+{
+    <div class="list-group">
+        @foreach (var client in Model.Clients)
+        {
+            <a asp-action="ClientDetails" asp-route-id="@client.Id" class="list-group-item list-group-item-action">
+                <div class="row">
+                    <h5 class="col mb-1" style="text-overflow:ellipsis">@client.Key</h5>
+                    <small class="col-auto">@client.KeyType</small>
+                </div>
+                <div>@client.Desctiption</div>
+                @if (!client.IsActive || client.IsConnected)
+                {
+                    <div>
+                        @if (!client.IsActive)
+                        {
+                            <span class="badge badge-warning">無効</span>
+                        }
+                        @if (client.IsConnected)
+                        {
+                            <span class="badge badge-primary">接続中</span>
+                        }
+                    </div>
+                }
+            </a>
+        }
+    </div>
+}
+else
+{
+    <p>検索結果がありません。</p>
+}

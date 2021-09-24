@@ -89,9 +89,34 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult Clients()
+        public ActionResult Clients([FromQuery] ClientsSearchConditionsViewModel clientsSearchConditions)
         {
-            return View();
+            var vm = new ClientsViewModel()
+            {
+                SearchConditions = clientsSearchConditions ?? new ClientsSearchConditionsViewModel(),
+                Clients = new()
+                {
+                    new ClientSummaryViewModel()
+                    {
+                        Id = "1",
+                        Key = "MT4/OANDA Corporation/811631031/2",
+                        KeyType = "Publisher",
+                        Desctiption = "山根さん",
+                        IsActive = false,
+                        IsConnected = false,
+                    },
+                    new ClientSummaryViewModel()
+                    {
+                        Id = "2",
+                        Key = "MT4/OANDA Corporation/811653730/2",
+                        KeyType = "Subscriber",
+                        Desctiption = "大川さん",
+                        IsActive = true,
+                        IsConnected = true,
+                    },
+                }
+            };
+            return View(vm);
         }
 
         [HttpGet("clients/add")]
