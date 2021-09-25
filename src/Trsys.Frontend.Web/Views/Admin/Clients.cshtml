@@ -2,6 +2,132 @@
 
 @{
     ViewData["Title"] = "シークレットキー一覧";
+    var publisherLink = Model.SearchConditions.KeyType.Contains("Publisher")
+    ? new
+    {
+        Text = "Publisher",
+        IsActive = true,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType.Where(kt => kt != "Publisher").ToList(),
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    }
+    : new
+    {
+        Text = "Publisher",
+        IsActive = false,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType.Concat(new[] { "Publisher" }),
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    };
+    var subscriberLink = Model.SearchConditions.KeyType.Contains("Subscriber")
+    ? new
+    {
+        Text = "Subscriber",
+        IsActive = true,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType.Where(kt => kt != "Subscriber").ToList(),
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    }
+    : new
+    {
+        Text = "Subscriber",
+        IsActive = false,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType.Concat(new[] { "Subscriber" }),
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    };
+    var connectedOnlyLink = Model.SearchConditions.ConnectedOnly ?? false
+    ? new
+    {
+        Text = "接続中",
+        IsActive = true,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    }
+    : new
+    {
+        Text = "接続中",
+        IsActive = false,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            connectedOnly = true,
+            isActive = Model.SearchConditions.IsActive,
+            text = Model.SearchConditions.Text,
+        }),
+    };
+    var isActiveLink = Model.SearchConditions.IsActive.Contains(true)
+    ? new
+    {
+        Text = "有効",
+        IsActive = true,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive.Where(ia => !ia).ToList(),
+            text = Model.SearchConditions.Text,
+        }),
+    }
+    : new
+    {
+        Text = "有効",
+        IsActive = false,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive.Concat(new[] { true }).ToList(),
+            text = Model.SearchConditions.Text,
+        }),
+    };
+    var isInactiveLink = Model.SearchConditions.IsActive.Contains(false)
+    ? new
+    {
+        Text = "無効",
+        IsActive = true,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive.Where(ia => ia).ToList(),
+            text = Model.SearchConditions.Text,
+        }),
+    }
+    : new
+    {
+        Text = "無効",
+        IsActive = false,
+        Url = Url.Action("Clients", new
+        {
+            keyType = Model.SearchConditions.KeyType,
+            connectedOnly = Model.SearchConditions.ConnectedOnly,
+            isActive = Model.SearchConditions.IsActive.Concat(new[] { false }).ToList(),
+            text = Model.SearchConditions.Text,
+        }),
+    };
+
+    var links = new[] { publisherLink, subscriberLink, connectedOnlyLink, isActiveLink, isInactiveLink };
 }
 
 <div class="row align-items-center">
@@ -21,39 +147,45 @@
             </div>
             <div class="col-12 col-sm-9">
                 <div class="form-row">
-                    <div class="col-auto mb-2">
-                        <a href="#" class="btn btn-outline-primary">Publisher</a>
-                    </div>
-                    <div class="col-auto mb-2">
-                        <a href="#" class="btn btn-outline-primary">Subscriber</a>
-                    </div>
-                    <div class="col-auto mb-2">
-                        <a href="#" class="btn btn-outline-primary">接続中</a>
-                    </div>
-                    <div class="col-auto mb-2">
-                        <a href="#" class="btn btn-outline-primary">有効</a>
-                    </div>
-                    <div class="col-auto mb-2">
-                        <a href="#" class="btn btn-outline-primary">無効</a>
-                    </div>
+                    @foreach (var link in links)
+                    {
+                        <div class="col-auto mb-2">
+                            <a href="@link.Url"
+                            class="btn btn-outline-primary @(link.IsActive ? "active" : "")">@link.Text</a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-        <div class="form-row mb-2">
-            <div class="col-3 d-none d-sm-block">
-                <h5 class="my-2">テキスト</h5>
+        <form method="GET" action="@Url.Action("Clients")">
+            @foreach (var kt in Model.SearchConditions.KeyType)
+            {
+                <input type="hidden" name="keyType" value="@kt" />
+            }
+            @if (Model.SearchConditions.ConnectedOnly ?? false)
+            {
+                <input type="hidden" name="connectedOnly" value="@true" />
+            }
+            @foreach (var kt in Model.SearchConditions.IsActive)
+            {
+                <input type="hidden" name="isActive" value="@kt" />
+            }
+            <div class="form-row mb-2">
+                <div class="col-3 d-none d-sm-block">
+                    <h5 class="my-2">テキスト</h5>
+                </div>
+                <div class="col-12 col-sm-9">
+                    <input type="text" class="form-control d-block" name="text" value="@Model.SearchConditions.Text" />
+                </div>
             </div>
-            <div class="col-12 col-sm-9">
-                <input type="text" class="form-control d-block" asp-for="SearchConditions.Text" />
+            <div class="form-row mb-2">
+                <div class="col-3 d-none d-sm-block">
+                </div>
+                <div class="col-12 col-sm-9">
+                    <button type="submit" class="btn btn-primary">検索</button>
+                </div>
             </div>
-        </div>
-        <div class="form-row mb-2">
-            <div class="col-3 d-none d-sm-block">
-            </div>
-            <div class="col-12 col-sm-9">
-                <button type="button" class="btn btn-primary">検索</button>
-            </div>
-        </div>
+        </form>
     </div>
     <hr />
 </div>
@@ -63,7 +195,7 @@
 @if (Model.Clients.Any())
 {
     <div class="list-group">
-        @foreach (var client in Model.Clients)
+    @foreach (var client in Model.Clients)
         {
             <a asp-action="ClientDetails" asp-route-id="@client.Id" class="list-group-item list-group-item-action">
                 <div class="row">

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Trsys.Frontend.Application.Admin.Clients;
@@ -36,7 +37,7 @@ namespace Trsys.Frontend.Web.Controllers
                 Header = "接続中のEA",
                 LinkText = "一覧",
                 LinkTitle = "シークレットキー一覧",
-                LinkUri = Url.Action(nameof(Clients)),
+                LinkUri = Url.Action(nameof(Clients), new { connectedOnly = true, }),
                 Lines = new()
                 {
                     new()
@@ -103,11 +104,17 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult Clients([FromQuery] ClientsSearchRequest request)
+        public ActionResult Clients([FromQuery] List<string> keyType, [FromQuery] bool? connectedOnly, [FromQuery] List<bool> isActive, [FromQuery] string text)
         {
             var vm = new ClientsViewModel()
             {
-                SearchConditions = request ?? new ClientsSearchRequest(),
+                SearchConditions = new ClientsSearchRequest()
+                {
+                    KeyType = keyType ?? new(),
+                    ConnectedOnly = connectedOnly,
+                    IsActive = isActive ?? new(),
+                    Text = text,
+                },
                 Clients = new()
                 {
                     new SecretKeyDto()
