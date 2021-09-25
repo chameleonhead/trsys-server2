@@ -1,9 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Trsys.Frontend.Application.Admin.ClientDetails;
 using Trsys.Frontend.Application.Admin.Clients;
 using Trsys.Frontend.Application.Admin.Dashboard;
 using Trsys.Frontend.Web.Models.Admin;
@@ -129,22 +130,45 @@ namespace Trsys.Frontend.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ClientAdd(IFormCollection collection)
+        public async Task<ActionResult> ClientAddExecute([FromForm] ClientAddViewModel vm)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View(nameof(ClientAdd), vm);
+                }
+
+                await mediator.Send(vm.Request);
+
+                TempData["Message"] = "登録が完了しました。";
                 return RedirectToAction(nameof(Clients));
             }
             catch
             {
-                return View();
+                return View(nameof(ClientAdd), vm);
             }
         }
 
         [HttpGet("clients/{id}")]
-        public ActionResult ClientDetails(string id)
+        public async Task<ActionResult> ClientDetails(string id, [FromQuery] int? year, [FromQuery] int? month)
         {
-            return View();
+            var now = DateTimeOffset.UtcNow;
+            var request = new ClientDetailsRequest()
+            {
+                SecretKeyId = id,
+                Year = year ?? now.Year,
+                Month = month ?? now.Month
+            };
+            var response = await mediator.Send(request);
+            var vm = new ClientDetailsViewModel()
+            {
+                Request = request,
+                SecretKey = response.SecretKey,
+                TradeHistory = response.TradeHistory,
+                YearMonthSelection = response.YearMonthSelection,
+            };
+            return View(vm);
         }
 
         [HttpGet("clients/{id}/edit")]

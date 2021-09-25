@@ -1,16 +1,27 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.ClientDetailsViewModel
+
+@{
     ViewData["Title"] = "シークレットキー詳細";
 }
 
 <div class="row">
-    <h3 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811631031/2</h3>
-    <small class="col-auto">Publisher</small>
+    <h3 class="col mb-1" style="text-overflow:ellipsis">@Model.SecretKey.Key</h3>
+    <small class="col-auto">@Model.SecretKey.KeyType</small>
 </div>
 <div class="d-flex justify-content-between">
-    <div>山根さん</div>
-    <a asp-action="ClientEdit" asp-route-id="1">編集</a>
+    <div>@Model.SecretKey.Desctiption</div>
+    <a asp-action="ClientEdit" asp-route-id="@Model.Request.SecretKeyId">編集</a>
 </div>
-<div><span class="badge badge-warning">無効</span></div>
+<div>
+    @if (!Model.SecretKey.IsActive)
+    {
+        <span class="badge badge-warning">無効</span>
+    }
+    @if (Model.SecretKey.IsConnected)
+    {
+        <span class="badge badge-primary">接続中</span>
+    }
+</div>
 
 <hr />
 

@@ -1,34 +1,38 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.ClientAddViewModel
+
+@{
     ViewData["Title"] = "シークレットキー追加";
 }
 
 <h2>シークレットキー追加</h2>
 <hr />
 
-<form>
+<form asp-action="ClientAddExecute">
     <div class="form-group">
         <label for="key-type">種類</label>
-        <select class="custom-select" id="key-type">
+        <select asp-for="Request.KeyType" class="custom-select" id="key-type">
             <option value=""></option>
             <option value="Publisher">Publisher</option>
             <option value="Subscriber">Subscriber</option>
         </select>
+        <span asp-validation-for="Request.KeyType" class="text-danger"></span>
         <small id="key-type-help" class="form-text text-muted">シークレットキーの種類を選択します。</small>
     </div>
     <div class="form-group">
         <label for="description">シークレットキー</label>
-        <input type="text" class="form-control" id="key" aria-describedby="key-help" autocomplete="off">
+        <input asp-for="Request.Key" type="text" class="form-control" id="key" aria-describedby="key-help" autocomplete="off">
+        <span asp-validation-for="Request.Key" class="text-danger"></span>
         <small id="key-help" class="form-text text-muted">シークレットキーを記載します。</small>
     </div>
     <div class="form-group">
         <label for="description">説明</label>
-        <input type="text" class="form-control" id="description" aria-describedby="description-help" autocomplete="off">
+        <input asp-for="Request.Description" type="text" class="form-control" id="description" aria-describedby="description-help" autocomplete="off">
         <small id="description-help" class="form-text text-muted">シークレットキーの説明を記載します。</small>
     </div>
     <div class="form-group">
         <label>有効化</label>
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="activation">
+            <input asp-for="Request.IsActive" type="checkbox" class="custom-control-input" id="activation">
             <label class="custom-control-label" for="activation"></label>
         </div>
         <small id="description-help" class="form-text text-muted">シークレットキーが使用可能かどうか設定します。</small>
@@ -42,3 +46,8 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

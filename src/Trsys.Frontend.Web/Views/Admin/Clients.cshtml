@@ -151,7 +151,7 @@
                     {
                         <div class="col-auto mb-2">
                             <a href="@link.Url"
-                            class="btn btn-outline-primary @(link.IsActive ? "active" : "")">@link.Text</a>
+                               class="btn btn-outline-primary @(link.IsActive ? "active" : "")">@link.Text</a>
                         </div>
                     }
                 </div>
@@ -195,7 +195,7 @@
 @if (Model.Clients.Any())
 {
     <div class="list-group">
-    @foreach (var client in Model.Clients)
+        @foreach (var client in Model.Clients)
         {
             <a asp-action="ClientDetails" asp-route-id="@client.Id" class="list-group-item list-group-item-action">
                 <div class="row">
