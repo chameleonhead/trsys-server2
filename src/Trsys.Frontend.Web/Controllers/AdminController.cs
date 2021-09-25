@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trsys.Frontend.Application.Admin.Clients;
 using Trsys.Frontend.Application.Admin.Dashboard;
-using Trsys.Frontend.Application.Dtos;
 using Trsys.Frontend.Web.Models.Admin;
 
 namespace Trsys.Frontend.Web.Controllers
@@ -104,38 +103,20 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("clients")]
-        public ActionResult Clients([FromQuery] List<string> keyType, [FromQuery] bool? connectedOnly, [FromQuery] List<bool> isActive, [FromQuery] string text)
+        public async Task<ActionResult> Clients([FromQuery] List<string> keyType, [FromQuery] bool? connectedOnly, [FromQuery] List<bool> isActive, [FromQuery] string text)
         {
+            var request = new ClientsSearchRequest()
+            {
+                KeyType = keyType ?? new(),
+                ConnectedOnly = connectedOnly,
+                IsActive = isActive ?? new(),
+                Text = text,
+            };
+            var response = await mediator.Send(request);
             var vm = new ClientsViewModel()
             {
-                SearchConditions = new ClientsSearchRequest()
-                {
-                    KeyType = keyType ?? new(),
-                    ConnectedOnly = connectedOnly,
-                    IsActive = isActive ?? new(),
-                    Text = text,
-                },
-                Clients = new()
-                {
-                    new SecretKeyDto()
-                    {
-                        Id = "1",
-                        Key = "MT4/OANDA Corporation/811631031/2",
-                        KeyType = "Publisher",
-                        Desctiption = "山根さん",
-                        IsActive = false,
-                        IsConnected = false,
-                    },
-                    new SecretKeyDto()
-                    {
-                        Id = "2",
-                        Key = "MT4/OANDA Corporation/811653730/2",
-                        KeyType = "Subscriber",
-                        Desctiption = "大川さん",
-                        IsActive = true,
-                        IsConnected = true,
-                    },
-                }
+                SearchConditions = request,
+                Clients = response.Clients
             };
             return View(vm);
         }
