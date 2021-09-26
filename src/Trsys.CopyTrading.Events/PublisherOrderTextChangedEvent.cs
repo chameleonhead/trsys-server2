@@ -9,10 +9,10 @@ namespace Trsys.CopyTrading.Events
         {
         }
 
-        public PublisherOrderTextChangedEvent(string publisherKey, string text)
+        public PublisherOrderTextChangedEvent(DateTimeOffset timestamp, string publisherKey, string text)
         {
             Id = Guid.NewGuid().ToString();
-            Timestamp = DateTimeOffset.UtcNow;
+            Timestamp = timestamp;
             PublisherKey = publisherKey;
             Text = text;
         }

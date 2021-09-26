@@ -70,7 +70,7 @@ namespace Trsys.CopyTrading.Application
             return Task.CompletedTask;
         }
 
-        public Task PublishOrderTextAsync(string key, string text)
+        public Task PublishOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
             var publisher = eaStore.Find(key, "Publisher") as Publisher;
             if (publisher == null)
@@ -78,7 +78,7 @@ namespace Trsys.CopyTrading.Application
                 throw new EaSessionTokenNotFoundException();
             }
             var orderText = OrderText.Parse(text);
-            publisher.UpdateOrderText(orderText);
+            publisher.UpdateOrderText(timestamp, orderText);
             return Task.CompletedTask;
         }
 
@@ -87,7 +87,7 @@ namespace Trsys.CopyTrading.Application
             return Task.FromResult(orderStore.GetOrderText());
         }
 
-        public Task SubscribeOrderTextAsync(string key, string text)
+        public Task SubscribeOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
             var subscriber = eaStore.Find(key, "Subscriber") as Subscriber;
             if (subscriber == null)
@@ -95,7 +95,7 @@ namespace Trsys.CopyTrading.Application
                 throw new EaSessionTokenNotFoundException();
             }
             var orderText = OrderText.Parse(text);
-            subscriber.SubscribeOrderText(orderText);
+            subscriber.SubscribeOrderText(timestamp, orderText);
             return Task.CompletedTask;
         }
         public Task ReceiveLogAsync(DateTimeOffset timestamp, string key, string keyType, string version, string token, string text)

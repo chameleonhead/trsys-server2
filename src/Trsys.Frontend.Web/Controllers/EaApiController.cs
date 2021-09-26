@@ -117,7 +117,7 @@ namespace Trsys.Frontend.Web.Controllers
                         }
                     }
                 }
-                await service.SubscribeOrderTextAsync(key, orderText.Text);
+                await service.SubscribeOrderTextAsync(DateTimeOffset.UtcNow, key, orderText.Text);
                 HttpContext.Response.Headers["ETag"] = $"\"{orderText.Hash}\"";
                 Activity.Current.AddEvent(new ActivityEvent("GetOrdersSuccess"));
                 return Ok(orderText.Text);
@@ -145,7 +145,7 @@ namespace Trsys.Frontend.Web.Controllers
             try
             {
                 await service.ValidateSessionTokenAsync(token, key, "Publisher");
-                await service.PublishOrderTextAsync(key, text);
+                await service.PublishOrderTextAsync(DateTimeOffset.UtcNow, key, text);
                 Activity.Current.AddEvent(new ActivityEvent("PostOrdersSuccess"));
                 return Ok();
             }

@@ -89,8 +89,9 @@ message ValidateSessionTokenResponse {
 }
 
 message PublishOrderTextRequest {
-  string key = 1;
-  string text = 2;
+  google.protobuf.Timestamp timestamp = 1;
+  string key = 2;
+  string text = 3;
 }
 
 message GetOrderTextRequest {
@@ -111,8 +112,9 @@ message GetCurrentOrderTextResponse {
 }
 
 message SubscribeOrderTextRequest {
-  string key = 1;
-  string text = 2;
+  google.protobuf.Timestamp timestamp = 1;
+  string key = 2;
+  string text = 3;
 }
 
 message ReceiveLogRequest {

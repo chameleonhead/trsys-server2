@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Trsys.CopyTrading.Events;
 
 namespace Trsys.CopyTrading.Abstractions
@@ -14,13 +15,13 @@ namespace Trsys.CopyTrading.Abstractions
             this.orderBus = orderBus;
         }
 
-        public void UpdateOrderText(OrderText orderText)
+        public void UpdateOrderText(DateTimeOffset timestamp, OrderText orderText)
         {
             var diff = OrderDifference.CalculateDifference(CurrentOrder, orderText);
             if (diff.HasDifference)
             {
                 CurrentOrder = orderText;
-                Events.Enqueue(new PublisherOrderTextChangedEvent(Key, orderText.Text));
+                Events.Enqueue(new PublisherOrderTextChangedEvent(timestamp, Key, orderText.Text));
                 foreach (var item in diff.Opened)
                 {
                     var order = new PublisherOrder(

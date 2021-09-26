@@ -174,7 +174,7 @@ namespace Trsys.CopyTrading.Service
         {
             try
             {
-                await service.PublishOrderTextAsync(request.Key, request.Text);
+                await service.PublishOrderTextAsync(request.Timestamp.ToDateTimeOffset(), request.Key, request.Text);
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Success,
@@ -217,7 +217,7 @@ namespace Trsys.CopyTrading.Service
         {
             try
             {
-                await service.SubscribeOrderTextAsync(request.Key, request.Text);
+                await service.SubscribeOrderTextAsync(request.Timestamp.ToDateTimeOffset(), request.Key, request.Text);
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Success,

@@ -155,13 +155,14 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async Task PublishOrderTextAsync(string key, string text)
+        public async Task PublishOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
             using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.PublishOrderTextAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
                 {
+                    Timestamp = Timestamp.FromDateTimeOffset(timestamp),
                     Key = key,
                     Text = text,
                 });
@@ -199,13 +200,14 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async Task SubscribeOrderTextAsync(string key, string text)
+        public async Task SubscribeOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
             using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.SubscribeOrderTextAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
                 {
+                    Timestamp = Timestamp.FromDateTimeOffset(timestamp),
                     Key = key,
                     Text = text,
                 });

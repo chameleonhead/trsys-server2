@@ -1,4 +1,5 @@
-﻿using Trsys.CopyTrading.Events;
+﻿using System;
+using Trsys.CopyTrading.Events;
 
 namespace Trsys.CopyTrading.Abstractions
 {
@@ -10,12 +11,12 @@ namespace Trsys.CopyTrading.Abstractions
         {
         }
 
-        public OrderText SubscribeOrderText(OrderText currentOrderText)
+        public OrderText SubscribeOrderText(DateTimeOffset timestamp, OrderText currentOrderText)
         {
             if (publishedOrderText != currentOrderText)
             {
                 publishedOrderText = currentOrderText;
-                Events.Enqueue(new SubscriberOrderTextChangedEvent(Key, currentOrderText.Text));
+                Events.Enqueue(new SubscriberOrderTextChangedEvent(timestamp, Key, currentOrderText.Text));
             }
             return currentOrderText;
         }
