@@ -15,16 +15,18 @@ namespace Trsys.CopyTrading
 
         private readonly EaServicePool pool;
         private readonly IEaSessionTokenValidator tokenValidator;
+        private readonly CopyTradingOrderTextCache cache;
 
-        public GrpcEaService(EaServicePool pool, IEaSessionTokenValidator tokenValidator)
+        public GrpcEaService(EaServicePool pool, IEaSessionTokenValidator tokenValidator, CopyTradingOrderTextCache cache)
         {
             this.pool = pool;
             this.tokenValidator = tokenValidator;
+            this.cache = cache;
         }
 
         private Task<T> ExecuteAsync<T>(Func<Ea.EaClient, Task<T>> execution)
         {
-            return pool.UseClientAsync<T>(execution);
+            return pool.UseClientAsync(execution);
         }
 
         private Task ExecuteAsync(Func<Ea.EaClient, Task> execution)
@@ -52,11 +54,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task RemvoeSecretKeyAsync(string key, string keyType)
+        public async Task RemvoeSecretKeyAsync(string key, string keyType)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("RemvoeSecretKeyAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("RemvoeSecretKeyAsync");
                 var response = await service.RemvoeSecretKeyAsync(new RemvoeSecretKeyRequest()
                 {
                     Key = key,
@@ -72,11 +74,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
+        public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("GenerateSessionTokenAsync");
+            return await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("GenerateSessionTokenAsync");
                 var response = await service.GenerateSessionTokenAsync(new GenerateSessionTokenRequest()
                 {
                     Key = key,
@@ -96,11 +98,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task DiscardSessionTokenAsync(string token, string key, string keyType)
+        public async Task DiscardSessionTokenAsync(string token, string key, string keyType)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("DiscardSessionTokenAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("DiscardSessionTokenAsync");
                 var response = await service.DiscardSessionTokenAsync(new DiscardSessionTokenRequest()
                 {
                     Token = token,
@@ -121,11 +123,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task ValidateSessionTokenAsync(string token, string key, string keyType)
+        public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("ValidateSessionTokenAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("ValidateSessionTokenAsync");
                 try
                 {
                     if (!tokenValidator.ValidateToken(key, keyType, token))
@@ -155,11 +157,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task PublishOrderTextAsync(string key, string text)
+        public async Task PublishOrderTextAsync(string key, string text)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("PublishOrderTextAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("PublishOrderTextAsync");
                 var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
                 {
                     Key = key,
@@ -175,27 +177,53 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task<OrderText> GetCurrentOrderTextAsync()
+        public async Task<OrderText> GetCurrentOrderTextAsync()
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("GetCurrentOrderTextAsync");
+            return await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("GetCurrentOrderTextAsync");
+                var orderText = cache.GetOrderTextCache();
+                if (orderText != null)
+                {
+                    activity.AddEvent(new ActivityEvent("OrderTextCacheHit"));
+                    return orderText;
+                }
                 var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
                 switch (response.Result)
                 {
                     case GetCurrentOrderTextResponse.Types.Result.Success:
-                        return OrderText.Parse(response.Text);
+                        orderText = OrderText.Parse(response.Text);
+                        cache.UpdateOrderTextCache(orderText);
+                        return orderText;
                     default:
                         throw new Exception(response.Message);
                 }
             });
         }
 
-        public Task SubscribeOrderTextAsync(string key, string text)
+        public async Task<OrderText> GetCurrentOrderTextWithoutCacheAsync()
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("GetCurrentOrderTextWithoutCacheAsync");
+            return await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("SubscribeOrderTextAsync");
+                var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
+                switch (response.Result)
+                {
+                    case GetCurrentOrderTextResponse.Types.Result.Success:
+                        var orderText = OrderText.Parse(response.Text);
+                        cache.UpdateOrderTextCache(orderText);
+                        return orderText;
+                    default:
+                        throw new Exception(response.Message);
+                }
+            });
+        }
+
+        public async Task SubscribeOrderTextAsync(string key, string text)
+        {
+            using var activity = source.StartActivity("SubscribeOrderTextAsync");
+            await ExecuteAsync(async service =>
+            {
                 var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
                 {
                     Key = key,
@@ -211,11 +239,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
+        public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("ReceiveLogAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("ReceiveLogAsync");
                 var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
                 {
                     ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
@@ -235,11 +263,11 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
+        public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            return ExecuteAsync(async service =>
+            using var activity = source.StartActivity("ReceiveLogAsync");
+            await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("ReceiveLogAsync");
                 var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
                 {
                     ServerTimestamp = Timestamp.FromDateTimeOffset(serverTimestamp),
@@ -261,9 +289,9 @@ namespace Trsys.CopyTrading
 
         public async void SubscribeOrderTextUpdated(Action<OrderText> handler)
         {
+            using var activity = source.StartActivity("SubscribeSubscriberOrderUpdate");
             await ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("SubscribeSubscriberOrderUpdate");
                 using var stream = service.GetCurrentOrderTextStream(new GetCurrentOrderTextRequest());
                 var reader = stream.ResponseStream;
                 while (await reader.MoveNext(CancellationToken.None))

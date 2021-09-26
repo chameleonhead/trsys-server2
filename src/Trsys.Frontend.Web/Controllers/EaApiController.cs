@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
-using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Filters;
 
 namespace Trsys.Frontend.Web.Controllers
@@ -17,12 +16,10 @@ namespace Trsys.Frontend.Web.Controllers
     public class EaApiController : ControllerBase
     {
         private readonly IEaService service;
-        private readonly CopyTradingCache cache;
 
-        public EaApiController(IEaService service, CopyTradingCache cache)
+        public EaApiController(IEaService service)
         {
             this.service = service;
-            this.cache = cache;
         }
 
         [Route("api/keys")]
@@ -61,7 +58,6 @@ namespace Trsys.Frontend.Web.Controllers
                     Activity.Current.AddEvent(new ActivityEvent("PostTokenSessionNotFound"));
                     return BadRequest("InvalidSecretKey");
                 }
-                cache.UpdateValidEaSessionTokenValidity(session.Token);
                 Activity.Current.AddEvent(new ActivityEvent("PostTokenSuccess"));
                 return Ok(session.Token);
             }
@@ -81,7 +77,6 @@ namespace Trsys.Frontend.Web.Controllers
             try
             {
                 await service.DiscardSessionTokenAsync(token, key, keyType);
-                cache.RemoveValidEaSessionToken(token);
                 Activity.Current.AddEvent(new ActivityEvent("DeleteTokenSuccess"));
                 return Ok();
             }
@@ -107,19 +102,9 @@ namespace Trsys.Frontend.Web.Controllers
             Activity.Current.AddEvent(new ActivityEvent("GetOrdersStart"));
             try
             {
-                if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
-                {
-                    Activity.Current.AddEvent(new ActivityEvent("GetOrdersSessionCacheNotHit"));
-                    await service.ValidateSessionTokenAsync(token, key, "Subscriber");
-                    cache.UpdateValidEaSessionTokenValidity(token);
-                }
-                var orderText = cache.GetOrderTextCache();
-                if (orderText == null)
-                {
-                    Activity.Current.AddEvent(new ActivityEvent("GetOrdersOrderTextCacheNotHit"));
-                    orderText = await service.GetCurrentOrderTextAsync();
-                    cache.UpdateOrderTextCache(orderText);
-                }
+                await service.ValidateSessionTokenAsync(token, key, "Subscriber");
+
+                var orderText = await service.GetCurrentOrderTextAsync();
                 var etags = HttpContext.Request.Headers["If-None-Match"];
                 if (etags.Any())
                 {
@@ -159,14 +144,8 @@ namespace Trsys.Frontend.Web.Controllers
             Activity.Current.AddEvent(new ActivityEvent("PostOrdersStart"));
             try
             {
-                if (cache.IsValidEaSessionToken(token) == ValidateEaSessionTokenCacheResult.NOT_IN_CACHE)
-                {
-                    Activity.Current.AddEvent(new ActivityEvent("PostOrdersSessionCacheNotHit"));
-                    await service.ValidateSessionTokenAsync(token, key, "Publisher");
-                    cache.UpdateValidEaSessionTokenValidity(token);
-                }
+                await service.ValidateSessionTokenAsync(token, key, "Publisher");
                 await service.PublishOrderTextAsync(key, text);
-                cache.RemoveOrderTextCache();
                 Activity.Current.AddEvent(new ActivityEvent("PostOrdersSuccess"));
                 return Ok();
             }

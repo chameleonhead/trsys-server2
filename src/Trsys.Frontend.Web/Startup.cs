@@ -9,10 +9,8 @@ using System;
 using Trsys.Backoffice;
 using Trsys.CopyTrading;
 using Trsys.Frontend.Infrastructure;
-using Trsys.Frontend.Web.Caching;
 using Trsys.Frontend.Web.Formatters;
 using Trsys.Frontend.Web.Hubs;
-using Trsys.Frontend.Web.Services;
 
 namespace Trsys.Frontend.Web
 {
@@ -38,8 +36,6 @@ namespace Trsys.Frontend.Web
             {
                 options.ServiceEndpoint = Configuration.GetValue<string>("Trsys:CopyTradingEndpoint");
             });
-            services.AddSingleton<CopyTradingCache>();
-            services.AddHostedService<CopyTradingBackgroundWorker>();
 
             services.AddFrontendInfrastructure();
 
