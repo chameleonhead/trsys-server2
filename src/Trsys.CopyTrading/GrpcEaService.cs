@@ -14,10 +14,12 @@ namespace Trsys.CopyTrading
         private readonly static ActivitySource source = new ActivitySource("Trsys.CopyTrading.GrpcClient");
 
         private readonly EaServicePool pool;
+        private readonly IEaSessionTokenValidator tokenValidator;
 
-        public GrpcEaService(EaServicePool pool)
+        public GrpcEaService(EaServicePool pool, IEaSessionTokenValidator tokenValidator)
         {
             this.pool = pool;
+            this.tokenValidator = tokenValidator;
         }
 
         private Task<T> ExecuteAsync<T>(Func<Ea.EaClient, Task<T>> execution)
@@ -124,6 +126,15 @@ namespace Trsys.CopyTrading
             return ExecuteAsync(async service =>
             {
                 using var activity = source.StartActivity("ValidateSessionTokenAsync");
+                try
+                {
+                    if (!tokenValidator.ValidateToken(key, keyType, token))
+                    {
+                        throw new EaSessionTokenInvalidException();
+                    }
+                    return;
+                }
+                catch { }
                 var response = await service.ValidateSessionTokenAsync(new ValidateSessionTokenRequest()
                 {
                     Token = token,

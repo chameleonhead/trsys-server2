@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Trsys.CopyTrading.Abstractions;
 using Trsys.CopyTrading.Application;
 using Trsys.CopyTrading.Infrastructure;
 
@@ -21,6 +22,7 @@ namespace Trsys.CopyTrading
             {
                 services.AddSingleton<EaServicePool>(new EaServicePool(options.ServiceEndpoint, 4));
                 services.AddTransient<IEaService, GrpcEaService>();
+                services.AddTransient<IEaSessionTokenValidator, EaSessionTokenValidator>();
             }
             return services;
         }
