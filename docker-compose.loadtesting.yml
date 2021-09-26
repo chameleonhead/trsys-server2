@@ -1,0 +1,13 @@
+﻿version: "3.5"
+services:
+  loadtesting:
+    image: mcr.microsoft.com/dotnet/sdk:5.0
+    command: bash -c "cp -rf /workspace/* /app && dotnet run --project tests/LoadTesting/LoadTesting.csproj"
+    working_dir: /app
+    volumes:
+      - .:/workspace
+    environment:
+      - FRONTENT_URL=https://frontend:5001
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    depends_on:
+      - frontend

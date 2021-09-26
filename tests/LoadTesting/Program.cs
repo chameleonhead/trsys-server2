@@ -1,8 +1,6 @@
 ﻿using LoadTesting.Client;
 using LoadTesting.Extensions;
 using LoadTesting.Server;
-using LoadTesting.Server.CopyTrading;
-using LoadTesting.Server.Frontend;
 using NBomber.Contracts;
 using NBomber.CSharp;
 using OpenTelemetry;
@@ -34,16 +32,7 @@ namespace LoadTesting
                 .AddZipkinExporter()
                 .Build();
 
-            using var dockerUp = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml up")
-            {
-                OnShotdown = () =>
-                {
-                    using var dockerDown = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml down");
-                }
-            };
-            using var copyTradingServer = CopyTradingServer.CreateServer();
-            using var frontendServer = FrontendServer.CreateServer();
-            var httpClientPool = new HttpClientPool(frontendServer.CreateClient, COUNT_OF_CLIENTS / 2);
+            var httpClientPool = new HttpClientPool(() => HttpClientFactory.Create(Environment.GetEnvironmentVariable("FRONTENT_URL") ?? "https://localhost:5001", true), COUNT_OF_CLIENTS / 2);
             var publisherKey = "MT4/OANDA Corporation/899999999/2";
             var subscriberKeys = Enumerable.Range(1, COUNT_OF_CLIENTS).Select(i => $"MT4/OANDA Corporation/8{i:00000000}/2").ToList();
             WithRetry(() => RegisterKeys(httpClientPool, new[] { publisherKey }, "Publisher")).Wait();

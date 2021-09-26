@@ -12,17 +12,18 @@ services:
     environment:
       - Trsys__CopyTradingEndpoint=https://copy_trading:5003
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    depends_on:
+      - copy_trading
   copy_trading:
     image: mcr.microsoft.com/dotnet/sdk:5.0
     command: bash -c "cp -rf /workspace/* /app && dotnet run --launch-profile Docker --project src/Trsys.CopyTrading.Service/Trsys.CopyTrading.Service.csproj"
     working_dir: /app
     volumes:
       - .:/workspace
-    ports:
-      - 5003:5003
-      - 5002:5002
     environment:
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    depends_on:
+      - zipkin
   zipkin:
     image: openzipkin/zipkin
     ports:
