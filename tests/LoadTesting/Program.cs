@@ -34,12 +34,12 @@ namespace LoadTesting
                 .AddZipkinExporter()
                 .Build();
 
-            using var zipkin = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml up")
+            using var dockerUp = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml up")
             {
-                 OnShotdown = () =>
-                 {
-                     using var dockerDown = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml down -v");
-                 }
+                OnShotdown = () =>
+                {
+                    using var dockerDown = new ProcessRunner("docker-compose", "-f docker-compose.loadtesting.yml down");
+                }
             };
             using var copyTradingServer = CopyTradingServer.CreateServer();
             using var frontendServer = FrontendServer.CreateServer();

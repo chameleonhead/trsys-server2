@@ -11,8 +11,6 @@ namespace Trsys.CopyTrading
 {
     class GrpcEaService : IEaService
     {
-        private readonly static ActivitySource source = new ActivitySource("Trsys.CopyTrading.GrpcClient");
-
         private readonly EaServicePool pool;
         private readonly IEaSessionTokenValidator tokenValidator;
         private readonly CopyTradingOrderTextCache cache;
@@ -38,7 +36,7 @@ namespace Trsys.CopyTrading
         {
             return ExecuteAsync(async service =>
             {
-                using var activity = source.StartActivity("AddSecretKeyAsync");
+                using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.AddSecretKeyAsync");
                 var response = await service.AddSecretKeyAsync(new AddSecretKeyRequest()
                 {
                     Key = key,
@@ -56,7 +54,7 @@ namespace Trsys.CopyTrading
 
         public async Task RemvoeSecretKeyAsync(string key, string keyType)
         {
-            using var activity = source.StartActivity("RemvoeSecretKeyAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.RemvoeSecretKeyAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.RemvoeSecretKeyAsync(new RemvoeSecretKeyRequest()
@@ -76,7 +74,7 @@ namespace Trsys.CopyTrading
 
         public async Task<EaSession> GenerateSessionTokenAsync(string key, string keyType)
         {
-            using var activity = source.StartActivity("GenerateSessionTokenAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.GenerateSessionTokenAsync");
             return await ExecuteAsync(async service =>
             {
                 var response = await service.GenerateSessionTokenAsync(new GenerateSessionTokenRequest()
@@ -100,7 +98,7 @@ namespace Trsys.CopyTrading
 
         public async Task DiscardSessionTokenAsync(string token, string key, string keyType)
         {
-            using var activity = source.StartActivity("DiscardSessionTokenAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.DiscardSessionTokenAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.DiscardSessionTokenAsync(new DiscardSessionTokenRequest()
@@ -125,18 +123,18 @@ namespace Trsys.CopyTrading
 
         public async Task ValidateSessionTokenAsync(string token, string key, string keyType)
         {
-            using var activity = source.StartActivity("ValidateSessionTokenAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.ValidateSessionTokenAsync");
+            try
+            {
+                if (!tokenValidator.ValidateToken(key, keyType, token))
+                {
+                    throw new EaSessionTokenInvalidException();
+                }
+                return;
+            }
+            catch { }
             await ExecuteAsync(async service =>
             {
-                try
-                {
-                    if (!tokenValidator.ValidateToken(key, keyType, token))
-                    {
-                        throw new EaSessionTokenInvalidException();
-                    }
-                    return;
-                }
-                catch { }
                 var response = await service.ValidateSessionTokenAsync(new ValidateSessionTokenRequest()
                 {
                     Token = token,
@@ -159,7 +157,7 @@ namespace Trsys.CopyTrading
 
         public async Task PublishOrderTextAsync(string key, string text)
         {
-            using var activity = source.StartActivity("PublishOrderTextAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.PublishOrderTextAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
@@ -179,15 +177,15 @@ namespace Trsys.CopyTrading
 
         public async Task<OrderText> GetCurrentOrderTextAsync()
         {
-            using var activity = source.StartActivity("GetCurrentOrderTextAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.GetCurrentOrderTextAsync");
+            var orderText = cache.GetOrderTextCache();
+            if (orderText != null)
+            {
+                activity.AddEvent(new ActivityEvent("OrderTextCacheHit"));
+                return orderText;
+            }
             return await ExecuteAsync(async service =>
             {
-                var orderText = cache.GetOrderTextCache();
-                if (orderText != null)
-                {
-                    activity.AddEvent(new ActivityEvent("OrderTextCacheHit"));
-                    return orderText;
-                }
                 var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
                 switch (response.Result)
                 {
@@ -201,27 +199,9 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async Task<OrderText> GetCurrentOrderTextWithoutCacheAsync()
-        {
-            using var activity = source.StartActivity("GetCurrentOrderTextWithoutCacheAsync");
-            return await ExecuteAsync(async service =>
-            {
-                var response = await service.GetCurrentOrderTextAsync(new GetCurrentOrderTextRequest());
-                switch (response.Result)
-                {
-                    case GetCurrentOrderTextResponse.Types.Result.Success:
-                        var orderText = OrderText.Parse(response.Text);
-                        cache.UpdateOrderTextCache(orderText);
-                        return orderText;
-                    default:
-                        throw new Exception(response.Message);
-                }
-            });
-        }
-
         public async Task SubscribeOrderTextAsync(string key, string text)
         {
-            using var activity = source.StartActivity("SubscribeOrderTextAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.SubscribeOrderTextAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
@@ -241,7 +221,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
         {
-            using var activity = source.StartActivity("ReceiveLogAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.ReceiveLogAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
@@ -265,7 +245,7 @@ namespace Trsys.CopyTrading
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, long eaTimestamp, string key, string keyType, string version, string token, string text)
         {
-            using var activity = source.StartActivity("ReceiveLogAsync");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.ReceiveLogAsync");
             await ExecuteAsync(async service =>
             {
                 var response = await service.ReceiveLogAsync(new ReceiveLogRequest()
@@ -289,7 +269,7 @@ namespace Trsys.CopyTrading
 
         public async void SubscribeOrderTextUpdated(Action<OrderText> handler)
         {
-            using var activity = source.StartActivity("SubscribeSubscriberOrderUpdate");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.SubscribeSubscriberOrderUpdate");
             await ExecuteAsync(async service =>
             {
                 using var stream = service.GetCurrentOrderTextStream(new GetCurrentOrderTextRequest());
@@ -304,7 +284,7 @@ namespace Trsys.CopyTrading
 
         public void UnsubscribeOrderTextUpdated(Action<OrderText> handler)
         {
-            using var activity = source.StartActivity("UnsubscribeSubscriberOrderUpdate");
+            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.UnsubscribeSubscriberOrderUpdate");
         }
     }
 }

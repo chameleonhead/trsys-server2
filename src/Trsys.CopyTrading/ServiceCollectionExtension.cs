@@ -20,7 +20,7 @@ namespace Trsys.CopyTrading
             }
             else
             {
-                services.AddSingleton<EaServicePool>(new EaServicePool(options.ServiceEndpoint, 4));
+                services.AddSingleton(new EaServicePool(options.ServiceEndpoint, 4));
                 services.AddTransient<IEaService, GrpcEaService>();
                 services.AddTransient<IEaSessionTokenValidator, EaSessionTokenValidator>();
                 services.AddSingleton<CopyTradingOrderTextCache>();

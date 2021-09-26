@@ -19,6 +19,9 @@ namespace LoadTesting.Server
                 WorkingDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                 FileName = command,
                 Arguments = argsuments,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
             });
         }
 
@@ -29,8 +32,11 @@ namespace LoadTesting.Server
                 if (disposing)
                 {
                     OnShotdown?.Invoke();
-                    _process.Kill();
-                    _process.WaitForExit();
+                    _process.StandardInput.Close();
+                    if (!_process.WaitForExit(60000))
+                    {
+                        _process.Kill();
+                    }
                 }
                 disposedValue = true;
             }

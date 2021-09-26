@@ -15,7 +15,7 @@ namespace LoadTesting.Server
             };
             var client = new HttpClient(handler)
             {
-                BaseAddress = new Uri(endpoint)
+                BaseAddress = new Uri(endpoint),
             };
             return client;
         }

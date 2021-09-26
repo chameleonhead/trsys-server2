@@ -45,7 +45,7 @@ namespace Trsys.Frontend.Web
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") ?? "trsys-server"))
                     .AddAspNetCoreInstrumentation()
-                    .AddSource("Trsys.CopyTrading.GrpcClient")
+                    .AddSource("Trsys.CopyTrading")
                     .AddZipkinExporter(options =>
                     {
                         var endpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_ZIPKIN_ENDPOINT");
