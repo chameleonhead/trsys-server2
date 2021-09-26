@@ -31,6 +31,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Failure,
@@ -51,6 +52,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Failure,
@@ -89,6 +91,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new GenerateSessionTokenResponse()
                 {
                     Result = GenerateSessionTokenResponse.Types.Result.Failure,
@@ -123,6 +126,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new SessionTokenResponse()
                 {
                     Result = SessionTokenResponse.Types.Result.Failure,
@@ -157,6 +161,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new SessionTokenResponse()
                 {
                     Result = SessionTokenResponse.Types.Result.Failure,
@@ -177,6 +182,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Failure,
@@ -198,6 +204,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new GetCurrentOrderTextResponse()
                 {
                     Result = GetCurrentOrderTextResponse.Types.Result.Failure,
@@ -218,6 +225,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Failure,
@@ -238,6 +246,7 @@ namespace Trsys.CopyTrading.Service
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unknown error.");
                 return new CommonResponse()
                 {
                     Result = CommonResponse.Types.Result.Failure,
@@ -258,8 +267,9 @@ namespace Trsys.CopyTrading.Service
                         Text = orderText.Text,
                     });
                 }
-                catch
+                catch (Exception ex)
                 {
+                    logger.LogError(ex, "Unknown error.");
                 }
             };
             service.SubscribeOrderTextUpdated(handler);
