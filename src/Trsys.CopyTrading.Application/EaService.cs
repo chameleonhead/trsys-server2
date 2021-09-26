@@ -7,13 +7,15 @@ namespace Trsys.CopyTrading.Application
 {
     public class EaService : IEaService
     {
+        private readonly IEaSessionTokenProvider tokenProvider;
         private readonly IEaStore eaStore;
         private readonly IEaLogAnalyzer eaLogAnalyzer;
         private readonly IOrderNotificationBus orderBus;
         private readonly IOrderStore orderStore;
 
-        public EaService(IEaStore eaStore, IEaLogAnalyzer eaLogAnalyzer, IOrderNotificationBus orderBus, IOrderStore orderStore)
+        public EaService(IEaStore eaStore, IEaSessionTokenProvider tokenProvider, IEaLogAnalyzer eaLogAnalyzer, IOrderNotificationBus orderBus, IOrderStore orderStore)
         {
+            this.tokenProvider = tokenProvider;
             this.eaStore = eaStore;
             this.eaLogAnalyzer = eaLogAnalyzer;
             this.orderBus = orderBus;
@@ -39,7 +41,11 @@ namespace Trsys.CopyTrading.Application
             {
                 return Task.FromResult(default(EaSession));
             }
-            return Task.FromResult(ea.GenerateSession());
+            if (ea.Session != null)
+            {
+                throw new EaSessionAlreadyExistsException();
+            }
+            return Task.FromResult(ea.GenerateSession(tokenProvider.GenerateToken(key, keyType)));
         }
 
         public Task DiscardSessionTokenAsync(string token, string key, string keyType)

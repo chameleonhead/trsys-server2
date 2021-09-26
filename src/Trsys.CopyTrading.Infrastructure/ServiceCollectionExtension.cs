@@ -14,6 +14,7 @@ namespace Trsys.CopyTrading.Infrastructure
             services.AddSingleton<IEaStore, InMemoryEaStore>();
             services.AddSingleton<IOrderStore, InMemoryOrderStore>();
             services.AddSingleton<IEaLogAnalyzer, BlockingQueuedEaLogAnalyzer>();
+            services.AddSingleton<IEaSessionTokenProvider, EaSessionTokenProvider>();
             return services;
         }
     }

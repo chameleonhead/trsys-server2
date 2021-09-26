@@ -18,13 +18,13 @@ namespace Trsys.CopyTrading.Abstractions
         public EaSession Session { get; private set; }
         protected IEventQueue Events { get; }
 
-        public virtual EaSession GenerateSession()
+        public virtual EaSession GenerateSession(string sessionToken)
         {
             if (Session != null)
             {
                 throw new EaSessionAlreadyExistsException();
             }
-            Session = new EaSession(Key, KeyType, Guid.NewGuid().ToString());
+            Session = new EaSession(Key, KeyType, sessionToken);
             Events.Enqueue(new EaSessionGeneratedEvent(Key, KeyType, Session.Token));
             return Session;
         }
