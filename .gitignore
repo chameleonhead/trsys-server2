@@ -364,3 +364,4 @@ FodyWeavers.xsd
 db.sqlite3
 coveragereport/
 reports/
+.vscode/
