@@ -1,14 +1,14 @@
 ﻿using LoadTesting.Extensions;
+using LoadTesting.Server;
 using NBomber.Contracts;
 using Serilog;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace LoadTesting.Client
 {
     public class Subscriber : TokenClientBase
     {
-        public Subscriber(HttpClient client, string secretKey) : base(client, secretKey, "Subscriber")
+        public Subscriber(HttpClientPool pool, string secretKey) : base(pool, secretKey, "Subscriber")
         {
         }
 
@@ -18,7 +18,7 @@ namespace LoadTesting.Client
         {
             try
             {
-                var order = await Client.SubscribeOrderAsync(SecretKey, Token, Order);
+                var order = await ClientPool.UseClientAsync(client => client.SubscribeOrderAsync(SecretKey, Token, Order));
                 if (order != Order)
                 {
                     Order = order;

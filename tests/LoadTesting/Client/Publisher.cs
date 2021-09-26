@@ -1,7 +1,7 @@
 ﻿using LoadTesting.Extensions;
+using LoadTesting.Server;
 using NBomber.Contracts;
 using Serilog;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace LoadTesting.Client
@@ -11,7 +11,7 @@ namespace LoadTesting.Client
         private readonly OrderProvider orderProvider;
         private string sentOrder;
 
-        public Publisher(HttpClient client, string secretKey, OrderProvider orderProvider) : base(client, secretKey, "Publisher")
+        public Publisher(HttpClientPool pool, string secretKey, OrderProvider orderProvider) : base(pool, secretKey, "Publisher")
         {
             this.orderProvider = orderProvider;
         }
@@ -23,7 +23,7 @@ namespace LoadTesting.Client
             {
                 try
                 {
-                    await Client.PublishOrderAsync(SecretKey, Token, orderText);
+                    await ClientPool.UseClientAsync(client => client.PublishOrderAsync(SecretKey, Token, orderText));
                 }
                 catch
                 {

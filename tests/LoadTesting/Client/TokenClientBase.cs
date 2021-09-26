@@ -1,7 +1,7 @@
 ﻿using LoadTesting.Extensions;
+using LoadTesting.Server;
 using NBomber.Contracts;
 using System;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +9,7 @@ namespace LoadTesting.Client
 {
     public abstract class TokenClientBase
     {
-        protected HttpClient Client { get; }
+        protected HttpClientPool ClientPool { get; }
         protected string SecretKey { get; }
         protected string KeyType { get; }
         protected string Token { get; private set; }
@@ -17,22 +17,22 @@ namespace LoadTesting.Client
         private bool isInit = false;
         private readonly SemaphoreSlim lockObject = new SemaphoreSlim(1);
 
-        public TokenClientBase(HttpClient client, string secretKey, string keyType)
+        public TokenClientBase(HttpClientPool pool, string secretKey, string keyType)
         {
             SecretKey = secretKey;
             KeyType = keyType;
-            Client = client;
+            ClientPool = pool;
         }
 
         public async Task InitializeAsync()
         {
-            Token = await Client.GenerateTokenAsync(SecretKey, KeyType);
+            Token = await ClientPool.UseClientAsync(client => client.GenerateTokenAsync(SecretKey, KeyType));
             isInit = true;
         }
 
         public async Task FinalizeAsync()
         {
-            await Client.InvalidateTokenAsync(SecretKey, KeyType, Token);
+            await ClientPool.UseClientAsync(client => client.InvalidateTokenAsync(SecretKey, KeyType, Token));
             Token = null;
             isInit = false;
         }

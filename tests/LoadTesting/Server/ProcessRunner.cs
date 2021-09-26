@@ -10,6 +10,8 @@ namespace LoadTesting.Server
         private readonly Process _process;
         private bool disposedValue;
 
+        public Action OnShotdown { get; set; }
+
         public ProcessRunner(string command, string argsuments)
         {
             _process = Process.Start(new ProcessStartInfo()
@@ -26,6 +28,7 @@ namespace LoadTesting.Server
             {
                 if (disposing)
                 {
+                    OnShotdown?.Invoke();
                     _process.Kill();
                     _process.WaitForExit();
                 }
