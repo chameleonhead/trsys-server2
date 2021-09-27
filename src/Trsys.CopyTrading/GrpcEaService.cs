@@ -155,25 +155,30 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async Task PublishOrderTextAsync(DateTimeOffset timestamp, string key, string text)
+        public Task PublishOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
-            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.PublishOrderTextAsync");
-            await ExecuteAsync(async service =>
+            var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.PublishOrderTextAsync");
+            Task.Run(() => ExecuteAsync(async service =>
             {
-                var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
+                // offload to other thread
+                using (activity)
                 {
-                    Timestamp = Timestamp.FromDateTimeOffset(timestamp),
-                    Key = key,
-                    Text = text,
-                });
-                switch (response.Result)
-                {
-                    case CommonResponse.Types.Result.Success:
-                        break;
-                    default:
-                        throw new Exception(response.Message);
+                    var response = await service.PublishOrderTextAsync(new PublishOrderTextRequest()
+                    {
+                        Timestamp = Timestamp.FromDateTimeOffset(timestamp),
+                        Key = key,
+                        Text = text,
+                    });
+                    switch (response.Result)
+                    {
+                        case CommonResponse.Types.Result.Success:
+                            break;
+                        default:
+                            throw new Exception(response.Message);
+                    }
                 }
-            });
+            }));
+            return Task.CompletedTask;
         }
 
         public async Task<OrderText> GetCurrentOrderTextAsync()
@@ -200,25 +205,30 @@ namespace Trsys.CopyTrading
             });
         }
 
-        public async Task SubscribeOrderTextAsync(DateTimeOffset timestamp, string key, string text)
+        public Task SubscribeOrderTextAsync(DateTimeOffset timestamp, string key, string text)
         {
-            using var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.SubscribeOrderTextAsync");
-            await ExecuteAsync(async service =>
+            var activity = CopyTradingActivitySource.Source.StartActivity("GrpcClient.SubscribeOrderTextAsync");
+            Task.Run(() => ExecuteAsync(async service =>
             {
-                var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
+                // offload to other thread
+                using (activity)
                 {
-                    Timestamp = Timestamp.FromDateTimeOffset(timestamp),
-                    Key = key,
-                    Text = text,
-                });
-                switch (response.Result)
-                {
-                    case CommonResponse.Types.Result.Success:
-                        break;
-                    default:
-                        throw new Exception(response.Message);
+                    var response = await service.SubscribeOrderTextAsync(new SubscribeOrderTextRequest()
+                    {
+                        Timestamp = Timestamp.FromDateTimeOffset(timestamp),
+                        Key = key,
+                        Text = text,
+                    });
+                    switch (response.Result)
+                    {
+                        case CommonResponse.Types.Result.Success:
+                            break;
+                        default:
+                            throw new Exception(response.Message);
+                    }
                 }
-            });
+            }));
+            return Task.CompletedTask;
         }
 
         public async Task ReceiveLogAsync(DateTimeOffset serverTimestamp, string key, string keyType, string version, string token, string text)
