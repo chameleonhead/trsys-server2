@@ -1,21 +1,15 @@
 ﻿using System.Collections.Generic;
 using Trsys.Frontend.Application.Admin.Order;
+using Trsys.Frontend.Application.Dtos;
 
 namespace Trsys.Frontend.Web.Models.Admin
 {
     public class OrderViewModel
     {
-        public CurrentOrderViewModel CurrentOrder { get; set; }
-        public List<CurrentOrderSubscriptionStatusViewModel> OrderStatus { get; set; }
+        public CurrentOrderDto CurrentOrder { get; set; }
+        public List<SubscriberOrderStateDto> SubscriberStates { get; set; }
         public List<string> SymbolSelection { get; set; }
-        public OrderOpenCurrentOrderRequest Request { get; internal set; }
-    }
-
-    public class CurrentOrderViewModel
-    {
-    }
-
-    public class CurrentOrderSubscriptionStatusViewModel
-    {
+        public OrderOpenCurrentOrderRequest OpenRequest { get; set; }
+        public OrderCloseCurrentOrderRequest CloseRequest { get; set; }
     }
 }

@@ -12,11 +12,11 @@
 @if (Model.CurrentOrder == null)
 {
     <div class="mb-3">
-        <form>
+        <form asp-action="OrderOpenExecute">
             <div class="form-row align-items-center mb-2">
                 <label class="col-4" for="symbol">通貨ペア</label>
                 <div class="col">
-                    <select class="custom-select" id="symbol" asp-items="Model.SymbolSelection.Select(sym => new SelectListItem(sym, sym))" asp-for="Request.Symbol">
+                    <select class="custom-select" id="symbol" asp-items="Model.SymbolSelection.Select(sym => new SelectListItem(sym, sym))" asp-for="OpenRequest.Symbol">
                         <option></option>
                     </select>
                 </div>
@@ -26,16 +26,16 @@
                 <div class="col">
                     <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
                         <label class="btn btn-outline-primary">
-                            <input type="radio" name="options" autocomplete="off"> 買い
+                            <input type="radio" asp-for="OpenRequest.OrderType" value="BUY" autocomplete="off"> 買い
                         </label>
                         <label class="btn btn-outline-primary">
-                            <input type="radio" name="options" autocomplete="off"> 売り
+                            <input type="radio" asp-for="OpenRequest.OrderType" value="SELL" autocomplete="off"> 売り
                         </label>
                     </div>
                 </div>
             </div>
             <div>
-                <button class="btn btn-primary btn-block">注文</button>
+                <button type="submit" class="btn btn-primary btn-block">注文</button>
             </div>
         </form>
     </div>
@@ -51,7 +51,8 @@ else
             <div class="col-4 py-1">ポジション</div>
             <div class="col py-1">買い</div>
         </div>
-        <form>
+        <form asp-action="OrderCloseExecute">
+            <input type="hidden" asp-for="CloseRequest.CopyTradeId" />
             <button class="btn btn-danger btn-block">決済</button>
         </form>
     </div>
@@ -61,7 +62,7 @@ else
 
 <h3>注文状況</h3>
 
-@if (Model.OrderStatus.Any())
+@if (Model.SubscriberStates.Any())
 {
     <div class="list-group">
         <div class="list-group-item">
@@ -109,7 +110,5 @@ else
 }
 else
 {
-    <div class="text-center">
-        <span class="spinner-grow"></span>
-    </div>
+    <p>注文はありません。</p>
 }

@@ -229,10 +229,11 @@ namespace Trsys.Frontend.Web.Controllers
         [HttpGet("order")]
         public async Task<ActionResult> Order()
         {
-            await mediator.Send(new OrderGetCurrentOrderRequest());
+            var response = await mediator.Send(new OrderGetCurrentOrderRequest());
             var vm = new OrderViewModel()
             {
-                Request = new OrderOpenCurrentOrderRequest(),
+                OpenRequest = new OrderOpenCurrentOrderRequest(),
+                CloseRequest = new OrderCloseCurrentOrderRequest(),
                 SymbolSelection = new()
                 {
                     "USDJPY",
@@ -276,7 +277,8 @@ namespace Trsys.Frontend.Web.Controllers
                     "USDSEK",
                     "CNHJPY",
                 },
-                OrderStatus = new(),
+                SubscriberStates = response.SubscriberStates,
+                CurrentOrder = response.CurrentOrder,
             };
             return View(vm);
         }
