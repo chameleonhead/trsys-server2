@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.OrderViewModel
+
+@{
     ViewData["Title"] = "コピートレード";
 }
 
@@ -7,95 +9,109 @@
 </div>
 <hr />
 
-<div class="mb-3">
-    <div class="form-row mb-2">
-        <div class="col-4 py-1">通貨ペア</div>
-        <div class="col py-1">USDJPY</div>
-    </div>
-    <div class="form-row mb-2">
-        <div class="col-4 py-1">ポジション</div>
-        <div class="col py-1">買い</div>
-    </div>
-    <form>
-        <button class="btn btn-danger btn-block">決済</button>
-    </form>
-</div>
-
-<div class="mb-3">
-    <form>
-        <div class="form-row align-items-center mb-2">
-            <label class="col-4" for="symbol">通貨ペア</label>
-            <div class="col">
-                <select class="custom-select" id="symbol">
-                    <option></option>
-                    <option value="USDJPY">USDJPY</option>
-                    <option value="AUDJPY">AUDJPY</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-row align-items-center mb-2">
-            <label class="col-4" for="order-type">ポジション</label>
-            <div class="col">
-                <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-                    <label class="btn btn-outline-primary">
-                        <input type="radio" name="options" autocomplete="off"> 買い
-                    </label>
-                    <label class="btn btn-outline-primary">
-                        <input type="radio" name="options" autocomplete="off"> 売り
-                    </label>
+@if (Model.CurrentOrder == null)
+{
+    <div class="mb-3">
+        <form>
+            <div class="form-row align-items-center mb-2">
+                <label class="col-4" for="symbol">通貨ペア</label>
+                <div class="col">
+                    <select class="custom-select" id="symbol">
+                        <option></option>
+                        <option value="USDJPY">USDJPY</option>
+                        <option value="AUDJPY">AUDJPY</option>
+                    </select>
                 </div>
             </div>
+            <div class="form-row align-items-center mb-2">
+                <label class="col-4" for="order-type">ポジション</label>
+                <div class="col">
+                    <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                        <label class="btn btn-outline-primary">
+                            <input type="radio" name="options" autocomplete="off"> 買い
+                        </label>
+                        <label class="btn btn-outline-primary">
+                            <input type="radio" name="options" autocomplete="off"> 売り
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-block">注文</button>
+            </div>
+        </form>
+    </div>
+}
+else
+{
+    <div class="mb-3">
+        <div class="form-row mb-2">
+            <div class="col-4 py-1">通貨ペア</div>
+            <div class="col py-1">USDJPY</div>
         </div>
-        <div>
-            <button class="btn btn-primary btn-block">注文</button>
+        <div class="form-row mb-2">
+            <div class="col-4 py-1">ポジション</div>
+            <div class="col py-1">買い</div>
         </div>
-    </form>
-</div>
+        <form>
+            <button class="btn btn-danger btn-block">決済</button>
+        </form>
+    </div>
+}
 
 <hr />
 
 <h3>注文状況</h3>
 
-<div class="list-group">
-    <div class="list-group-item">
-        <div class="row">
-            <div class="col-12">
-                <span class="spinner-grow spinner-grow-sm text-info" role="status">
-                    <span class="sr-only">Loading...</span>
-                </span>
-                <span class="badge badge-info">注文待ち</span>
+@if (Model.OrderStatus.Any())
+{
+    <div class="list-group">
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-12">
+                    <span class="spinner-grow spinner-grow-sm text-info" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </span>
+                    <span class="badge badge-info">注文待ち</span>
+                </div>
+                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
+                <div class="col-auto">大川さん</div>
             </div>
-            <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-            <div class="col-auto">大川さん</div>
+        </div>
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-12">
+                    <span class="badge badge-primary">注文済み</span>
+                </div>
+                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
+                <div class="col-auto">大川さん</div>
+            </div>
+            <div class="form-row">
+                <div class="col-auto"><small>ボリューム</small> 10,000</div>
+                <div class="col-auto"><small>決済金額</small> 128.3003</div>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-12">
+                    <span class="spinner-grow spinner-grow-sm text-warning" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </span>
+                    <span class="badge badge-warning">決済待ち</span>
+                </div>
+                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
+                <div class="col-auto">大川さん</div>
+            </div>
+            <div class="form-row">
+                <div class="col-auto"><small>ボリューム</small> 10,000</div>
+                <div class="col-auto"><small>決済金額</small> 128.3003</div>
+            </div>
         </div>
     </div>
-    <div class="list-group-item">
-        <div class="row">
-            <div class="col-12">
-                <span class="badge badge-primary">注文済み</span>
-            </div>
-            <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-            <div class="col-auto">大川さん</div>
-        </div>
-        <div class="form-row">
-            <div class="col-auto"><small>ボリューム</small> 10,000</div>
-            <div class="col-auto"><small>決済金額</small> 128.3003</div>
-        </div>
+}
+else
+{
+    <div class="text-center">
+        <span class="spinner-grow"></span>
     </div>
-    <div class="list-group-item">
-        <div class="row">
-            <div class="col-12">
-                <span class="spinner-grow spinner-grow-sm text-warning" role="status">
-                    <span class="sr-only">Loading...</span>
-                </span>
-                <span class="badge badge-warning">決済待ち</span>
-            </div>
-            <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-            <div class="col-auto">大川さん</div>
-        </div>
-        <div class="form-row">
-            <div class="col-auto"><small>ボリューム</small> 10,000</div>
-            <div class="col-auto"><small>決済金額</small> 128.3003</div>
-        </div>
-    </div>
-</div>
+}

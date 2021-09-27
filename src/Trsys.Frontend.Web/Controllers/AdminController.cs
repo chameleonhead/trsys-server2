@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Trsys.Frontend.Application.Admin.ClientDetails;
 using Trsys.Frontend.Application.Admin.Clients;
 using Trsys.Frontend.Application.Admin.Dashboard;
+using Trsys.Frontend.Application.Admin.Order;
 using Trsys.Frontend.Web.Models.Admin;
 
 namespace Trsys.Frontend.Web.Controllers
@@ -226,9 +227,14 @@ namespace Trsys.Frontend.Web.Controllers
         }
 
         [HttpGet("order")]
-        public ActionResult Order()
+        public async Task<ActionResult> Order()
         {
-            return View();
+            await mediator.Send(new OrderRequest());
+            var vm = new OrderViewModel()
+            {
+                OrderStatus = new(),
+            };
+            return View(vm);
         }
 
         [HttpGet("history")]
