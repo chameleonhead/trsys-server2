@@ -7,7 +7,7 @@ namespace Trsys.Frontend.Web.Models.Admin
 {
     public class ClientDetailsViewModel
     {
-        public ClientDetailsRequest Request { get; internal set; }
+        public ClientDetailsSecretKeyRequest Request { get; internal set; }
         public SecretKeyDto SecretKey { get; set; }
         public SubscriberCopyTradeHistorySearchResult TradeHistorySearchResult { get; set; }
         public List<YearMonth> YearMonthSelection { get; internal set; }

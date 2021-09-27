@@ -4,10 +4,8 @@ using Trsys.Frontend.Application.Dtos;
 
 namespace Trsys.Frontend.Application.Admin.ClientDetails
 {
-    public class ClientDetailsResponse
+    public class ClientDetailsSecretKeyResponse
     {
         public SecretKeyDto SecretKey { get; set; }
-        public SubscriberCopyTradeHistorySearchResult TradeHistorySearchResult { get; set; } 
-        public List<YearMonth> YearMonthSelection { get; set; }
     }
 }

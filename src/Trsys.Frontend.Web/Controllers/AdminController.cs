@@ -128,7 +128,7 @@ namespace Trsys.Frontend.Web.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("clients/add")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ClientAddExecute([FromForm] ClientAddViewModel vm)
         {
@@ -154,27 +154,75 @@ namespace Trsys.Frontend.Web.Controllers
         public async Task<ActionResult> ClientDetails(string id, [FromQuery] int? year, [FromQuery] int? month)
         {
             var now = DateTimeOffset.UtcNow;
-            var request = new ClientDetailsRequest()
+            var secretKeyRequest = new ClientDetailsSecretKeyRequest()
+            {
+                SecretKeyId = id,
+            };
+            var secretKeyResponse = await mediator.Send(secretKeyRequest);
+            var tradeHistoryRequest = new ClientDetailsSubscriberTradeHistorySearchRequest()
             {
                 SecretKeyId = id,
                 Year = year ?? now.Year,
                 Month = month ?? now.Month
             };
-            var response = await mediator.Send(request);
+            var tradeHistoryResponse = await mediator.Send(tradeHistoryRequest);
             var vm = new ClientDetailsViewModel()
             {
-                Request = request,
-                SecretKey = response.SecretKey,
-                TradeHistorySearchResult = response.TradeHistorySearchResult,
-                YearMonthSelection = response.YearMonthSelection,
+                Request = secretKeyRequest,
+                SecretKey = secretKeyResponse.SecretKey,
+                TradeHistorySearchResult = tradeHistoryResponse.TradeHistorySearchResult,
+                YearMonthSelection = tradeHistoryResponse.YearMonthSelection,
             };
             return View(vm);
         }
 
         [HttpGet("clients/{id}/edit")]
-        public ActionResult ClientEdit(string id)
+        public async Task<ActionResult> ClientEdit(string id)
         {
-            return View();
+            var secretKeyRequest = new ClientDetailsSecretKeyRequest()
+            {
+                SecretKeyId = id,
+            };
+            var secretKeyResponse = await mediator.Send(secretKeyRequest);
+            var vm = new ClientEditViewModel()
+            {
+                SecretKey = secretKeyResponse.SecretKey,
+                Request = new()
+                {
+                    SecretKeyId = id,
+                    Description = secretKeyResponse.SecretKey.Desctiption,
+                    IsActive = secretKeyResponse.SecretKey.IsActive,
+                },
+            };
+            return View(vm);
+        }
+
+        [HttpPost("clients/{id}/edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ClientEditExecute(string id, [FromForm] ClientEditViewModel vm)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var secretKeyRequest = new ClientDetailsSecretKeyRequest()
+                    {
+                        SecretKeyId = id,
+                    };
+                    var secretKeyResponse = await mediator.Send(secretKeyRequest);
+                    vm.SecretKey = secretKeyResponse.SecretKey;
+                    return View(nameof(ClientEdit), vm);
+                }
+
+                await mediator.Send(vm.Request);
+
+                TempData["Message"] = "登録が完了しました。";
+                return RedirectToAction(nameof(ClientDetails), new { id });
+            }
+            catch
+            {
+                return View(nameof(ClientEdit), vm);
+            }
         }
 
         [HttpGet("order")]

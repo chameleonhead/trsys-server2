@@ -1,40 +1,59 @@
-﻿@{
+﻿@model Trsys.Frontend.Web.Models.Admin.ClientEditViewModel
+
+@{
     ViewData["Title"] = "シークレットキー編集";
 }
 
 <div class="row">
-    <h3 class="col mb-1" style="text-overflow:ellipsis">MT4/OANDA Corporation/811631031/2</h3>
-    <small class="col-auto">Publisher</small>
+    <h3 class="col mb-1" style="text-overflow:ellipsis">@Model.SecretKey.Key</h3>
+    <small class="col-auto">@Model.SecretKey.KeyType</small>
 </div>
 <div class="d-flex justify-content-between">
-    <div>山根さん</div>
+    <div>@Model.SecretKey.Desctiption</div>
 </div>
-<div><span class="badge badge-warning">無効</span></div>
+<div>
+    @if (!Model.SecretKey.IsActive)
+    {
+        <span class="badge badge-warning">無効</span>
+    }
+    @if (Model.SecretKey.IsConnected)
+    {
+        <span class="badge badge-primary">接続中</span>
+    }
+</div>
 
 <hr />
 
 <h3>編集</h3>
 
-<form>
+<form asp-action="ClientEditExecute" asp-route-id="@Model.Request.SecretKeyId">
+    <input type="hidden" asp-for="Request.SecretKeyId" />
     <div class="form-group">
         <label for="description">説明</label>
-        <input type="text" class="form-control" id="description" aria-describedby="description-help" autocomplete="off">
+        <input type="text" asp-for="Request.Description" class="form-control" id="description" aria-describedby="description-help" autocomplete="off">
+        <span asp-validation-for="Request.Description" class="text-danger"></span>
         <small id="description-help" class="form-text text-muted">シークレットキーの説明を記載します。</small>
     </div>
     <div class="form-group">
         <label>有効化</label>
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="activation">
+            <input type="checkbox" asp-for="Request.IsActive" class="custom-control-input" id="activation">
+            <span asp-validation-for="Request.IsActive" class="text-danger"></span>
             <label class="custom-control-label" for="activation"></label>
         </div>
         <small id="description-help" class="form-text text-muted">シークレットキーが使用可能かどうか設定します。</small>
     </div>
     <div class="form-row">
         <div class="col-auto">
-            <a asp-action="ClientDetails" asp-route-id="1" class=" btn btn-block btn-outline-secondary">キャンセル</a>
+            <a asp-action="ClientDetails" asp-route-id="@Model.Request.SecretKeyId" class=" btn btn-block btn-outline-secondary">キャンセル</a>
         </div>
         <div class="col-auto">
             <button type="submit" class=" btn btn-block btn-primary">完了</button>
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -2,7 +2,7 @@
 
 namespace Trsys.Frontend.Application.Admin.ClientDetails
 {
-    public class ClientDetailsRequest : IRequest<ClientDetailsResponse>
+    public class ClientDetailsSubscriberTradeHistorySearchRequest : IRequest<ClientDetailsSubscriberTradeHistorySearchResponse>
     {
         public string SecretKeyId { get; set; }
         public int Year { get; set; }

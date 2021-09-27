@@ -5,21 +5,12 @@ using System.Threading.Tasks;
 
 namespace Trsys.Frontend.Application.Admin.ClientDetails
 {
-    public class ClientDetailsRequestHandler : IRequestHandler<ClientDetailsRequest, ClientDetailsResponse>
+    public class ClientDetailsSubscriberTradeHistorySearchRequestHandler : IRequestHandler<ClientDetailsSubscriberTradeHistorySearchRequest, ClientDetailsSubscriberTradeHistorySearchResponse>
     {
-        public Task<ClientDetailsResponse> Handle(ClientDetailsRequest request, CancellationToken cancellationToken)
+        public Task<ClientDetailsSubscriberTradeHistorySearchResponse> Handle(ClientDetailsSubscriberTradeHistorySearchRequest request, CancellationToken cancellationToken)
         {
-            var response = new ClientDetailsResponse()
+            var response = new ClientDetailsSubscriberTradeHistorySearchResponse()
             {
-                SecretKey = new()
-                {
-                    Id = "2",
-                    Key = "MT4/OANDA Corporation/811653730/2",
-                    KeyType = "Subscriber",
-                    Desctiption = "大川さん",
-                    IsActive = true,
-                    IsConnected = true,
-                },
                 TradeHistorySearchResult = new()
                 {
                     CurrentYearMonth = new YearMonth(request.Year, request.Month),
