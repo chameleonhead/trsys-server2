@@ -16,10 +16,8 @@
             <div class="form-row align-items-center mb-2">
                 <label class="col-4" for="symbol">通貨ペア</label>
                 <div class="col">
-                    <select class="custom-select" id="symbol">
+                    <select class="custom-select" id="symbol" asp-items="Model.SymbolSelection.Select(sym => new SelectListItem(sym, sym))" asp-for="Request.Symbol">
                         <option></option>
-                        <option value="USDJPY">USDJPY</option>
-                        <option value="AUDJPY">AUDJPY</option>
                     </select>
                 </div>
             </div>

@@ -229,9 +229,53 @@ namespace Trsys.Frontend.Web.Controllers
         [HttpGet("order")]
         public async Task<ActionResult> Order()
         {
-            await mediator.Send(new OrderRequest());
+            await mediator.Send(new OrderGetCurrentOrderRequest());
             var vm = new OrderViewModel()
             {
+                Request = new OrderOpenCurrentOrderRequest(),
+                SymbolSelection = new()
+                {
+                    "USDJPY",
+                    "EURJPY",
+                    "GBPJPY",
+                    "AUDJPY",
+                    "NZDJPY",
+                    "EURUSD",
+                    "AUDUSD",
+                    "GBPUSD",
+                    "NZDUSD",
+                    "EURGBP",
+                    "AUDCAD",
+                    "AUDCHF",
+                    "AUDNZD",
+                    "CADJPY",
+                    "CHFJPY",
+                    "EURAUD",
+                    "EURCAD",
+                    "EURCHF",
+                    "GBPAUD",
+                    "GBPCHF",
+                    "USDCHF",
+                    "USDCAD",
+                    "TRYJPY",
+                    "ZARJPY",
+                    "GBPCAD",
+                    "GBPNZD",
+                    "USDTRY",
+                    "USDZAR",
+                    "CADCHF",
+                    "EURNZD",
+                    "NZDCAD",
+                    "NZDCHF",
+                    "MXNJPY",
+                    "USDMXN",
+                    "USDSGD",
+                    "USDCNH",
+                    "USDDKK",
+                    "USDNOK",
+                    "USDSEK",
+                    "CNHJPY",
+                },
                 OrderStatus = new(),
             };
             return View(vm);
