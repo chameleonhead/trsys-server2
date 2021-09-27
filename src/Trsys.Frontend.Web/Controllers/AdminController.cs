@@ -165,7 +165,7 @@ namespace Trsys.Frontend.Web.Controllers
             {
                 Request = request,
                 SecretKey = response.SecretKey,
-                TradeHistory = response.TradeHistory,
+                TradeHistorySearchResult = response.TradeHistorySearchResult,
                 YearMonthSelection = response.YearMonthSelection,
             };
             return View(vm);

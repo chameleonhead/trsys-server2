@@ -25,85 +25,134 @@
 
 <hr />
 
-<div class="form-row align-items-center mb-3">
-    <h3 class="col">履歴</h3>
+@if (Model.TradeHistorySearchResult.Items.Any())
+{
+    <div class="form-row align-items-center mb-3">
+        <h3 class="col">履歴</h3>
 
-    <div class="col-auto">
-        <div class="input-group">
-            <select class="custom-select" id="search-year">
-                <option value="2021">2021</option>
-            </select>
-            <div class="input-group-append">
-                <label class="input-group-text" for="search-year">年</label>
+        <div class="col-auto">
+            <div class="input-group">
+                <select class="custom-select" id="search-year" name="Year">
+                    @foreach (var year in Model.YearMonthSelection.Select(ym => ym.Year).Distinct().ToArray())
+                    {
+                        if (year == Model.TradeHistorySearchResult.CurrentYearMonth.Year)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    }
+                </select>
+                <div class="input-group-append">
+                    <label class="input-group-text" for="search-year">年</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <select class="custom-select" id="search-month">
+                    @foreach (var month in Model.YearMonthSelection.Where(ym => ym.Year == Model.TradeHistorySearchResult.CurrentYearMonth.Year).Select(ym => ym.Month).ToArray())
+                    {
+                        if (month == Model.TradeHistorySearchResult.CurrentYearMonth.Month)
+                        {
+                            <option value="@month" selected>@month</option>
+                        }
+                        else
+                        {
+                            <option value="@month">@month</option>
+                        }
+                    }
+                </select>
+                <div class="input-group-append">
+                    <label class="input-group-text" for="search-month">月</label>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-auto">
-        <div class="input-group">
-            <select class="custom-select" id="search-month">
-                <option value="9">9</option>
-            </select>
-            <div class="input-group-append">
-                <label class="input-group-text" for="search-month">月</label>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="font-weight-bold">収支</div>
+                @if (Model.TradeHistorySearchResult.TotalProfitLoss > 0)
+                {
+                    <div class="text-right text-success">@Model.TradeHistorySearchResult.TotalProfitLoss.ToString("#,#0") JPY</div>
+                }
+                else if (Model.TradeHistorySearchResult.TotalProfitLoss < 0)
+                {
+                    <div class="text-right text-danger">@Model.TradeHistorySearchResult.TotalProfitLoss.ToString("#,#0") JPY</div>
+                }
+                else
+                {
+                    <div class="text-right">@Model.TradeHistorySearchResult.TotalProfitLoss.ToString("#,#0")</div>
+                }
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="font-weight-bold">取引回数</div>
+                <div class="text-right">@Model.TradeHistorySearchResult.TotalCount.ToString("#,#0") 回</div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="d-flex justify-content-between">
-            <div><b>収支</b></div>
-            <div class="text-right text-success">10,000 JPY</div>
-        </div>
-        <div class="d-flex justify-content-between">
-            <div><b>取引回数</b></div>
-            <div class="text-right">2 回</div>
-        </div>
+    <div class="list-group">
+        @foreach (var trade in Model.TradeHistorySearchResult.Items)
+        {
+            <a asp-action="HistoryDetails" asp-route-id="@trade.CopyTradeId" class="list-group-item list-group-item-action">
+                <div class="form-row">
+                    <div class="col-auto">
+                        <div>@trade.Symbol</div>
+                    </div>
+                    <div class="col-auto">
+                        <div>@(trade.OrderType == "BUY" ? "買い" : trade.OrderType == "SELL" ? "売り" : "")</div>
+                    </div>
+                    <div class="col">
+                        @if (trade.IsOpen)
+                        {
+                            <div class="text-right text-primary">OPENING</div>
+                        }
+                        else
+                        {
+                            if (trade.ProfitLoss > 0)
+                            {
+                                <div class="text-right text-success">@trade.ProfitLoss.ToString("#,#0") JPY</div>
+                            }
+                            else if (trade.ProfitLoss < 0)
+                            {
+                                <div class="text-right text-danger">@trade.ProfitLoss.ToString("#,#0") JPY</div>
+                            }
+                            else
+                            {
+                                <div class="text-right">@trade.ProfitLoss.ToString("#,#0")</div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div>
+                    @if (trade.CloseTimestamp.HasValue)
+                    {
+                        if (trade.CloseTimestamp.Value.Date == trade.OpenTimestamp.Date)
+                        {
+                            <small>@trade.OpenTimestamp.ToString("yyyy-MM-dd HH:mm:ss") - @trade.CloseTimestamp.Value.ToString("HH:mm:ss")</small>
+                        }
+                        else
+                        {
+                            <small>@trade.OpenTimestamp.ToString("yyyy-MM-dd HH:mm:ss") - @trade.CloseTimestamp.Value.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                        }
+                    }
+                    else
+                    {
+                        <small>@trade.OpenTimestamp.ToString("yyyy-MM-dd HH:mm:ss") -</small>
+                    }
+                </div>
+            </a>
+        }
     </div>
-</div>
+}
+else
+{
+    <h3>履歴</h3>
+    <p>取引の履歴がありません。</p>
+}
 
-<div class="list-group">
-    <a href="#" class="list-group-item list-group-item-action">
-        <div class="row">
-            <div class="col-auto">
-                <div>AUDJPY/買い</div>
-            </div>
-            <div class="col">
-                <div class="text-right text-primary">OPENING</div>
-            </div>
-        </div>
-        <div>
-            <small>2021-09-24</small>
-            <small>12:30:20 -</small>
-        </div>
-    </a>
-    <a href="#" class="list-group-item list-group-item-action">
-        <div class="row">
-            <div class="col-auto">
-                <div>USDJPY/買い</div>
-            </div>
-            <div class="col">
-                <div class="text-right text-success">+90,000</div>
-            </div>
-        </div>
-        <div>
-            <small>2021-09-24</small>
-            <small>10:30:20 - 11:30:25</small>
-        </div>
-    </a>
-    <a href="#" class="list-group-item list-group-item-action">
-        <div class="row">
-            <div class="col-auto">
-                <div>USDJPY/買い</div>
-            </div>
-            <div class="col">
-                <div class="text-right text-danger">-80,000</div>
-            </div>
-        </div>
-        <div>
-            <small>2021-09-23</small>
-            <small>10:30:20 - 11:30:25</small>
-        </div>
-    </a>
-</div>

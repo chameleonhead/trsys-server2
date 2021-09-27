@@ -9,7 +9,7 @@ namespace Trsys.Frontend.Web.Models.Admin
     {
         public ClientDetailsRequest Request { get; internal set; }
         public SecretKeyDto SecretKey { get; set; }
-        public List<SubscriberTradeHistoryDto> TradeHistory { get; set; }
+        public SubscriberCopyTradeHistorySearchResult TradeHistorySearchResult { get; set; }
         public List<YearMonth> YearMonthSelection { get; internal set; }
 
     }
