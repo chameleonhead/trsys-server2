@@ -191,7 +191,7 @@ namespace Trsys.Frontend.Web.Controllers
                 Request = new()
                 {
                     SecretKeyId = id,
-                    Description = secretKeyResponse.SecretKey.Desctiption,
+                    Description = secretKeyResponse.SecretKey.Description,
                     IsActive = secretKeyResponse.SecretKey.IsActive,
                 },
             };

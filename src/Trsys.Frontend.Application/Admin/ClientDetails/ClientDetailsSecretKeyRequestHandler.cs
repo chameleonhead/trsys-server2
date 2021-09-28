@@ -15,7 +15,7 @@ namespace Trsys.Frontend.Application.Admin.ClientDetails
                     Id = "2",
                     Key = "MT4/OANDA Corporation/811653730/2",
                     KeyType = "Subscriber",
-                    Desctiption = "大川さん",
+                    Description = "大川さん",
                     IsActive = true,
                     IsConnected = true,
                 },

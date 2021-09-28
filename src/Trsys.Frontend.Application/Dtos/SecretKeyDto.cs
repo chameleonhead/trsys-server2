@@ -5,7 +5,7 @@
         public string Id { get; set; }
         public string Key { get; set; }
         public string KeyType { get; set; }
-        public string Desctiption { get; set; }
+        public string Description { get; set; }
         public bool IsActive { get; set; }
         public bool IsConnected { get; set; }
     }

@@ -21,6 +21,17 @@ namespace Trsys.Frontend.Application.Admin.Order
                 },
                 SubscriberStates = new()
                 {
+                    new()
+                    {
+                        SecretKeyId = "1",
+                        Key = "MT4/OANDA Corporation/811653730/2",
+                        Description = "大川さん",
+                        CopyTradeId = "1",
+                        TicketNo = 1,
+                        IsOpen = true,
+                        Symbol = "USDJPY",
+                        OrderType = "BUY",
+                    }
                 },
             };
             return Task.FromResult(response);

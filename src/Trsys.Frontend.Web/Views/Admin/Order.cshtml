@@ -65,47 +65,57 @@ else
 @if (Model.SubscriberStates.Any())
 {
     <div class="list-group">
-        <div class="list-group-item">
-            <div class="row">
-                <div class="col-12">
-                    <span class="spinner-grow spinner-grow-sm text-info" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </span>
-                    <span class="badge badge-info">注文待ち</span>
+        @foreach (var state in Model.SubscriberStates)
+        {
+            <div class="list-group-item">
+                <div class="row">
+                    @if (state.IsOpen)
+                    {
+                        if (!state.OpenTrades.Any())
+                        {
+                            <div class="col-12">
+                                <span class="spinner-grow spinner-grow-sm text-info" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </span>
+                                <span class="badge badge-info">注文待ち</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-12">
+                                <span class="badge badge-primary">注文済み</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        if (!state.IsClosed)
+                        {
+                            <div class="col-12">
+                                <span class="spinner-grow spinner-grow-sm text-warning" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </span>
+                                <span class="badge badge-warning">決済待ち</span>
+                            </div>
+                        }
+                    }
+                    <h5 class="col-12 col-sm">@state.Key</h5>
+                    <div class="col-auto">@state.Description</div>
                 </div>
-                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-                <div class="col-auto">大川さん</div>
+                @if (state.OpenTrades.Any())
+                {
+                    <div class="form-row">
+                        <div class="col-auto"><small>ボリューム</small> @state.Volume</div>
+                        <div class="col-auto"><small>注文金額 (平均)</small> @state.OpenPriceAvg</div>
+                        @if (state.CloseTrades.Any())
+                        {
+                            <div class="col-auto"><small>決済金額 (平均)</small> @state.ClosePriceAvg</div>
+                            <div class="col-auto"><small>損益</small> @state.TotalProfitLoss</div>
+                        }
+                    </div>
+                }
             </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row">
-                <div class="col-12">
-                    <span class="badge badge-primary">注文済み</span>
-                </div>
-                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-                <div class="col-auto">大川さん</div>
-            </div>
-            <div class="form-row">
-                <div class="col-auto"><small>ボリューム</small> 10,000</div>
-                <div class="col-auto"><small>決済金額</small> 128.3003</div>
-            </div>
-        </div>
-        <div class="list-group-item">
-            <div class="row">
-                <div class="col-12">
-                    <span class="spinner-grow spinner-grow-sm text-warning" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </span>
-                    <span class="badge badge-warning">決済待ち</span>
-                </div>
-                <h5 class="col-12 col-sm">MT4/OANDA Corporation/811653730/2</h5>
-                <div class="col-auto">大川さん</div>
-            </div>
-            <div class="form-row">
-                <div class="col-auto"><small>ボリューム</small> 10,000</div>
-                <div class="col-auto"><small>決済金額</small> 128.3003</div>
-            </div>
-        </div>
+        }
     </div>
 }
 else
